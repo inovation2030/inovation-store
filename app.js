@@ -48,6 +48,23 @@ document.addEventListener('DOMContentLoaded',function(){
       var add=scope.querySelector('[data-add]'); if(add){add.setAttribute('data-price',price); add.setAttribute('data-add', add.getAttribute('data-base')+' — '+size);}
     });
   });
+  /* Selector de color en tarjetas de producto (edredones): cambia foto, nombre y carrito */
+  document.querySelectorAll('.color-sel').forEach(function(sel){
+    sel.addEventListener('click',function(e){
+      var b=e.target.closest('.color-opt'); if(!b)return;
+      sel.querySelectorAll('.color-opt').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      var art=sel.closest('article.product'); if(!art)return;
+      var name=b.getAttribute('data-name'), src=b.getAttribute('data-img');
+      var img=null; for(var i=0;i<art.children.length;i++){if(art.children[i].tagName==='IMG'){img=art.children[i];break;}}
+      var prefix=art.getAttribute('data-title')||'';
+      if(img&&src){img.src=src;img.alt=prefix+' — '+name;}
+      var lab=art.querySelector('.color-name'); if(lab)lab.textContent=name;
+      var h=art.querySelector('h3'); if(h&&prefix)h.textContent=prefix+' — '+name;
+      var add=art.querySelector('[data-add]');
+      if(add&&prefix){var sz=art.querySelector('.size-opt.on');var size=sz?sz.getAttribute('data-size'):null;add.setAttribute('data-base',prefix+' — '+name);add.setAttribute('data-add',prefix+' — '+name+(size?' — '+size:''));}
+    });
+  });
   document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){addToCart(b.getAttribute('data-add'),parseInt(b.getAttribute('data-price')||'0',10))})});
   document.querySelectorAll('.drop>button').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();b.parentElement.classList.toggle('open')})});
 

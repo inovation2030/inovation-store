@@ -170,3 +170,13 @@ nav.main>a.active{border-radius:12px}
 #palSwatches .sw.on{box-shadow:0 0 0 3px var(--gold)}
 #palChosen{margin:12px 0 0;font-size:15px}
 .product.flash{outline:3px solid var(--gold);outline-offset:2px}
+
+/* --- Selectores de color y tamaño visibles en cada tarjeta de producto --- */
+.sel-label{font-weight:700;font-size:13px;margin:12px 0 2px;color:var(--blue)}
+.sel-label .color-name{color:var(--ink)}
+.color-sel{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.color-opt{padding:0;border:2px solid #e3e8ee;border-radius:10px;background:#fff;cursor:pointer;overflow:hidden;text-align:center;font-family:inherit}
+.color-opt img{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;display:block}
+.color-opt span{display:block;font-size:11px;line-height:1.2;padding:4px 2px;color:var(--ink)}
+.color-opt.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.color-opt.on span{font-weight:700;color:var(--blue)}
