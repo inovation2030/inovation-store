@@ -261,28 +261,30 @@ var SIZES=[{n:"Individual",d:"100 x 200 cm",w:1.9},{n:"Matrimonial",d:"135 x 200
 var DUVET_PRICES=[999,1099,1199,1299,1499]; /* edredón por tamaño de cama */
 var SHEET_SIZE_PRICES=[500,600,700,800,800]; /* sábanas por tamaño; King Jumbo: precio no dado, se usa el de King ($800) */
 var SHEET_TYPES=[{n:"Algodón Egipcio",adj:0},{n:"Bambú Fresh",adj:-100},{n:"Satín Premium",adj:200}];
-var DUVET_TYPES=[{n:"Liso",p:899},{n:"Capitonado",p:999},{n:"Reversible",p:1099},{n:"Estampado",p:1199},{n:"Texturizado",p:1099},{n:"Premium",p:1399}];
-/* Edredones DOBLE VISTA (cara / reverso). hex = tono muestreado de la foto real
-   del producto (cara); rev = color del reverso, también de la foto (la solapa
-   doblada que se ve en cada foto): Azul Marino foto casi negra-azulada, solapa
-   gris azulada; Gris foto gris claro, solapa azul marino (foto gris-azul);
-   Beige foto crema, solapa chocolate; Blanco reverso Gris. Vino, Verde Oliva
-   y Rosa no tienen foto propia de edredón: su miniatura es una muestra de
-   color doble vista (assets/swatch-*.png), no una foto ajena. */
-/* Texturas del edredón: fotos GENERADAS a partir de las fotos reales del producto
-   (Alberto: "puedes crear fotos solo que sea igual que el edredón"). Cada una es
-   SOLO el edredón extendido en plano cenital, sin dormitorio, sin cama, sin fondo:
-   al mapearla en el 3D no se ve ninguna foto de dormitorio pegada. tex = cara,
-   revTex = reverso (doble vista). El Gris generado es gris medio visible (#919096
-   medido en la imagen), no blanco: por eso ahora Gris sí pinta todo el edredón. */
-var DUVET_COLORS=[{n:"Azul Marino",hex:"#232a45",rev:"#7d8390",revName:"Gris azulado",img:"assets/edredon-azul-marino.jpg",tex:"assets/duvet-tex-azul-marino.jpg",revTex:"assets/duvet-tex-gris.jpg"},{n:"Gris",hex:"#9aa0a8",rev:"#46536f",revName:"Azul Marino",img:"assets/edredon-gris.jpg",tex:"assets/duvet-tex-gris.jpg",revTex:"assets/duvet-tex-azul-marino.jpg"},{n:"Beige",hex:"#e0d2b8",rev:"#6b4a3c",revName:"Chocolate",img:"assets/edredon-beige.jpg",tex:"assets/duvet-tex-beige.jpg",revTex:"assets/duvet-tex-chocolate.jpg"},{n:"Blanco",hex:"#f4f3f1",rev:"#9aa0a8",revName:"Gris",img:"assets/edredon-blanco.jpg",tex:"assets/duvet-tex-blanco.jpg",revTex:"assets/duvet-tex-gris.jpg"},{n:"Vino",hex:"#7a2233",rev:"#e0d2b8",revName:"Beige",img:"assets/swatch-vino.png",tex:"assets/duvet-tex-vino.jpg",revTex:"assets/duvet-tex-beige.jpg"},{n:"Verde Oliva",hex:"#6b7040",rev:"#e0d2b8",revName:"Beige",img:"assets/swatch-oliva.png",tex:"assets/duvet-tex-oliva.jpg",revTex:"assets/duvet-tex-beige.jpg"},{n:"Rosa",hex:"#e8a7b8",rev:"#f4f3f1",revName:"Blanco",img:"assets/swatch-rosa.png",tex:"assets/duvet-tex-rosa.jpg",revTex:"assets/duvet-tex-blanco.jpg"}];
-var TYPE_IMG={Liso:"assets/edredon-blanco.jpg",Capitonado:"assets/edredon-gris-azul.jpg",Reversible:"assets/edredon-apilados.jpg",Estampado:"assets/edredon-blanco-rayas.jpg",Texturizado:"assets/edredon-beige.jpg",Premium:"assets/edredon-azul-marino.jpg"};
+/* Edredones REALES de Alberto, solo los de sus fotos: Azul Marino, Gris,
+   Beige, Blanco y Blanco con Rayas (assets/edredon-*.jpg). NO hay Vino,
+   Verde Oliva ni Rosa: esos colores se inventaron aquí y se quitaron.
+   El edredón es hipoalergénico y REVERSIBLE (doble vista): la cara y el
+   reverso se muestran solo cuando la foto real del producto lo respalda:
+   Gris cara / Azul Marino reverso (foto edredon-gris-azul.jpg) y su par
+   Azul Marino cara / Gris reverso. Beige, Blanco y Blanco con Rayas no
+   tienen foto del reverso, así que NO se les inventa color de reverso:
+   revName vacío y rev = color de la cara. */
+/* Texturas del edredón: fotos GENERADAS a partir de las fotos reales del
+   producto (Alberto: "puedes crear fotos solo que sea igual que el
+   edredón"). Solo existen para los 4 colores lisos reales; Blanco con
+   Rayas usa su foto real. tex = cara, revTex = reverso (doble vista). */
+var DUVET_COLORS=[{n:"Azul Marino",hex:"#232a45",rev:"#9aa0a8",revName:"Gris",img:"assets/edredon-azul-marino.jpg",tex:"assets/duvet-tex-azul-marino.jpg",revTex:"assets/duvet-tex-gris.jpg"},{n:"Gris",hex:"#9aa0a8",rev:"#46536f",revName:"Azul Marino",img:"assets/edredon-gris.jpg",tex:"assets/duvet-tex-gris.jpg",revTex:"assets/duvet-tex-azul-marino.jpg"},{n:"Beige",hex:"#e0d2b8",rev:"#e0d2b8",revName:"",img:"assets/edredon-beige.jpg",tex:"assets/duvet-tex-beige.jpg",revTex:"assets/duvet-tex-beige.jpg"},{n:"Blanco",hex:"#f4f3f1",rev:"#f4f3f1",revName:"",img:"assets/edredon-blanco.jpg",tex:"assets/duvet-tex-blanco.jpg",revTex:"assets/duvet-tex-blanco.jpg"},{n:"Blanco con Rayas",hex:"#f4f3f1",rev:"#f4f3f1",revName:"",img:"assets/edredon-blanco-rayas.jpg",tex:"assets/edredon-blanco-rayas.jpg",revTex:"assets/edredon-blanco-rayas.jpg"}];
 var PILLOWS=[{n:"2 Bamboo Standard + 2 Decorativas",p:1500},{n:"2 Bamboo King",p:1700},{n:"4 Bamboo Standard",p:3000},{n:"2 Pluma Sintética",p:649},{n:"1 Bamboo Standard",p:800},{n:"1 Bamboo King",p:900}]; /* almohadas de bambú reales: Standard $800 / par $1,500 · King $900 / par $1,700; 4 Bamboo Standard = 2 pares */
 var COMPS=[{n:"Cubrecolchón - Impermeable",p:200},{n:"Protector Impermeable",p:150},{n:"Cubrecolchón Premium",p:350},{n:"Set de Cojines",p:499},{n:"Sin complementos",p:0}];
-var st={step:3,size:2,sheetType:0,sheetColor:{name:"Blanco",hex:"#ffffff",img:null},duvetType:2,duvetColor:0,pillow:0,comp:0,curtain:-1,curtainSize:1,curtainPanels:1};
+var st={step:3,size:2,sheetType:0,sheetColor:{name:"Blanco",hex:"#ffffff",img:null},duvetColor:0,pillow:0,comp:0,curtain:-1,curtainSize:1,curtainPanels:1};
 function money(n){return "$"+Number(n).toLocaleString("es-MX")+" MXN";}
 function sheetPrice(){return SHEET_SIZE_PRICES[st.size]+SHEET_TYPES[st.sheetType].adj;}
-function duvetPrice(){return DUVET_PRICES[st.size]+(DUVET_TYPES[st.duvetType].p-1099);}
+/* Precio del edredón: SOLO el precio real por tamaño (sin tipos inventados).
+   Individual $999 · Matrimonial $1,099 · Queen $1,199 · King $1,299 · King Jumbo $1,499. */
+function duvetPrice(){return DUVET_PRICES[st.size];}
+/* Nombre del edredón para mostrar: color y reverso solo si la foto real lo respalda. */
+function duvetLabel(dc){return dc.n+(dc.revName?" / "+dc.revName:"");}
 function curtainPrice(){if(st.curtain<0)return 0;var p=CUR_SIZES[st.curtainSize].p;return st.curtainPanels===2&&p[1]?p[1]:p[0];}
 function calcTotal(){
   /* Total = sábanas + edredón + almohadas + complementos + cortinas, con los precios reales por tamaño.
@@ -337,8 +339,7 @@ var SPLINE_VARIABLES={
   bedSize:"BedSize",       /* "Individual" | "Matrimonial" | "Queen" | "King" | "King Jumbo" */
   sheetColor:"SheetColor", /* nombre del color, p. ej. "Rose" */
   sheetType:"SheetType",   /* "Algodón Egipcio" | "Bambú Fresh" | "Satín Premium" */
-  duvetColor:"DuvetColor", /* "Azul Marino" | "Gris" | "Beige" | "Blanco" | "Vino" | "Verde Oliva" | "Rosa" */
-  duvetType:"DuvetType",   /* "Liso" | "Capitonado" | "Reversible" | "Estampado" | "Texturizado" | "Premium" */
+  duvetColor:"DuvetColor", /* "Azul Marino" | "Gris" | "Beige" | "Blanco" | "Blanco con Rayas" (solo colores reales, con foto) */
   pillowOption:"PillowOption", /* texto de la opción elegida en el Paso 4 */
   curtainColor:"CurtainColor", /* nombre del color de cortina o "Sin cortinas" */
   cameraView:"CameraView", /* "front" | "angle" | "top" | "room" */
@@ -347,8 +348,8 @@ var SPLINE_VARIABLES={
 /* Foto real de la habitación que se muestra mientras no hay escena Spline
    conectada (o si la escena falla). Cambia con el color del edredón. Las
    fotos habitacion-real-*.jpg son fotos generadas iguales a una habitación
-   real; Vino, Verde Oliva y Rosa no tienen foto de habitación, así que usan
-   la foto del edredón elegido. */
+   real; Blanco con Rayas no tiene foto de habitación, así que usa
+   la foto real de su edredón. */
 var ROOM_PHOTOS={0:"assets/habitacion-real-azul-marino.jpg",1:"assets/habitacion-real-gris.jpg",2:"assets/habitacion-real-beige.jpg",3:"assets/habitacion-real-blanco.jpg"};
 
 var splineViewer=null, splineApp=null, splineLoaded=false, splineFailed=false;
@@ -408,12 +409,10 @@ function applyStateToSpline(){
   splineFallbackPhoto();
   if(!splineLoaded)return;
   var dc=DUVET_COLORS[st.duvetColor];
-  var dt=DUVET_TYPES[st.duvetType].n;
   splineSetVar(SPLINE_VARIABLES.bedSize,SIZES[st.size].n);
   splineSetVar(SPLINE_VARIABLES.sheetColor,st.sheetColor.name);
   splineSetVar(SPLINE_VARIABLES.sheetType,SHEET_TYPES[st.sheetType].n);
   splineSetVar(SPLINE_VARIABLES.duvetColor,dc.n);
-  splineSetVar(SPLINE_VARIABLES.duvetType,dt);
   splineSetVar(SPLINE_VARIABLES.pillowOption,PILLOWS[st.pillow].n);
   splineSetVar(SPLINE_VARIABLES.curtainColor,st.curtain>=0?CUR[st.curtain].name:"Sin cortinas");
   splineSetVar(SPLINE_VARIABLES.cameraView,st.step===5?"room":"angle");
@@ -548,7 +547,7 @@ function rotateBed(dir){
 function cycleDuvet(d){
   var n=DUVET_COLORS.length;
   st.duvetColor=(st.duvetColor+d+n)%n;
-  lastChange="Edredón: "+DUVET_COLORS[st.duvetColor].n+" / "+DUVET_COLORS[st.duvetColor].revName+" (doble vista)";
+  lastChange="Edredón: "+duvetLabel(DUVET_COLORS[st.duvetColor])+" (reversible)";
   render();
 }
 
@@ -593,9 +592,9 @@ function render(){
     }).join("")+'</div>';
   }
   if(st.step===3){
-    h='<div class="opt-label">Tipo de edredón</div><div class="type-grid">'+DUVET_TYPES.map(function(s,i){
-      return '<div class="type-card'+(st.duvetType===i?" on":"")+'" onclick="setDuvetType('+i+')">'+(st.duvetType===i?'<span class="tick">✓</span>':"")+'<img src="'+TYPE_IMG[s.n]+'" alt="'+s.n+'" onerror="imgFallback(this)"><span>'+s.n+' · $'+(DUVET_PRICES[st.size]+(s.p-1099)).toLocaleString("es-MX")+'</span></div>';
-    }).join("")+'</div><p style="color:#b9c9de;font-size:13px">Color: usa la tira de colores con foto debajo de la cama 3D. Elegido: '+DUVET_TYPES[st.duvetType].n+' · '+DUVET_COLORS[st.duvetColor].n+' / '+DUVET_COLORS[st.duvetColor].revName+' (doble vista) · $'+duvetPrice().toLocaleString("es-MX")+'.</p>';
+    h='<div class="opt-label">Color de edredón — solo colores reales con foto</div><div class="type-grid">'+DUVET_COLORS.map(function(c,i){
+      return '<div class="type-card'+(st.duvetColor===i?" on":"")+'" onclick="setDuvetColor('+i+')">'+(st.duvetColor===i?'<span class="tick">✓</span>':"")+'<img src="'+c.img+'" alt="'+c.n+'" onerror="imgFallback(this)"><span>'+duvetLabel(c)+' · $'+duvetPrice().toLocaleString("es-MX")+'</span></div>';
+    }).join("")+'</div><p style="color:#b9c9de;font-size:13px">Edredón hipoalergénico reversible. Elegido: '+duvetLabel(DUVET_COLORS[st.duvetColor])+' · $'+duvetPrice().toLocaleString("es-MX")+'. También puedes cambiarlo con la tira de colores con foto debajo de la cama.</p>';
   }
   if(st.step===4){
     h='<div class="opt-label">Almohadas</div>'+PILLOWS.map(function(s,i){
@@ -618,7 +617,7 @@ function render(){
   }
   document.getElementById("stepOpts").innerHTML=h;
   document.getElementById("duvetColors").innerHTML=DUVET_COLORS.map(function(c,i){
-    return '<div class="csw'+(st.duvetColor===i?" on":"")+'" onclick="setDuvetColor('+i+')">'+(st.duvetColor===i?'<span class="tick">✓</span>':"")+'<img src="'+c.img+'" alt="'+c.n+'" onerror="imgFallback(this)"><span>'+c.n+' / '+c.revName+'</span></div>';
+    return '<div class="csw'+(st.duvetColor===i?" on":"")+'" onclick="setDuvetColor('+i+')">'+(st.duvetColor===i?'<span class="tick">✓</span>':"")+'<img src="'+c.img+'" alt="'+c.n+'" onerror="imgFallback(this)"><span>'+duvetLabel(c)+'</span></div>';
   }).join("");
   /* Colores rápidos del edredón en el pie del escenario (layout del ejemplo). */
   var qs=document.getElementById("quickSwatches");
@@ -633,7 +632,7 @@ function render(){
   var rows=[
     ["Cama",SIZES[st.size].n+(SIZES[st.size].d?" Size":""),"assets/edredon-apilados.jpg",0],
     ["Sábanas",SHEET_TYPES[st.sheetType].n+" · "+st.sheetColor.name+" · "+SIZES[st.size].n,sheetImg,sheetPrice()],
-    ["Edredón",DUVET_TYPES[st.duvetType].n+" · "+dc.n+" / "+dc.revName+" (doble vista) · "+SIZES[st.size].n,dc.img,duvetPrice()],
+    ["Edredón","Reversible · "+duvetLabel(dc)+" · "+SIZES[st.size].n,dc.img,duvetPrice()],
     ["Almohadas",PILLOWS[st.pillow].n,"assets/almohada-par.jpg",PILLOWS[st.pillow].p],
     ["Complementos",COMPS[st.comp].n+(st.curtain>=0?" · Cortinas "+CUR[st.curtain].name+" "+CUR_SIZES[st.curtainSize].n+" · "+st.curtainPanels+" panel"+(st.curtainPanels>1?"es":""):""),compImg,COMPS[st.comp].p+curtainPrice()]
   ];
@@ -651,8 +650,7 @@ function setStep(n){st.step=n;render();}
 function setSize(i){st.size=i;lastChange="Tamaño: "+SIZES[i].n;render();}
 function setSheetType(i){st.sheetType=i;lastChange="Sábanas: "+SHEET_TYPES[i].n;render();}
 function setSheetColor(n,h,img){st.sheetColor={name:n,hex:h,img:img||null};lastChange="Sábanas: "+n;render();}
-function setDuvetType(i){st.duvetType=i;lastChange="Edredón: "+DUVET_TYPES[i].n;render();}
-function setDuvetColor(i){st.duvetColor=i;lastChange="Edredón: "+DUVET_COLORS[i].n+" / "+DUVET_COLORS[i].revName+" (doble vista)";render();}
+function setDuvetColor(i){st.duvetColor=i;lastChange="Edredón: "+duvetLabel(DUVET_COLORS[i])+" (reversible)";render();}
 function setPillow(i){st.pillow=i;lastChange="Almohadas: "+PILLOWS[i].n;render();}
 function setComp(i){st.comp=i;lastChange="Complementos: "+COMPS[i].n;render();}
 function setCurtain(i){st.curtain=i;lastChange=i>=0?"Cortinas: "+CUR[i].name:"Sin cortinas";render();}
@@ -661,11 +659,11 @@ function setCurtainPanels(n){if(n===2&&!CUR_SIZES[st.curtainSize].p[1])return;st
 function addCfgToCart(){
   var t=calcTotal();
   var msg=document.getElementById("cfgMessage"); if(msg)msg.textContent="Set agregado al carrito · Total "+money(t);
-  var name="Set Viste tu Cama 3D — "+SIZES[st.size].n+", "+SHEET_TYPES[st.sheetType].n+" "+st.sheetColor.name+", Edredón "+DUVET_TYPES[st.duvetType].n+" "+DUVET_COLORS[st.duvetColor].n+" / "+DUVET_COLORS[st.duvetColor].revName+" (doble vista), Almohadas "+PILLOWS[st.pillow].n+(st.curtain>=0?", Cortinas "+CUR[st.curtain].name+" "+CUR_SIZES[st.curtainSize].n+" "+st.curtainPanels+"p":"");
+  var name="Set Viste tu Cama 3D — "+SIZES[st.size].n+", "+SHEET_TYPES[st.sheetType].n+" "+st.sheetColor.name+", Edredón Reversible "+duvetLabel(DUVET_COLORS[st.duvetColor])+", Almohadas "+PILLOWS[st.pillow].n+(st.curtain>=0?", Cortinas "+CUR[st.curtain].name+" "+CUR_SIZES[st.curtainSize].n+" "+st.curtainPanels+"p":"");
   addToCart(name,t);
 }
 window.setStep=setStep; window.setSize=setSize; window.setSheetType=setSheetType; window.setSheetColor=setSheetColor;
-window.setDuvetType=setDuvetType; window.setDuvetColor=setDuvetColor; window.setPillow=setPillow; window.setComp=setComp;
+window.setDuvetColor=setDuvetColor; window.setPillow=setPillow; window.setComp=setComp;
 window.setCurtain=setCurtain; window.setCurtainSize=setCurtainSize; window.setCurtainPanels=setCurtainPanels; window.pickSheet=pickSheet; window.pickCurtain=pickCurtain; window.cycleDuvet=cycleDuvet;
 window.setView=setView; window.toggleAuto=toggleAuto; window.zoomBed=zoomBed; window.rotateBed=rotateBed;
 window.addCfgToCart=addCfgToCart;
