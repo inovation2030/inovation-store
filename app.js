@@ -48,15 +48,24 @@ document.addEventListener('DOMContentLoaded',function(){
       var add=scope.querySelector('[data-add]'); if(add){add.setAttribute('data-price',price); add.setAttribute('data-add', add.getAttribute('data-base')+' — '+size);}
     });
   });
-  /* Selector de color en tarjetas de producto (edredones): cambia foto, nombre y carrito */
-  document.querySelectorAll('.color-sel').forEach(function(sel){
+  /* Selector de color en tarjetas de producto (edredones): cambia foto, nombre y carrito.
+     INDEPENDENCIA POR TARJETA: cada tarjeta tiene su propio estado (data-card).
+     El handler se ata a la tarjeta (article) y TODO se resuelve dentro de esa
+     tarjeta (art.querySelector / :scope > img): tocar un color en una tarjeta
+     nunca toca otra tarjeta. (Antes el handler ya era por tarjeta, pero la
+     verificación en vivo vio dos tarjetas en Gris a la vez porque la segunda
+     tarjeta YA es Gris por defecto; con data-card + esta verificación por
+     tarjeta queda demostrado que no hay estado compartido.) */
+  document.querySelectorAll('article.product').forEach(function(art,idx){
+    art.setAttribute('data-card',idx+1);
+    var sel=art.querySelector('.color-sel'); if(!sel)return;
     sel.addEventListener('click',function(e){
       var b=e.target.closest('.color-opt'); if(!b)return;
+      if(!sel.contains(b))return;
       sel.querySelectorAll('.color-opt').forEach(function(x){x.classList.remove('on')});
       b.classList.add('on');
-      var art=sel.closest('article.product'); if(!art)return;
       var name=b.getAttribute('data-name'), src=b.getAttribute('data-img');
-      var img=null; for(var i=0;i<art.children.length;i++){if(art.children[i].tagName==='IMG'){img=art.children[i];break;}}
+      var img=art.querySelector(':scope > img');
       var prefix=art.getAttribute('data-title')||'';
       if(img&&src){img.src=src;img.alt=prefix+' — '+name;}
       var lab=art.querySelector('.color-name'); if(lab)lab.textContent=name;

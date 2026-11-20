@@ -93,6 +93,20 @@
 .stage3d canvas{height:100%}
 .ref-header .logo b{font-size:20px}
 }
+/* --- Layout del ejemplo (Muse): encabezado de vista previa, pie con colores
+   rápidos, caja de total y modo pantalla completa sin API --- */
+.stage-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#0b2247;color:#e8cc89;font-size:12px;letter-spacing:2px;padding:12px 16px;font-weight:700}
+.stage-heading .live-dot{color:#c8d8cb;letter-spacing:1px}
+.stage-footer{padding:13px 15px;background:#f3f0e9;color:#18283b;display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px}
+.stage-footer .swatches{display:flex;gap:7px;flex-wrap:wrap}
+.qsw{width:24px;height:24px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0;box-shadow:0 0 0 1px #c8c2b2}
+.qsw.on{outline:2px solid #E8A90C;outline-offset:1px}
+.total-box{margin:18px 0 14px;display:grid;gap:6px}
+.total-box .total-lbl{margin:0}
+.total-box .total{margin:0}
+.total-box small{font-size:11px;color:#b9c9de;text-align:right}
+.cart-message{min-height:20px;font-size:13px;color:#F2B705;margin:10px 0 0;text-align:center}
+.stage3d.fs-fallback{position:fixed;inset:0;z-index:9999;height:100vh!important;min-height:100vh!important;background:#e8edf1}
 @media(max-width:768px){
 .ref-header .hide-m{display:none}
 .ref-header .logo b{font-size:17px}
@@ -120,9 +134,10 @@
 <div id="stepOpts"></div>
 </div>
 <div class="stage-col">
+<div class="stage-heading"><span>VISTA PREVIA</span><span class="live-dot">● CONFIGURACIÓN EN VIVO</span></div>
 <div class="stage3d" id="stage3d">
 <div class="live3d">● MODELO 3D EN VIVO · <b>Three.js</b></div>
-<button class="fs-btn" type="button" onclick="toggleFS()" aria-label="Ver la habitación a pantalla completa">⛶ Pantalla completa</button>
+<button class="fs-btn" id="fsBtn" type="button" onclick="toggleFS()" aria-label="Ver la habitación a pantalla completa">⛶ Pantalla completa</button>
 <div class="gl-loading" id="glLoading"><b>Cargando modelo 3D…</b><span>Si tarda más de unos segundos, revisa tu conexión.</span></div>
 <div class="gl-fallback" id="glFallback"><img src="assets/edredon-azul-marino.jpg" alt="Cama vestida"><p><b>La escena 3D no se pudo cargar en este teléfono/navegador.</b><br><span id="glError">Revisa tu conexión a internet y recarga la página.</span><br>El configurador de opciones de abajo sigue funcionando.</p></div>
 <button class="bed-nav l" type="button" onclick="rotateBed(-1)" aria-label="Girar a la izquierda">‹</button>
@@ -142,15 +157,17 @@
 <button type="button" onclick="setView('top')">Vista superior</button>
 <button type="button" onclick="toggleAuto()" id="btnAuto">Giro automático: apagado</button>
 </div>
+<div class="stage-footer"><span>Colores rápidos del edredón — toca uno para cambiarlo en vivo</span><span class="swatches" id="quickSwatches"></span></div>
 <p class="sheet-chip" id="sheetChip">Sábanas: Algodón Egipcio · Blanco</p>
 <p class="bed-size-line">Tamaño en la vista: <b id="bedSizeLabel">Queen Size · 160 × 200 cm</b></p>
 </div>
 <div class="panel panel-sel">
 <div class="sel-head"><span class="bed-ico">🛏️</span><h2>Tu selección</h2></div>
 <div id="selList"></div>
-<p class="total-lbl">Total estimado</p><p class="total" id="cfgTotal">$3,490 MXN</p>
+<div class="total-box"><p class="total-lbl">Total estimado</p><p class="total" id="cfgTotal">$3,599 MXN</p><small>Precios reales de Inovation Store.</small></div>
 <button class="btn" type="button" style="width:100%" onclick="addCfgToCart()">🛒 Agregar al carrito</button>
 <p><button class="btn-mp" type="button" onclick="addCfgToCart();alert('Compra con Mercado Pago: se guardó tu set en el carrito. El cobro con Mercado Pago se integra en el checkout.')">Comprar con 🤝 <b>mercado pago</b></button></p>
+<p class="cart-message" id="cfgMessage" role="status"></p>
 <div class="seals"><div><span class="s-ico">🚚</span>Envío a todo<br>México</div><div><span class="s-ico">🛡️</span>Compra<br>segura</div><div><span class="s-ico">✅</span>Garantía<br>10 años</div></div>
 <p><a href="index.html" style="color:#F2B705">← Volver a la tienda</a></p>
 </div>
@@ -595,12 +612,47 @@ function start3D(){
 
 /* ---------- Controles de vista ---------- */
 var autoRot=false;
+/* Pantalla completa robusta: la versión anterior solo llamaba a
+   el.requestFullscreen() sin promesa ni respaldo, y en el navegador en vivo
+   no activaba nada (2 intentos). Ahora: webkit fallback, manejo de la
+   promesa, actualización de la etiqueta, resize del 3D al entrar/salir, y
+   modo expandido por CSS (.fs-fallback) cuando el navegador no ofrece la
+   API de pantalla completa (p. ej. Safari en iPhone). */
+function fsElement(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
+function updateFsBtn(){
+  var el=document.getElementById("stage3d");
+  var b=document.getElementById("fsBtn"); if(!b)return;
+  if(fsElement()&&el)el.classList.remove("fs-fallback");
+  var on=!!fsElement()||(el&&el.classList.contains("fs-fallback"));
+  b.textContent=on?"✕ Salir de pantalla completa":"⛶ Pantalla completa";
+  b.setAttribute("aria-label",on?"Salir de pantalla completa":"Ver la habitación a pantalla completa");
+}
 function toggleFS(){
   var el=document.getElementById("stage3d");
   if(!el)return;
-  if(document.fullscreenElement){document.exitFullscreen();}
-  else if(el.requestFullscreen){el.requestFullscreen();}
+  if(fsElement()){
+    if(document.exitFullscreen)document.exitFullscreen();
+    else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
+    el.classList.remove("fs-fallback");
+    updateFsBtn(); setTimeout(resize3D,120); return;
+  }
+  if(el.classList.contains("fs-fallback")){el.classList.remove("fs-fallback");updateFsBtn();setTimeout(resize3D,120);return;}
+  var req=el.requestFullscreen||el.webkitRequestFullscreen;
+  if(req){
+    var p=null;
+    try{p=req.call(el);}catch(e){p=null;}
+    if(p&&p.catch){p.catch(function(){el.classList.add("fs-fallback");updateFsBtn();setTimeout(resize3D,120);});}
+    /* Si a los 600 ms no entró en pantalla completa (p. ej. Safari iOS lo
+       ignora en silencio), usar el modo expandido por CSS. */
+    setTimeout(function(){
+      if(!fsElement()&&!el.classList.contains("fs-fallback")){el.classList.add("fs-fallback");updateFsBtn();setTimeout(resize3D,120);}
+    },600);
+  }else{
+    el.classList.add("fs-fallback"); updateFsBtn(); setTimeout(resize3D,120);
+  }
 }
+document.addEventListener("fullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
+document.addEventListener("webkitfullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
 function setView(v){
   if(!camera)return;
   document.querySelectorAll(".viewbar button").forEach(function(b){b.classList.remove("on");});
@@ -689,6 +741,11 @@ function render(){
   document.getElementById("duvetColors").innerHTML=DUVET_COLORS.map(function(c,i){
     return '<div class="csw'+(st.duvetColor===i?" on":"")+'" onclick="setDuvetColor('+i+')">'+(st.duvetColor===i?'<span class="tick">✓</span>':"")+'<img src="'+c.img+'" alt="'+c.n+'"><span>'+c.n+'</span></div>';
   }).join("");
+  /* Colores rápidos del edredón en el pie del escenario (layout del ejemplo). */
+  var qs=document.getElementById("quickSwatches");
+  if(qs){qs.innerHTML=DUVET_COLORS.map(function(c,i){
+    return '<button type="button" class="qsw'+(st.duvetColor===i?" on":"")+'" title="'+c.n+'" aria-label="Edredón '+c.n+'" style="background:'+c.hex+'" onclick="setDuvetColor('+i+')"></button>';
+  }).join("");}
   var dc=DUVET_COLORS[st.duvetColor];
   document.getElementById("bedSizeLabel").textContent=SIZES[st.size].d?SIZES[st.size].n+" Size · "+SIZES[st.size].d:SIZES[st.size].n;
   document.getElementById("sheetChip").textContent="Sábanas: "+SHEET_TYPES[st.sheetType].n+" · "+st.sheetColor.name;
@@ -720,6 +777,7 @@ function setCurtainSize(i){st.curtainSize=i;if(!CUR_SIZES[i].p[1])st.curtainPane
 function setCurtainPanels(n){if(n===2&&!CUR_SIZES[st.curtainSize].p[1])return;st.curtainPanels=n;render();}
 function addCfgToCart(){
   var t=calcTotal();
+  var msg=document.getElementById("cfgMessage"); if(msg)msg.textContent="Set agregado al carrito · Total "+money(t);
   var name="Set Viste tu Cama 3D — "+SIZES[st.size].n+", "+SHEET_TYPES[st.sheetType].n+" "+st.sheetColor.name+", Edredón "+DUVET_TYPES[st.duvetType].n+" "+DUVET_COLORS[st.duvetColor].n+", Almohadas "+PILLOWS[st.pillow].n+(st.curtain>=0?", Cortinas "+CUR[st.curtain].name+" "+CUR_SIZES[st.curtainSize].n+" "+st.curtainPanels+"p":"");
   addToCart(name,t);
 }
