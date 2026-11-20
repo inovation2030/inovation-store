@@ -73,4 +73,32 @@ h1.page{font-size:34px;color:var(--blue);margin:6px 0}
 .deg360{position:absolute;left:50%;bottom:84px;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.5);padding:8px 14px;border-radius:20px}
 .sel-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
 .total{font-size:30px;font-weight:800;color:var(--blue);text-align:right}
-@media(max-width:900px){.cfg{grid-template-columns:1fr}.header-in{flex-wrap:wrap}.bed-stage img.main{height:380px}}
+.menu-toggle{display:none}
+@media(max-width:900px){.cfg{grid-template-columns:1fr}.bed-stage img.main{height:380px}}
+/* --- Encabezado móvil compacto: una sola fila (logo + carrito + hamburguesa) --- */
+@media(max-width:768px){
+header.site{position:sticky;top:0}
+.header-in{position:relative;flex-wrap:nowrap;gap:10px;min-height:64px;max-height:64px;padding:8px 12px;justify-content:space-between}
+.logo img{height:40px}
+.logo b{font-size:15px;white-space:nowrap}
+.logo small{font-size:8px;letter-spacing:2px}
+.logo span{white-space:nowrap}
+.menu-toggle{display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:44px;height:44px;background:none;border:1px solid rgba(255,255,255,.45);border-radius:10px;color:#fff;font-size:24px;line-height:1;cursor:pointer;order:3}
+.cart-btn{flex:0 0 auto;height:40px;padding:8px 12px;font-size:14px;order:2}
+nav.main{display:none;position:absolute;top:100%;left:0;right:0;background:var(--blue);flex-direction:column;align-items:stretch;gap:0;padding:6px 12px 14px;border-top:1px solid rgba(255,255,255,.25);box-shadow:0 18px 30px rgba(0,0,0,.35);z-index:60}
+body.nav-open nav.main{display:flex}
+nav.main>a,nav.main .drop>button{display:block;width:100%;text-align:left;padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.12)}
+nav.main>a.active{border-radius:12px}
+.drop{position:static}
+.drop .submenu{position:static;display:none;box-shadow:none;border:0;background:rgba(0,0,0,.18);min-width:0;border-radius:10px}
+.drop:hover .submenu{display:none}
+.drop.open .submenu{display:block}
+.submenu a{color:#fff}
+.submenu a:hover{background:rgba(255,255,255,.12);color:#fff}
+}
+@media(max-width:400px){
+.logo b{font-size:13px}
+.logo small{font-size:7px;letter-spacing:1px}
+.cart-btn .cart-label{display:none}
+.cart-btn{padding:8px 10px}
+}

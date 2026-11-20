@@ -10,6 +10,32 @@ function closeCart(){document.getElementById('cartDrawer').classList.remove('ope
 function clearCart(){saveCart([]);renderCart()}
 document.addEventListener('DOMContentLoaded',function(){
   updateCartCount();renderCart();
+  /* Menú hamburguesa móvil: abre/cierra el menú como desplegable */
+  document.querySelectorAll('.menu-toggle').forEach(function(b){
+    b.addEventListener('click',function(e){
+      e.stopPropagation();
+      var open=document.body.classList.toggle('nav-open');
+      b.setAttribute('aria-expanded',open?'true':'false');
+      b.textContent=open?'✕':'☰';
+    });
+  });
+  document.querySelectorAll('nav.main a').forEach(function(a){
+    a.addEventListener('click',function(){
+      document.body.classList.remove('nav-open');
+      var t=document.querySelector('.menu-toggle');
+      if(t){t.textContent='☰';t.setAttribute('aria-expanded','false');}
+    });
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('header.site')){
+      document.body.classList.remove('nav-open');
+      var t=document.querySelector('.menu-toggle');
+      if(t){t.textContent='☰';t.setAttribute('aria-expanded','false');}
+    }
+  });
+  window.addEventListener('resize',function(){
+    if(window.innerWidth>768)document.body.classList.remove('nav-open');
+  });
   document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){addToCart(b.getAttribute('data-add'),parseInt(b.getAttribute('data-price')||'0',10))})});
   document.querySelectorAll('.drop>button').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();b.parentElement.classList.toggle('open')})});
 });
