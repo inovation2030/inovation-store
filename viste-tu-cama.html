@@ -643,8 +643,7 @@ function buildBed(){
   flapMat.userData.faceHex=dc.rev; flapMat.userData.faceTexUrl=dc.revTex; flapMat.userData.faceTex=fitTex(dc.revTex,w+0.57,0.72);
   var flap=new THREE.Mesh(duvetGeometry(w+0.57,0.72,duvetType),flapMat);
   flap.position.set(0,MAT_TOP+0.10,1.09); flap.castShadow=true; flap.receiveShadow=true; bedGroup.add(flap);
-  var foldRoll=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,w+0.57,16),flapMat);
-  foldRoll.rotation.z=Math.PI/2; foldRoll.position.set(0,MAT_TOP+0.13,0.73); foldRoll.castShadow=true; bedGroup.add(foldRoll);
+  /* Sin rollo de doblez: el cilindro rígido (foldRoll) se veía como una barra metálica cruzando el edredón. La solapa drapeada sola ya marca el doblez. */
   if(st.comp===0||st.comp===2){box(bedGroup,w+0.08,0.05,0.46,0,MAT_TOP,1.25,mat("#9b806b",0.85));}
   /* Banca al pie de la cama */
   box(bedGroup,w*0.8,0.1,0.45,0,0.52,d/2+0.55,mat("#c5a15b",0.85));
