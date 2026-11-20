@@ -504,8 +504,8 @@ function buildBed(){
     duvetMat=new THREE.MeshPhysicalMaterial({color:"#ffffff",map:faceTex,bumpMap:faceTex,bumpScale:bumpScale,roughness:0.45,metalness:0,sheen:1,sheenColor:new THREE.Color("#f2d28a"),sheenRoughness:0.4,side:THREE.FrontSide});
     duvetRevMat=new THREE.MeshPhysicalMaterial({color:"#ffffff",map:revTex,bumpMap:revTex,bumpScale:bumpScale,roughness:0.45,metalness:0,sheen:1,sheenColor:new THREE.Color("#f2d28a"),sheenRoughness:0.4,side:THREE.BackSide});
   }else{
-    duvetMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:faceTex,bumpMap:faceTex,bumpScale:bumpScale,roughness:duvetType==="Texturizado"?1:0.85,side:THREE.FrontSide});
-    duvetRevMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:revTex,bumpMap:revTex,bumpScale:bumpScale,roughness:0.9,side:THREE.BackSide});
+    duvetMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:faceTex,bumpMap:faceTex,bumpScale:bumpScale,roughness:duvetType==="Texturizado"?1:0.95,side:THREE.FrontSide});
+    duvetRevMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:revTex,bumpMap:revTex,bumpScale:bumpScale,roughness:0.95,side:THREE.BackSide});
   }
   duvetMat.userData.faceHex=dc.hex; duvetMat.userData.faceTexUrl=dc.tex; duvetMat.userData.faceTex=faceTex;
   duvetRevMat.userData.faceHex=dc.rev; duvetRevMat.userData.faceTexUrl=dc.revTex; duvetRevMat.userData.faceTex=revTex;
@@ -538,7 +538,7 @@ function buildBed(){
      (mismo relieve de rombos), de 0.72 m de fondo cubriendo todo el pie de la
      cama, con la textura generada del REVERSO (dc.revTex) y un rollo de doblez
      en su borde superior. Al girar la cama se ve el reverso en la solapa. */
-  var flapMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:revTex,bumpMap:revTex,bumpScale:0.03,roughness:0.9,side:THREE.DoubleSide});
+  var flapMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:revTex,bumpMap:revTex,bumpScale:0.03,roughness:0.95,side:THREE.DoubleSide});
   flapMat.userData.faceHex=dc.rev; flapMat.userData.faceTexUrl=dc.revTex; flapMat.userData.faceTex=revTex;
   var flap=new THREE.Mesh(duvetGeometry(w+0.30,0.72,duvetType),flapMat);
   flap.position.set(0,MAT_TOP+0.21,1.08); flap.castShadow=true; flap.receiveShadow=true; bedGroup.add(flap);
@@ -663,7 +663,7 @@ function init3D(){
   renderer.setSize(stage.clientWidth,stage.clientHeight,false);
   renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   renderer.outputEncoding=THREE.sRGBEncoding;
-  renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.95;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.85; /* Gris lavado: con 0.95 + luces 2.0/1.15 el gris medio (#6c6c71, lineal 0.155) salia ~RGB 120 de media y ~214 en los centros claros de los rombos (casi blanco). Con 0.85 y luces 1.8/1.05/0.65 el gris medio renderiza ~RGB 106 (igual que el archivo), Azul Marino sigue ~RGB 29 y las paredes blancas ~RGB 218. Ver calculo en buildBed/init3D. */
   stage.appendChild(renderer.domElement);
   renderer.domElement.addEventListener("webglcontextlost",function(e){
     e.preventDefault();
@@ -684,13 +684,13 @@ function init3D(){
   setTimeout(function(){
     if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
   },20000);
-  scene.add(new THREE.HemisphereLight(0xffffff,0x8a94a3,1.15));
-  var key=new THREE.DirectionalLight(0xfff2df,2.0);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8a94a3,1.05));
+  var key=new THREE.DirectionalLight(0xfff2df,1.8);
   key.position.set(-4,8,5); key.castShadow=true;
   key.shadow.mapSize.set(isMobile?1024:2048,isMobile?1024:2048);
   key.shadow.camera.left=-6; key.shadow.camera.right=6; key.shadow.camera.top=6; key.shadow.camera.bottom=-6;
   scene.add(key);
-  var fill=new THREE.DirectionalLight(0xdfe8ff,0.7); fill.position.set(5,4,-5); scene.add(fill);
+  var fill=new THREE.DirectionalLight(0xdfe8ff,0.65); fill.position.set(5,4,-5); scene.add(fill);
   bedGroup=new THREE.Group(); scene.add(bedGroup);
   curtainGroup=new THREE.Group(); scene.add(curtainGroup);
   buildRoom(); buildBed();
