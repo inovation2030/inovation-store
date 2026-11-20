@@ -1,0 +1,196 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Viste tu Cama | Inovation Store</title><link rel="stylesheet" href="styles.css"></head><body><header class="site"><div class="header-in"><a class="logo" href="index.html"><img src="assets/logo.png" alt="Inovation Store"><span><b>INOVATION STORE</b><small>BLANCOS PARA EL HOGAR</small></span></a><nav class="main"><a href="index.html">Inicio</a><div class="drop"><button type="button">Tienda ▾</button><div class="submenu"><a href="tienda.html">Tienda — Ver todo</a><a href="edredones.html">Edredones</a><a href="sabanas.html">Sábanas</a><a href="sabanas-bambu.html">Sábanas de Bambú</a><a href="almohadas.html">Almohadas</a><a href="cortinas.html">Cortinas Blackout</a><a href="cubrecolchones.html">Cubrecolchones</a><a href="protectores.html">Protectores de Colchón</a></div></div><a href="viste-tu-cama.html" class="active">Viste tu Cama</a><a href="ofertas.html">Ofertas</a><a href="videos.html">Videos</a><a href="pass.html">Inovation Pass</a><a href="contacto.html">Contacto</a></nav><button class="cart-btn" type="button" onclick="openCart()">🛒 Carrito <span class="count cart-count">0</span></button></div></header><main>
+<h1 class="page">Viste tu Cama</h1><p class="lead">Diseña tu combinación ideal — página aparte, a pantalla completa.</p>
+<div class="cfg">
+<div class="panel">
+<h2 style="margin-top:0">Viste tu Cama</h2><p>Diseña tu combinación ideal</p>
+<div id="steps"></div>
+<div id="stepOpts"></div>
+</div>
+<div>
+<div class="bed-stage" id="bedStage">
+<div class="curtains" id="curtainLayer"><img id="curtL" src="" alt=""><img id="curtR" src="" alt=""></div>
+<img class="main" id="bedImg" src="assets/edredon-azul-marino.jpg" alt="Cama vestida">
+<button class="bed-nav l" type="button" onclick="rotateBed(-1)">‹</button>
+<button class="bed-nav r" type="button" onclick="rotateBed(1)">›</button>
+<div class="deg360">360° · arrastra o usa las flechas</div>
+<div class="zoom"><button type="button" onclick="zoomBed(0.15)">+</button><button type="button" onclick="zoomBed(-0.15)">−</button></div>
+<div class="sheetband" id="sheetBand" style="background:#ffffff;color:#123a6b">Sábanas: Algodón Egipcio · Blanco</div>
+</div>
+<p style="text-align:center"><b>Color de edredón:</b></p>
+<div class="swatches" id="duvetColors" style="justify-content:center"></div>
+<p style="text-align:center;color:#5a6a7a">Tamaño en la vista: <b id="bedSizeLabel">Queen Size · 160 × 200 cm</b></p>
+</div>
+<div class="panel">
+<h2 style="margin-top:0">🛏️ Tu selección</h2>
+<div id="selList"></div>
+<p>Total estimado</p><p class="total" id="cfgTotal">$3,490 MXN</p>
+<button class="btn" type="button" style="width:100%" onclick="addCfgToCart()">🛒 Agregar al carrito</button>
+<p><button class="btn blue" type="button" style="width:100%" onclick="addCfgToCart();alert('Compra con Mercado Pago: se guardó tu set en el carrito.')">Comprar con Mercado Pago</button></p>
+<div class="badges" style="flex-direction:column"><div class="badge">🚚 Envío a todo México</div><div class="badge">🔒 Compra segura</div><div class="badge">🛡️ Garantía 10 años</div></div>
+<p><a href="index.html">← Volver a la tienda</a></p>
+</div>
+</div>
+<script>
+var EG = [
+{name:"Violet",img:"assets/sabana-violet.jpg",hex:"#6a4a8a"},
+{name:"Rose",img:"assets/sabana-rose.jpg",hex:"#d97a8a"},
+{name:"Baby Blue",img:"assets/sabana-baby-blue.jpg",hex:"#a8c8e0"},
+{name:"Black",img:"assets/sabana-black.jpg",hex:"#222222"},
+{name:"Beage",img:"assets/sabana-beage.jpg",hex:"#d8c9a8"},
+{name:"Burgundy",img:"assets/sabana-burgundy.jpg",hex:"#7a1f2b"},
+{name:"Chocolate",img:"assets/sabana-chocolate.jpg",hex:"#5a3a28"},
+{name:"Gold",img:"assets/sabana-gold.jpg",hex:"#c9a227"},
+{name:"Orange",img:"assets/sabana-orange.jpg",hex:"#e07b2a"},
+{name:"Champagne",img:"assets/sabana-champagne.jpg",hex:"#e8d9b0"},
+{name:"Military Green",img:"assets/sabana-military-green.jpg",hex:"#5a6b4a"},
+{name:"Marine",img:"assets/sabana-marine.jpg",hex:"#1f3a5f"},
+{name:"Grape",img:"assets/sabana-grape.jpg",hex:"#6b3a7a"},
+{name:"Olive",img:"assets/sabana-olive.jpg",hex:"#7a7a4a"},
+{name:"Royal Blue",img:"assets/sabana-royal-blue.jpg",hex:"#2a4a9a"},
+{name:"Baby Rose",img:"assets/sabana-baby-rose.jpg",hex:"#f2c8d0"},
+{name:"Rojo Vino",img:"assets/sabana-rojo-vino.jpg",hex:"#8a2a3a"},
+{name:"Camel",img:"assets/sabana-camel.jpg",hex:"#c19a6b"},
+{name:"Red",img:"assets/sabana-red.jpg",hex:"#c02020"},
+{name:"Crema",img:"assets/sabana-crema.jpg",hex:"#f2ead8"}
+];
+var PAL = [
+{name:"Tinto",hex:"#7a1f2b"},{name:"Fucsia",hex:"#d94a7a"},{name:"Lavanda",hex:"#b8a0c8"},
+{name:"Rosa",hex:"#f2a0c0"},{name:"Oro",hex:"#c9a227"},{name:"Taupe",hex:"#a89880"},
+{name:"Beige",hex:"#d8c9a8"},{name:"Arena",hex:"#c8b898"},{name:"Ivory",hex:"#f0ede8"},
+{name:"Blanco",hex:"#ffffff"},{name:"Chocolate",hex:"#5a3a28"},{name:"Gris Oxford",hex:"#7a7a80"},
+{name:"Morado",hex:"#6b3a8a"},{name:"Azul Rey",hex:"#2a4ad0"},{name:"Azul Marino",hex:"#1f3a5f"},
+{name:"Turqueza",hex:"#3aa8b8"},{name:"Azul Cielo",hex:"#a8c8e8"},{name:"Verde Claro",hex:"#a8c8a0"},
+{name:"Verde Olivo",hex:"#7a8a5a"},{name:"Rojo Fresa",hex:"#e02030"}
+];
+var CUR = [
+{name:"Morado",img:"assets/cortina-morado.jpg",hex:"#7a3a8a"},
+{name:"Verde Salvia",img:"assets/cortina-verde-salvia.jpg",hex:"#a8c8a0"},
+{name:"Tinto",img:"assets/cortina-tinto.jpg",hex:"#8a1f2b"},
+{name:"Negro",img:"assets/cortina-negro.jpg",hex:"#1a1a1a"},
+{name:"Terracota",img:"assets/cortina-terracota.jpg",hex:"#d07a4a"},
+{name:"Cobre",img:"assets/cortina-cobre.jpg",hex:"#b06a3a"},
+{name:"Azul Cielo",img:"assets/cortina-azul-cielo.jpg",hex:"#8ab8e8"},
+{name:"Turquesa",img:"assets/cortina-turquesa.jpg",hex:"#2ab8d8"},
+{name:"Blanco",img:"assets/cortina-blanco.jpg",hex:"#ffffff"}
+];
+var BEDIMG = {"Azul Marino":"assets/edredon-azul-marino.jpg","Gris":"assets/edredon-gris.jpg","Beige":"assets/edredon-beige.jpg","Blanco":"assets/edredon-blanco.jpg","Vino":"assets/edredon-gris-azul.jpg","Verde Oliva":"assets/edredon-beige.jpg","Rosa":"assets/edredon-blanco-rayas.jpg"};
+var SIZES = [{n:"Individual",d:"100 x 200 cm",delta:-200,scale:0.78},{n:"Matrimonial",d:"135 x 200 cm",delta:-100,scale:0.88},{n:"Queen",d:"160 x 200 cm",delta:0,scale:1},{n:"King",d:"200 x 200 cm",delta:300,scale:1.12}];
+var SHEET_TYPES = [{n:"Algodón Egipcio",p:1199},{n:"Bambú Fresh",p:1099},{n:"Satín Premium",p:1399}];
+var DUVET_TYPES = [{n:"Liso",p:899},{n:"Capitonado",p:999},{n:"Reversible",p:1099},{n:"Estampado",p:1199},{n:"Texturizado",p:1099},{n:"Premium",p:1399}];
+var DUVET_COLORS = [{n:"Azul Marino",hex:"#1f3a5f"},{n:"Gris",hex:"#8a8a90"},{n:"Beige",hex:"#d8c9a8"},{n:"Blanco",hex:"#ffffff"},{n:"Vino",hex:"#7a1f2b"},{n:"Verde Oliva",hex:"#7a8a5a"},{n:"Rosa",hex:"#f2a0c0"}];
+var PILLOWS = [{n:"2 Bamboo + 2 Decorativas",p:992},{n:"2 Bamboo Memory Foam",p:749},{n:"4 Bamboo",p:1449},{n:"2 Pluma Sintética",p:649}];
+var COMPS = [{n:"Cubrecolchón - Impermeable",p:200},{n:"Protector Impermeable",p:150},{n:"Cubrecolchón Premium",p:350},{n:"Set de Cojines",p:499},{n:"Sin complementos",p:0}];
+var st = {step:3, size:2, sheetType:0, sheetColor:{name:"Blanco",hex:"#ffffff"}, duvetType:2, duvetColor:0, pillow:0, comp:0, curtain:-1, zoom:1, rot:0};
+function money(n){ return "$" + Number(n).toLocaleString("es-MX") + " MXN"; }
+function calcTotal(){
+  var t = 3490;
+  t += SIZES[st.size].delta;
+  t += (SHEET_TYPES[st.sheetType].p - 1199);
+  t += (DUVET_TYPES[st.duvetType].p - 1099);
+  t += (PILLOWS[st.pillow].p - 992);
+  t += (COMPS[st.comp].p - 200);
+  if (st.curtain >= 0) t += 1299;
+  return t;
+}
+function pickSheet(el){ setSheetColor(el.getAttribute("data-n"), el.getAttribute("data-h")); }
+function pickCurtain(el){ setCurtain(parseInt(el.getAttribute("data-i"), 10)); }
+function render(){
+  var names = ["Tamaño de cama","Sábanas","Edredón","Almohadas","Complementos"];
+  document.getElementById("steps").innerHTML = names.map(function(n,i){
+    return `<div class="step${st.step===i+1 ? " on" : ""}" onclick="setStep(${i+1})"><b>${i+1} · ${n}</b>${st.step===i+1 ? "● seleccionado" : ""}</div>`;
+  }).join("");
+  var h = "";
+  if (st.step === 1){
+    h = "<b>Tipo de cama</b>" + SIZES.map(function(s,i){
+      return `<button class="opt${st.size===i ? " on" : ""}" onclick="setSize(${i})">${s.n} · ${s.d} ${s.delta===0 ? "(Incluido)" : (s.delta>0 ? "+$"+s.delta : "−$"+Math.abs(s.delta))}</button>`;
+    }).join("");
+  }
+  if (st.step === 2){
+    h = "<b>Tipo de sábana</b>" + SHEET_TYPES.map(function(s,i){
+      return `<button class="opt${st.sheetType===i ? " on" : ""}" onclick="setSheetType(${i})">${s.n} · $${s.p.toLocaleString("es-MX")}</button>`;
+    }).join("");
+    h += "<b>Color de sábanas — Estilo Egipcio (20)</b><div class=\"swatches\">" + EG.map(function(c){
+      return `<img class="sw${st.sheetColor.name===c.name ? " on" : ""}" title="${c.name}" src="${c.img}" data-n="${c.name}" data-h="${c.hex}" onclick="pickSheet(this)" style="object-fit:cover">`;
+    }).join("") + "</div>";
+    h += "<b>Color de sábanas — Paleta (20)</b><div class=\"swatches\">" + PAL.map(function(c){
+      return `<div class="sw${st.sheetColor.name===c.name ? " on" : ""}" title="${c.name}" style="background:${c.hex}" data-n="${c.name}" data-h="${c.hex}" onclick="pickSheet(this)"></div>`;
+    }).join("") + "</div>";
+  }
+  if (st.step === 3){
+    h = "<b>Tipo de edredón</b>" + DUVET_TYPES.map(function(s,i){
+      return `<button class="opt${st.duvetType===i ? " on" : ""}" onclick="setDuvetType(${i})">${s.n} · $${s.p.toLocaleString("es-MX")}</button>`;
+    }).join("") + "<p>Color: usa la tira de colores debajo de la cama.</p>";
+  }
+  if (st.step === 4){
+    h = "<b>Almohadas</b>" + PILLOWS.map(function(s,i){
+      return `<button class="opt${st.pillow===i ? " on" : ""}" onclick="setPillow(${i})">${s.n} · $${s.p.toLocaleString("es-MX")}</button>`;
+    }).join("");
+  }
+  if (st.step === 5){
+    h = "<b>Complementos</b>" + COMPS.map(function(s,i){
+      return `<button class="opt${st.comp===i ? " on" : ""}" onclick="setComp(${i})">${s.n} · ${s.p ? "+$"+s.p : "Incluido"}</button>`;
+    }).join("");
+    h += "<b>Cortinas blackout — $1,299</b><div class=\"swatches\">" + CUR.map(function(c,i){
+      return `<img class="sw${st.curtain===i ? " on" : ""}" title="${c.name}" src="${c.img}" onclick="pickCurtain(this)" data-i="${i}" style="object-fit:cover">`;
+    }).join("") + "</div>";
+    h += `<button class="opt${st.curtain===-1 ? " on" : ""}" onclick="setCurtain(-1)">Sin cortinas</button>`;
+  }
+  document.getElementById("stepOpts").innerHTML = h;
+  document.getElementById("duvetColors").innerHTML = DUVET_COLORS.map(function(c,i){
+    return `<div class="sw${st.duvetColor===i ? " on" : ""}" title="${c.n}" style="background:${c.hex}" onclick="setDuvetColor(${i})"></div><span style="font-size:11px">${c.n}</span>`;
+  }).join("");
+  var dc = DUVET_COLORS[st.duvetColor];
+  var img = document.getElementById("bedImg");
+  img.src = BEDIMG[dc.n] || BEDIMG["Azul Marino"];
+  img.style.transform = "scaleX(" + SIZES[st.size].scale + ") scale(" + st.zoom + ")";
+  document.getElementById("bedSizeLabel").textContent = SIZES[st.size].n + " Size · " + SIZES[st.size].d;
+  var band = document.getElementById("sheetBand");
+  band.style.background = st.sheetColor.hex;
+  band.style.color = (st.sheetColor.hex.toLowerCase() === "#ffffff" || st.sheetColor.hex.toLowerCase() === "#f2ead8") ? "#123a6b" : "#fff";
+  band.textContent = "Sábanas: " + SHEET_TYPES[st.sheetType].n + " · " + st.sheetColor.name;
+  var cl = document.getElementById("curtainLayer");
+  if (st.curtain >= 0){ cl.style.display = "flex"; document.getElementById("curtL").src = CUR[st.curtain].img; document.getElementById("curtR").src = CUR[st.curtain].img; }
+  else { cl.style.display = "none"; }
+  var rows = [["Cama", SIZES[st.size].n + " Size"],["Sábanas", SHEET_TYPES[st.sheetType].n + " · " + st.sheetColor.name],["Edredón", DUVET_TYPES[st.duvetType].n + " - " + dc.n],["Almohadas", PILLOWS[st.pillow].n],["Complementos", COMPS[st.comp].n + (st.curtain >= 0 ? " · Cortinas " + CUR[st.curtain].name : "")]];
+  document.getElementById("selList").innerHTML = rows.map(function(r){ return `<div class="sel-row"><span>${r[0]}</span><b>${r[1]}</b></div>`; }).join("");
+  document.getElementById("cfgTotal").textContent = money(calcTotal());
+}
+function setStep(n){ st.step = n; render(); }
+function setSize(i){ st.size = i; render(); }
+function setSheetType(i){ st.sheetType = i; render(); }
+function setSheetColor(n,h){ st.sheetColor = {name:n, hex:h}; render(); }
+function setDuvetType(i){ st.duvetType = i; render(); }
+function setDuvetColor(i){ st.duvetColor = i; render(); }
+function setPillow(i){ st.pillow = i; render(); }
+function setComp(i){ st.comp = i; render(); }
+function setCurtain(i){ st.curtain = i; render(); }
+function zoomBed(d){ st.zoom = Math.min(1.5, Math.max(0.8, st.zoom + d)); render(); }
+function rotateBed(dir){
+  var order = ["Azul Marino","Gris","Beige","Blanco","Vino","Verde Oliva","Rosa"];
+  st.rot = (st.rot + dir + order.length) % order.length;
+  st.duvetColor = order.indexOf(order[st.rot]);
+  render();
+}
+render();
+function addCfgToCart(){
+  var t = calcTotal();
+  var name = "Set Viste tu Cama — " + SIZES[st.size].n + ", " + SHEET_TYPES[st.sheetType].n + " " + st.sheetColor.name + ", Edredón " + DUVET_TYPES[st.duvetType].n + " " + DUVET_COLORS[st.duvetColor].n;
+  addToCart(name, t);
+}
+</script>
+</main>
+<aside id="cartDrawer" aria-label="Carrito">
+<h2>Tu carrito</h2><div id="cartItems"></div>
+<p>Total: <b id="cartTotal">$0 MXN</b></p>
+<p>Ganas <b id="cartPoints">0 puntos Pass</b> con esta compra.</p>
+<p><button class="btn" type="button" onclick="alert('Compra con Mercado Pago (demo). Elige tu método en el checkout.')">Comprar con Mercado Pago</button></p>
+<p><button class="btn blue" type="button" onclick="alert('Apple Pay / CoDi disponibles en el checkout.')">Apple Pay · CoDi</button></p>
+<p><button class="btn" type="button" onclick="alert('Se aplicó tu saldo Inovation Pass.')">Pagar con saldo Pass</button></p>
+<p><button type="button" onclick="clearCart()">Vaciar carrito</button> · <button type="button" onclick="closeCart()">Cerrar</button></p>
+</aside>
+<footer><div class="in">
+<div><b>INOVATION STORE</b><br>Blancos para el hogar · Azul y dorado<br>Envíos a todo México · Compra segura · Garantía 10 años</div>
+<div><a href="edredones.html">Edredones</a><br><a href="sabanas.html">Sábanas</a><br><a href="cortinas.html">Cortinas</a><br><a href="almohadas.html">Almohadas</a></div>
+<div><a href="viste-tu-cama.html">Viste tu Cama</a><br><a href="ofertas.html">Ofertas</a><br><a href="pass.html">Inovation Pass</a><br><a href="contacto.html">Contacto por WhatsApp</a></div>
+</div></footer>
+<script src="app.js"></script></body></html>
