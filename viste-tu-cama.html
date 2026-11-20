@@ -55,7 +55,7 @@
    tapaban el producto). 44x44 px mínimo táctil. */
 .stage-controls{position:absolute;right:12px;bottom:70px;display:flex;gap:8px;z-index:5}
 .stage-controls button{width:44px;height:44px;border-radius:50%;border:1px solid #dfe5ea;background:rgba(255,255,255,.95);font-size:24px;cursor:pointer;color:#123a6b;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18)}
-.deg360{position:absolute;left:50%;top:12px;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:20px;font-weight:700;z-index:3;pointer-events:none}
+.deg360{position:absolute;left:50%;top:12px;bottom:auto;height:auto;white-space:nowrap;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:20px;font-weight:700;z-index:3;pointer-events:none}
 .gl-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#53616f;background:#e8edf1;text-align:center;padding:20px;z-index:2}
 .gl-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f7f6f2;text-align:center;padding:20px;z-index:4}
 .gl-fallback img{max-width:420px;width:100%;border-radius:12px}
@@ -201,7 +201,7 @@ main{padding-bottom:84px!important}
 <p><a href="index.html" style="color:#F2B705">← Volver a la tienda</a></p>
 </div>
 </div>
-<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D procedural con Three.js y texturas de las fotos reales de tus productos. <b>Modelo GLB pendiente:</b> no existe ningún modelo .glb en el proyecto (faltan bed_frame, mattress, fitted_sheet, duvet, pillow_left/right y headboard); la cama actual es procedural y la caída textil es una aproximación — para una caída de tela realista hace falta un modelo Blender exportado a .glb, que se podrá cargar en esta misma escena cuando esté listo.</p>
+<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D con Three.js y el modelo real de la cama en GLB (assets/bed.glb, construido en Blender con piezas nombradas: estructura, cabecera, colchón, sábana ajustada, edredón doble vista, almohadas y banca), con texturas de las fotos reales de tus productos. Si el modelo GLB no carga, la página muestra la cama procedural de respaldo con las mismas opciones y precios.</p>
 </main>
 <aside id="cartDrawer" aria-label="Carrito">
 <h2>Tu carrito</h2><div id="cartItems"></div>
@@ -293,6 +293,7 @@ function calcTotal(){
 /* ---------- Escena 3D (Three.js clásico r147) ---------- */
 var stage=document.getElementById("stage3d");
 var scene,camera,renderer,controls,bedGroup,curtainGroup,texCache={};
+var glbGroup=null, glbParts=null, glbReady=false; /* Modelo GLB real (Blender): cuando carga, sustituye a la cama procedural. */
 var BED_D=3.1, MAT_TOP=1.06;
 function showFallback(reason){
   var f=document.getElementById("glFallback"), l=document.getElementById("glLoading");
@@ -330,9 +331,9 @@ function loadScript(src,timeoutMs){
 function ensureThree(){
   if(window.THREE && THREE.OrbitControls)return Promise.resolve(true);
   var sources=[
-    {base:"assets/",three:"three.min.js",controls:"OrbitControls.js"},
-    {base:"https://cdn.jsdelivr.net/npm/three@0.147.0/",three:"build/three.min.js",controls:"examples/js/controls/OrbitControls.js"},
-    {base:"https://unpkg.com/three@0.147.0/",three:"build/three.min.js",controls:"examples/js/controls/OrbitControls.js"}
+    {base:"assets/",three:"three.min.js",controls:"OrbitControls.js",gltf:"GLTFLoader.js"},
+    {base:"https://cdn.jsdelivr.net/npm/three@0.147.0/",three:"build/three.min.js",controls:"examples/js/controls/OrbitControls.js",gltf:"examples/js/loaders/GLTFLoader.js"},
+    {base:"https://unpkg.com/three@0.147.0/",three:"build/three.min.js",controls:"examples/js/controls/OrbitControls.js",gltf:"examples/js/loaders/GLTFLoader.js"}
   ];
   var chain=Promise.resolve(false);
   sources.forEach(function(src){
@@ -341,6 +342,10 @@ function ensureThree(){
       var p=Promise.resolve();
       if(!window.THREE)p=p.then(function(){return loadScript(src.base+src.three,5000);});
       if(!window.THREE||!THREE.OrbitControls)p=p.then(function(){return loadScript(src.base+src.controls,5000);});
+      /* GLTFLoader (modelo GLB real de la cama, hecho en Blender): si no
+         carga desde esta fuente se prueba la siguiente; si no carga de
+         ninguna, la página sigue con la cama procedural (nunca bloquea el 3D). */
+      if(!window.THREE||!THREE.GLTFLoader)p=p.then(function(){return loadScript(src.base+src.gltf,5000);}).catch(function(e){console.warn("GLTFLoader no cargó desde",src.base,e&&e.message);return false;});
       return p.then(function(){
         return !!(window.THREE && THREE.OrbitControls);
       }).catch(function(e){console.warn("Three.js no cargó desde",src.base,e&&e.message);return false;});
@@ -673,8 +678,16 @@ function buildBed(){
       bedGroup.add(pillowMesh(ci*0.5,py+0.12,-0.55,0.5,0.42,0.26,mat(ci===0?"#c5a15b":"#b5a28b",0.85),-0.25));
     }
   }
-  /* Cortinas Blackout Thermal a los lados de la ventana (Paso 5).
-     La ventana siempre lleva cortinas: el color elegido (17 colores) o,
+  buildCurtains();
+}
+/* Cortinas Blackout Thermal a los lados de la ventana (Paso 5). Se construyen
+   aparte de la cama para que el Paso 5 siga funcionando también cuando la cama
+   es el modelo GLB (antes las cortinas solo se reconstruían dentro de
+   buildBed(), que ya no corre con el GLB activo). */
+function buildCurtains(){
+  if(!curtainGroup)return;
+  var gold=mat("#c5a15b",0.35,{metalness:0.65});
+  /* La ventana siempre lleva cortinas: el color elegido (17 colores) o,
      si aún no se elige ninguno, un visillo blanco translúcido. */
   while(curtainGroup.children.length){curtainGroup.remove(curtainGroup.children[0]);}
   var cMat;
@@ -694,11 +707,106 @@ function buildBed(){
     panel.position.set(s*2.45,1.75,-2.72); panel.castShadow=true; panel.receiveShadow=true;
     curtainGroup.add(panel);
   });
-  var rod=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,6.0,12),gold);
+  /* Barra de la cortina: antes medía 6.0 m y cruzaba TODA la pared; en la
+     vista 3/4 se proyectaba como una barra metálica en diagonal cruzando el
+     edredón. Ahora solo cubre la ventana (4.0 m, de -2.0 a 2.0), con las
+     borlas en sus extremos, y ya no cruza la cama. */
+  var rod=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,4.0,12),gold);
   rod.rotation.z=Math.PI/2; rod.position.set(0,3.55,-2.72); rod.castShadow=true; curtainGroup.add(rod);
   [-1,1].forEach(function(s){
     var fin=new THREE.Mesh(new THREE.SphereGeometry(0.07,10,8),gold);
-    fin.position.set(s*3.0,3.55,-2.72); curtainGroup.add(fin);
+    fin.position.set(s*2.0,3.55,-2.72); curtainGroup.add(fin);
+  });
+}
+/* ---------- Modelo GLB real (Blender) ----------
+   assets/bed.glb: cama Queen construida en Blender con piezas nombradas
+   (bed_frame, headboard, mattress, fitted_sheet, duvet, duvet_reverse,
+   duvet_flap, pillow_left/right, pillow_left2/right2, cushion_left/right/
+   center, runner, bench) y materiales independientes por pieza. Cuando el
+   GLB carga, sustituye a la cama procedural (bedGroup se oculta) y TODOS
+   los cambios del configurador se aplican a sus materiales en vivo. Si el
+   GLB no carga (sin GLTFLoader, archivo ausente o error de red), la página
+   sigue con la cama procedural sin romperse. */
+var GLB_URL="assets/bed.glb";
+var GLB_BASE_W=2.6; /* ancho Queen del modelo, igual que SIZES Queen w */
+function glbMesh(name){return (glbParts&&glbParts[name])||null;}
+function setGlbVis(name,on){var m=glbMesh(name); if(m)m.visible=!!on;}
+function setDuvetMat(mesh,tex,bumpScale,type){
+  if(!mesh)return;
+  if(!mesh.userData)mesh.userData={}; /* THREE.Mesh siempre lo trae; por si acaso. */
+  /* Premium: material físico con brillo satinado; el resto: estándar. */
+  if(type==="Premium"){
+    if(!mesh.userData.premMat){
+      mesh.userData.premMat=new THREE.MeshPhysicalMaterial({color:"#ffffff",roughness:0.45,metalness:0,sheen:1,sheenColor:new THREE.Color("#f2d28a"),sheenRoughness:0.4});
+    }
+    if(mesh.material!==mesh.userData.premMat)mesh.material=mesh.userData.premMat;
+  }else{
+    if(!mesh.userData.stdMat){
+      mesh.userData.stdMat=new THREE.MeshStandardMaterial({color:"#ffffff",roughness:0.95});
+    }
+    if(mesh.material!==mesh.userData.stdMat)mesh.material=mesh.userData.stdMat;
+  }
+  var m=mesh.material;
+  m.map=tex; m.bumpMap=tex; m.bumpScale=bumpScale;
+  m.roughness=type==="Texturizado"?1:(type==="Premium"?0.45:0.95);
+  m.side=mesh.name==="duvet_reverse"?THREE.BackSide:(mesh.name==="duvet_flap"?THREE.DoubleSide:THREE.FrontSide);
+  m.needsUpdate=true;
+}
+function applyStateToGLB(){
+  if(!glbReady||!glbGroup)return;
+  var w=SIZES[st.size].w;
+  /* El modelo es Queen (2.6 m); los demás tamaños escalan el ancho. */
+  glbGroup.scale.set(w/GLB_BASE_W,1,1);
+  /* Sábanas: color puro sobre la sábana ajustada del modelo. */
+  var sh=glbMesh("fitted_sheet");
+  if(sh&&sh.material){sh.material.color=new THREE.Color(st.sheetColor.hex); sh.material.needsUpdate=true;}
+  /* Edredón doble vista con las fotos generadas iguales al real. */
+  var dc=DUVET_COLORS[st.duvetColor];
+  var duvetType=DUVET_TYPES[st.duvetType].n;
+  var bumpScale=duvetType==="Texturizado"?0.06:duvetType==="Capitonado"?0.05:duvetType==="Premium"?0.02:0.025;
+  setDuvetMat(glbMesh("duvet"),fitTex(dc.tex,w+0.55,2.3),bumpScale,duvetType);
+  setDuvetMat(glbMesh("duvet_reverse"),fitTex(dc.revTex,w+0.55,2.3),bumpScale,duvetType);
+  setDuvetMat(glbMesh("duvet_flap"),fitTex(dc.revTex,w+0.57,0.72),0.03,duvetType);
+  /* Almohadas según la opción elegida. */
+  var p=st.pillow;
+  var show2=(p===0||p===1||p===2||p===3);
+  setGlbVis("pillow_left",show2||p===4||p===5);
+  setGlbVis("pillow_right",show2);
+  setGlbVis("pillow_left2",p===2);
+  setGlbVis("pillow_right2",p===2);
+  var pilCol=(p===3)?"#f2ead8":"#fbfaf6"; /* Pluma Sintética: tono crema */
+  ["pillow_left","pillow_right","pillow_left2","pillow_right2"].forEach(function(n){
+    var m=glbMesh(n); if(m&&m.material){m.material.color=new THREE.Color(pilCol); m.material.needsUpdate=true;}
+  });
+  /* Cojines decorativos: opción 0 (2 decorativas) y complemento 3 (set de 3). */
+  setGlbVis("cushion_left",p===0||st.comp===3);
+  setGlbVis("cushion_right",p===0||st.comp===3);
+  setGlbVis("cushion_center",st.comp===3);
+  /* Runner al pie: cubrecolchón (comp 0) o Premium (comp 2). */
+  setGlbVis("runner",st.comp===0||st.comp===2);
+}
+function loadBedGLB(){
+  if(!window.THREE||!THREE.GLTFLoader){console.warn("Viste tu cama: sin GLTFLoader, se usa la cama procedural.");return;}
+  var loader=new THREE.GLTFLoader();
+  loader.load(GLB_URL,function(gltf){
+    try{
+      glbGroup=gltf.scene;
+      glbParts={};
+      glbGroup.traverse(function(n){
+        if(n.isMesh){n.castShadow=true; n.receiveShadow=true; if(n.name)glbParts[n.name]=n;}
+      });
+      var d=glbMesh("duvet"); if(d&&d.material)d.material.side=THREE.FrontSide;
+      var dr=glbMesh("duvet_reverse"); if(dr&&dr.material)dr.material.side=THREE.BackSide;
+      scene.add(glbGroup);
+      glbReady=true;
+      bedGroup.visible=false;
+      applyStateToGLB();
+      frameObject();
+      redraw3D();
+      console.log("Viste tu cama: modelo GLB cargado (bed.glb).");
+    }catch(e){console.warn("Viste tu cama: error al activar el GLB, se queda la cama procedural.",e);}
+  },undefined,function(e){
+    console.warn("Viste tu cama: no se pudo cargar bed.glb, se usa la cama procedural.",e&&e.message);
   });
 }
 var lastAspect=0;
@@ -712,12 +820,19 @@ var camAnim=null;
    proporciones no se deformen al alejar/acercar la cámara. En el Paso 5
    (cortinas) se encuadra la habitación completa para ver la ventana. */
 var ROOM_TARGET={x:0,y:1.3,z:-0.2}, ROOM_W=7.2, ROOM_H=4.6;
-var BED_FIT_MARGIN=1.15; /* 1/0.87: la cama llena ~87% de la dimensión
-   limitante del visor (ZIP: 80-90%), sin recortes. */
+var BED_FIT_MARGIN=1.08; /* 1/0.93: la cama llena ~93% de la dimensión
+   limitante del visor (ZIP: 80-90% del área visible; el Box3 incluye banca y
+   cabecera, así que la cama vestida queda en ~83-88% en alto y ancho). Antes
+   1.15 (87% del Box3) y en vivo la cama se veía al ~79% de ancho y ~76% de
+   alto. Con 1.08 no hay recortes: la distancia se calcula para que el Box3
+   quepa justo. */
 function bedBounds(){
-  if(!bedGroup)return null;
-  bedGroup.updateWorldMatrix(true,true);
-  var b=new THREE.Box3().setFromObject(bedGroup);
+  /* El encuadre mide la cama ACTIVA: el modelo GLB cuando cargó, o la cama
+     procedural si el GLB no está (respaldo). */
+  var g=(glbReady&&glbGroup)?glbGroup:bedGroup;
+  if(!g)return null;
+  g.updateWorldMatrix(true,true);
+  var b=new THREE.Box3().setFromObject(g);
   if(b.isEmpty())return null;
   return b;
 }
@@ -866,6 +981,7 @@ function init3D(){
   bedGroup=new THREE.Group(); scene.add(bedGroup);
   curtainGroup=new THREE.Group(); scene.add(curtainGroup);
   buildRoom(); buildBed();
+  loadBedGLB(); /* Modelo GLB real (Blender); si falla, queda la procedural. */
   frameObject(true); /* encuadre inicial: Box3 real de la cama, sin animación */
   if(window.ResizeObserver){
     new ResizeObserver(function(){resize3D();}).observe(stage);
@@ -1092,7 +1208,10 @@ function render(){
   }).join("");
   document.getElementById("cfgTotal").textContent=money(calcTotal());
   showToast();
-  if(scene){buildBed();}
+  if(scene){
+    if(glbReady){applyStateToGLB(); buildCurtains();}
+    else{buildBed();}
+  }
   /* Redibujo forzado tras reconstruir la cama: sin esto el canvas podía
      quedarse en una franja superior hasta tocar pantalla completa. */
   if(window.requestAnimationFrame){requestAnimationFrame(function(){redraw3D();});}
