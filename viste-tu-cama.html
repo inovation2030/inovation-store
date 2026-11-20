@@ -62,7 +62,11 @@
 .stage-controls{position:absolute;right:12px;bottom:70px;display:flex;gap:8px;z-index:5}
 .stage-controls button{width:44px;height:44px;border-radius:50%;border:1px solid #dfe5ea;background:rgba(255,255,255,.95);font-size:24px;cursor:pointer;color:#123a6b;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 .deg360{position:absolute;left:50%;top:12px;bottom:auto;height:auto;white-space:nowrap;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:20px;font-weight:700;z-index:3;pointer-events:none}
-.spline-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#53616f;background:#e8edf1;text-align:center;padding:20px;z-index:2}
+/* Indicador de carga: chip compacto arriba del escenario, sin tapar el
+   visor (fondo translúcido y sin capturar clics) para que la escena se
+   vea mientras carga. La foto de respaldo (.spline-fallback) solo aparece
+   ante un fallo real, nunca encima de un visor que aún carga. */
+.spline-loading{position:absolute;left:50%;top:64px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:#123a6b;background:rgba(255,255,255,.92);border:1px solid #dfe5ea;border-radius:12px;text-align:center;padding:12px 18px;z-index:2;pointer-events:none;max-width:92%}
 .spline-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f7f6f2;text-align:center;padding:20px;z-index:4}
 .spline-fallback img{max-width:420px;width:100%;border-radius:12px}
 .color-strip{background:#fff;padding:14px 10px 10px;display:flex;align-items:center;gap:8px;border-top:1px solid #e3e8ee}
@@ -518,8 +522,31 @@ function applyStateToSpline(){
   splineSetVisible(SPLINE_OBJECTS.curtainRight,s>=5&&st.curtain>=0);
 }
 /* Monta el visor Spline en el escenario. Si no hay URL, muestra la foto
-   real de la habitación. Si la escena tarda más de 12 s o falla, también
-   muestra la foto real (el configurador nunca se rompe por el visor). */
+   real de la habitación. La foto de respaldo SOLO aparece ante un fallo
+   real: error de carga del visor, pérdida del contexto WebGL, que el visor
+   nunca arranque, o que la escena no complete su carga en 60 s. Mientras
+   la escena todavía puede estar cargando, el visor queda visible (sin la
+   foto encima) y solo se muestra el indicador "Cargando escena 3D…". */
+var splineLoadTimer=null, splineStartTimer=null;
+var SPLINE_LOAD_TIMEOUT_MS=60000; /* la escena publicada tarda 12-20 s en cargar: 12 s la cortaba */
+var SPLINE_START_TIMEOUT_MS=30000; /* si el visor nunca empieza a cargar (módulo bloqueado), es un fallo real, no lentitud */
+function clearSplineTimers(){
+  if(splineLoadTimer){clearTimeout(splineLoadTimer);splineLoadTimer=null;}
+  if(splineStartTimer){clearTimeout(splineStartTimer);splineStartTimer=null;}
+}
+/* El temporizador de 60 s arranca SOLO cuando la carga de la escena ya
+   empezó de verdad (evento load-start del visor), nunca durante el parse
+   del body antes de que corra el script del módulo del visor. */
+function startSplineLoadTimer(){
+  clearSplineTimers();
+  splineLoadTimer=setTimeout(function(){
+    splineLoadTimer=null;
+    if(!splineLoaded&&!splineFailed){
+      splineFailed=true;
+      showSplineFallback("La escena 3D tardó demasiado en cargar (más de 60 s). Revisa tu conexión y recarga la página. El configurador de abajo sigue funcionando.");
+    }
+  },SPLINE_LOAD_TIMEOUT_MS);
+}
 function initSpline(){
   if(!SPLINE_SCENE_URL){
     showSplineFallback("La escena 3D de Spline aún no está conectada: falta pegar la URL .splinecode de la habitación en la constante SPLINE_SCENE_URL de esta página. Mientras tanto ves la foto real de la habitación con tu edredón. El configurador de abajo funciona igual.");
@@ -532,25 +559,40 @@ function initSpline(){
   el.setAttribute("loading-anim-type","spinner-small-dark");
   el.addEventListener("load-start",function(){
     var l=document.getElementById("splineLoading"); if(l)l.style.display="flex";
+    startSplineLoadTimer();
   });
   el.addEventListener("load-complete",function(){
-    splineLoaded=true;
+    splineLoaded=true; splineFailed=false;
+    clearSplineTimers();
     try{splineApp=el.app||null;}catch(e){splineApp=null;}
     var l=document.getElementById("splineLoading"); if(l)l.style.display="none";
     var f=document.getElementById("splineFallback"); if(f)f.style.display="none";
     applyStateToSpline();
   });
   el.addEventListener("context-loss",function(){
-    showSplineFallback("El navegador perdió el contexto WebGL (memoria del teléfono). Recarga la página.");
+    splineFailed=true;
+    clearSplineTimers();
+    showSplineFallback("La escena 3D no cargó: el navegador perdió el contexto WebGL (memoria del teléfono). Recarga la página.");
+  });
+  el.addEventListener("error",function(){
+    if(splineLoaded)return;
+    splineFailed=true;
+    clearSplineTimers();
+    showSplineFallback("La escena 3D no cargó: hubo un error al cargar el archivo de la escena. Revisa tu conexión y recarga la página.");
   });
   splineViewer=el;
   stage.appendChild(el);
-  setTimeout(function(){
-    if(!splineLoaded&&!splineFailed){
+  /* Si el módulo del visor nunca se ejecuta (CDN bloqueado), load-start
+     no se dispara jamás: a los 30 s se muestra la foto con un mensaje de
+     error real ("no cargó"), no de lentitud. Si load-start sí se dispara,
+     este temporizador se cancela y manda el de 60 s. */
+  splineStartTimer=setTimeout(function(){
+    splineStartTimer=null;
+    if(!splineLoaded&&!splineFailed&&!splineLoadTimer){
       splineFailed=true;
-      showSplineFallback("La escena Spline tardó demasiado en cargar (conexión lenta o URL .splinecode incorrecta). Revisa la URL en SPLINE_SCENE_URL y recarga la página.");
+      showSplineFallback("La escena 3D no cargó: no se pudo iniciar el visor de Spline (revisa tu conexión). El configurador de abajo sigue funcionando.");
     }
-  },12000);
+  },SPLINE_START_TIMEOUT_MS);
 }
 
 /* ---------- Controles de vista (Spline) ----------
@@ -772,7 +814,8 @@ window.addCfgToCart=addCfgToCart;
 /* La interfaz corre SIEMPRE y PRIMERO, sin esperar a Spline: los 5 pasos,
    colores, medidas y total funcionan aunque la escena 3D falle o aún no esté
    conectada. El visor Spline arranca aparte; sin URL muestra la foto real
-   de la habitación, y si tarda más de 12 s también muestra la foto. */
+   de la habitación, y si la escena no completa su carga en 60 s (o el visor
+   nunca arranca) también muestra la foto, con un mensaje de error honesto. */
 render();
 try{ initSpline(); }catch(e){ showSplineFallback("La escena Spline no se pudo iniciar: "+(e&&e.message?e.message:"error desconocido")); }
 </script>
