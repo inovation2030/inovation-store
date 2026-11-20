@@ -102,3 +102,11 @@ nav.main>a.active{border-radius:12px}
 .cart-btn .cart-label{display:none}
 .cart-btn{padding:8px 10px}
 }
+
+.size-sel{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.size-opt{border:1px solid var(--line);border-radius:20px;padding:7px 10px;cursor:pointer;background:#fff;font-size:13px;font-weight:600;color:#123a6b}
+.size-opt.on{border-color:var(--gold);background:#fff3c4}
+.cur-sel{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.palette-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:10px}
+
+.pillow-size,.pillow-qty{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}

@@ -36,6 +36,38 @@ document.addEventListener('DOMContentLoaded',function(){
   window.addEventListener('resize',function(){
     if(window.innerWidth>768)document.body.classList.remove('nav-open');
   });
+  /* Selector de tamaño en tarjetas de producto (edredones, sábanas): actualiza precio y carrito */
+  document.querySelectorAll('.size-sel').forEach(function(sel){
+    sel.addEventListener('click',function(e){
+      var b=e.target.closest('.size-opt'); if(!b)return;
+      sel.querySelectorAll('.size-opt').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on');
+      var scope=sel.closest('article, .palette-box'); if(!scope)return;
+      var price=parseInt(b.getAttribute('data-price'),10), size=b.getAttribute('data-size');
+      var pr=scope.querySelector('.price'); if(pr)pr.innerHTML='$'+price.toLocaleString('es-MX')+' <small>MXN</small>';
+      var add=scope.querySelector('[data-add]'); if(add){add.setAttribute('data-price',price); add.setAttribute('data-add', add.getAttribute('data-base')+' — '+size);}
+    });
+  });
   document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){addToCart(b.getAttribute('data-add'),parseInt(b.getAttribute('data-price')||'0',10))})});
   document.querySelectorAll('.drop>button').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();b.parentElement.classList.toggle('open')})});
+
+  /* Selector de almohadas de bambú: tamaño (Standard/King) + cantidad (1/par) */
+  document.querySelectorAll('article.product').forEach(function(art){
+    var sz=art.querySelector('.pillow-size'), qt=art.querySelector('.pillow-qty');
+    if(!sz||!qt)return;
+    function updPillow(){
+      var b=sz.querySelector('.size-opt.on'), q=qt.querySelector('.size-opt.on');
+      if(!b||!q)return;
+      var price=(q.getAttribute('data-qty')==='2')?parseInt(b.getAttribute('data-pair'),10):parseInt(b.getAttribute('data-single'),10);
+      var pr=art.querySelector('.price'); if(pr)pr.innerHTML='$'+price.toLocaleString('es-MX')+' <small>MXN</small>';
+      var add=art.querySelector('[data-add]'); if(add){add.setAttribute('data-price',price); add.setAttribute('data-add', add.getAttribute('data-base')+' — '+b.getAttribute('data-size')+' · '+(q.getAttribute('data-qty')==='2'?'Par (2 almohadas)':'1 almohada'));}
+    }
+    [sz,qt].forEach(function(sel){
+      sel.addEventListener('click',function(e){
+        var b=e.target.closest('.size-opt'); if(!b)return;
+        sel.querySelectorAll('.size-opt').forEach(function(x){x.classList.remove('on')});
+        b.classList.add('on'); updPillow();
+      });
+    });
+  });
 });
