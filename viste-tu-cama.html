@@ -10,7 +10,7 @@
 .ref-header .cart-btn{background:none;border:0;color:#fff;font-size:24px;padding:8px 10px;position:relative;box-shadow:none}
 .ref-header .cart-btn .count{position:absolute;top:0;right:0;background:#E8A90C;color:#123a6b;min-width:20px;height:20px;font-size:11px}
 .ref-header nav.main .drop .submenu{top:calc(100% + 6px)}
-.cfg3d{display:grid;grid-template-columns:300px 1fr 330px;gap:0;align-items:stretch;background:linear-gradient(180deg,#0b2247,#0a1a33);border-radius:16px;overflow:hidden;border:1px solid #1c3a6b}
+.cfg3d{display:grid;grid-template-columns:300px 1fr 330px;gap:0;align-items:start;background:linear-gradient(180deg,#0b2247,#0a1a33);border-radius:16px;overflow:visible;border:1px solid #1c3a6b}
 .cfg3d .panel{background:transparent;color:#fff;border:0;border-radius:0;padding:20px}
 .cfg3d .panel h2{color:#fff}
 .panel-steps .cfg-title{display:flex;gap:12px;align-items:center;margin:0 0 4px}
@@ -36,6 +36,10 @@
 .type-card span{font-size:12px;display:block;padding:5px 0 2px}
 .type-card .tick{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;background:#123a6b;color:#fff;display:grid;place-items:center;font-size:13px;border:2px solid #F2B705}
 .cfg3d .swatches .sw{box-shadow:0 0 0 1px #33507e}
+#stepOpts .swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+#stepOpts .swatches .sw{width:100%;height:auto;aspect-ratio:1/1;border-radius:10px;object-fit:cover}
+.panel-steps{overflow:visible}
+#stepOpts{overflow:visible}
 .cfg3d .swatches .sw.on{box-shadow:0 0 0 3px #F2B705}
 .stage-col{background:#e8edf1;display:flex;flex-direction:column;min-width:0}
 .stage3d{position:relative;background:#e8edf1;min-height:560px;flex:1}
@@ -77,7 +81,8 @@
 .seals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;font-size:12px;color:#dbe6f5;margin-top:16px}
 .seals .s-ico{font-size:26px;display:block;margin-bottom:4px}
 @media(max-width:900px){
-.cfg3d{grid-template-columns:1fr}
+.cfg3d{grid-template-columns:1fr;overflow:visible}
+.panel-steps,.panel-sel{overflow:visible}
 .stage-col{order:-1}
 .panel-steps{order:0}
 .panel-sel{order:1}
