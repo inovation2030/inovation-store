@@ -1,7 +1,9 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Viste tu Cama 3D | Inovation Store</title><link rel="stylesheet" href="styles.css">
-<!-- Spline Viewer (web component). Versión fijada 2.0.203, CDN oficial de Spline.
+<!-- Spline Viewer (web component). Versión fijada 2.0.204, CDN oficial de Spline:
+     es la misma versión del runtime con la que se publicó la escena
+     (la página publicada de Spline carga @splinetool/runtime@2.0.204).
      Carga el elemento <spline-viewer> que muestra la escena .splinecode. -->
-<script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.203/build/spline-viewer.js"></script>
+<script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.204/build/spline-viewer.js"></script>
 <style>
 /* Viste tu Cama — diseño exacto de la referencia: azul marino + dorado */
 .ref-header{background:linear-gradient(180deg,#081a38,#0d2a52);border-bottom:3px solid #E8A90C}
@@ -177,7 +179,7 @@ main{padding-bottom:84px!important}
 <button type="button" onclick="zoomBed(0.15)" aria-label="Acercar">＋</button>
 </div>
 <div class="deg360">⟳ 360° ⟲</div>
-<div class="hint3d">Arrastra para girar 360° · Rueda o pellizca para acercar · Dos dedos para desplazar</div>
+<div class="hint3d">Arrastra para girar 360° · Rueda o pellizca para acercar · Toca el edredón para darle la vuelta · Toca la solapa para quitarlo y ver solo las sábanas</div>
 </div>
 <div class="color-strip">
 <button class="strip-arrow" type="button" onclick="cycleDuvet(-1)" aria-label="Color anterior">‹</button>
@@ -189,6 +191,8 @@ main{padding-bottom:84px!important}
 <button type="button" onclick="setView('angle',this)" class="on" id="btnAngle">Vista 3/4</button>
 <button type="button" onclick="setView('top',this)">Vista superior</button>
 <button type="button" onclick="toggleAuto()" id="btnAuto">Giro automático: apagado</button>
+<button type="button" onclick="flipDuvet()" id="btnFlip">⟲ Dar la vuelta al edredón</button>
+<button type="button" onclick="toggleRemoveDuvet()" id="btnRemoveDuvet">－ Quitar edredón</button>
 </div>
 <div class="stage-footer"><span>Colores rápidos del edredón — toca uno para cambiarlo en vivo</span><span class="swatches" id="quickSwatches"></span></div>
 <p class="sheet-chip" id="sheetChip">Sábanas: Algodón Egipcio · Blanco</p>
@@ -205,8 +209,8 @@ main{padding-bottom:84px!important}
 <p><a href="index.html" style="color:#F2B705">← Volver a la tienda</a></p>
 </div>
 </div>
-<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D con Spline: la habitación y la cama se crean en el editor de Spline (spline.design) y se conectan pegando su URL .splinecode en la constante SPLINE_SCENE_URL de esta página. Mientras no haya escena conectada, el visor muestra la foto real de la habitación con el edredón elegido y el configurador funciona igual (5 pasos, colores, medidas y precios reales).</p>
-<p class="spline-credit" style="font-size:13px;margin-top:6px"><a href="https://app.spline.design" target="_blank" rel="noopener">Open in Spline</a> · <a href="https://spline.design" target="_blank" rel="noopener">Made with Spline</a></p>
+<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D con Spline: habitación de lujo y cama en 3D real (no es una foto). La cama se va armando paso a paso: Paso 1 la cama, Paso 2 las sábanas, Paso 3 el edredón, Paso 4 las almohadas y Paso 5 los complementos y cortinas. El edredón es un objeto 3D reversible: dale la vuelta para ver el otro lado (Azul Marino / Gris) y quítalo para ver solo las sábanas. Si la escena no carga, se muestra la foto real de la habitación y el configurador sigue funcionando igual (5 pasos, colores, medidas y precios reales).</p>
+<p class="spline-credit" style="font-size:13px;margin-top:6px"><a href="https://app.spline.design/file/dcf5db59-d958-417a-ad20-d66d1a908fd6" target="_blank" rel="noopener">Open in Spline</a> · <a href="https://spline.design" target="_blank" rel="noopener">Made with Spline</a></p>
 </main>
 <aside id="cartDrawer" aria-label="Carrito">
 <h2>Tu carrito</h2><div id="cartItems"></div>
@@ -297,32 +301,36 @@ function calcTotal(){
    y utiliza el otro" — el otro es Spline, la primera recomendación de su
    guía para la habitación y la cama en 3D.
    El visor es el web component oficial <spline-viewer> (script en <head>).
-   La escena (habitación + cama) SOLO se puede crear en el editor de Spline
-   (https://app.spline.design): no hay forma de generar una escena .splinecode
-   desde aquí ni desde la línea de comandos. Cuando la escena exista, se pega
-   su URL en SPLINE_SCENE_URL y el configurador la controla en vivo. */
-var stage=document.getElementById("stage3d");
+   La escena (habitación + cama) se creó en el editor de Spline
+   (https://app.spline.design/file/dcf5db59-d958-417a-ad20-d66d1a908fd6,
+   cuenta babyfacebad@icloud.com, plan Hobby gratuito) y se publicó en
+   https://my.spline.design/spline3dstarterfile-Vd6txbVaaIpOHrio6Iwb5lF0/
+   La URL .splinecode de abajo es el archivo real de esa escena publicada,
+   verificado: responde HTTP 200, pesa 4.650.023 bytes, es un .splinecode
+   válido y permite CORS (Access-Control-Allow-Origin: *). Es el mismo
+   archivo que carga la página publicada de Spline con su runtime. */
 
 /* ========================================================================
-   >>>  ÚNICA CONSTANTE QUE HAY QUE PEGAR: URL DE LA ESCENA SPLINE  <<<
-   Pega aquí la URL .splinecode de la escena (Spline → Export → Code, la URL
-   termina en /scene.splinecode, p. ej.:
-   https://prod.spline.design/AbCdEfGhIjKlMnOp/scene.splinecode
-   Mientras esté vacía (""), el visor muestra la foto real de la habitación
-   y TODO el configurador sigue funcionando (pasos, colores, total, carrito).
+   URL DE LA ESCENA SPLINE (verificada, archivo real publicado)
+   https://my.spline.design/spline3dstarterfile-Vd6txbVaaIpOHrio6Iwb5lF0/scene.splinecode
+   Si la escena se vuelve a publicar o se crea una nueva, se pega aquí su
+   URL .splinecode (Spline → Export → Code). Mientras esté vacía (""), el
+   visor muestra la foto real de la habitación y TODO el configurador
+   sigue funcionando (pasos, colores, total, carrito).
    ======================================================================== */
-var SPLINE_SCENE_URL="";
+var SPLINE_SCENE_URL="https://my.spline.design/spline3dstarterfile-Vd6txbVaaIpOHrio6Iwb5lF0/scene.splinecode";
 
-/* Objetos que la escena Spline DEBE tener con estos nombres exactos (en el
-   editor de Spline: selecciona cada pieza y ponle este nombre en el panel
-   de la derecha). Si un objeto no existe, ese cambio simplemente no se
-   aplica en la escena; el configurador y el total siguen funcionando. */
+/* Objetos de la escena Spline con estos nombres exactos (verificados en el
+   archivo .splinecode publicado). Si un objeto no existe, ese cambio
+   simplemente no se aplica en la escena; el configurador y el total siguen
+   funcionando. NOTA: la escena NO tiene un objeto "DuvetReverse" (no existe
+   en el archivo): el reverso se muestra dándole la vuelta al objeto Duvet
+   y cambiando su color de material (cara ↔ reverso, ver flipDuvet()). */
 var SPLINE_OBJECTS={
   bed:"Bed",                 /* grupo completo de la cama (para girarla) */
   sheet:"FittedSheet",       /* sábana ajustada al colchón */
-  duvet:"Duvet",             /* edredón, cara */
-  duvetReverse:"DuvetReverse", /* edredón, reverso (doble vista) */
-  duvetFlap:"DuvetFlap",     /* solapa doblada al pie, del reverso */
+  duvet:"Duvet",             /* edredón, objeto 3D real (no es foto) */
+  duvetFlap:"DuvetFlap",     /* solapa doblada al pie; al tocarla en la escena el edredón se quita */
   pillowLeft:"PillowLeft", pillowRight:"PillowRight",
   pillowLeft2:"PillowLeft2", pillowRight2:"PillowRight2",
   cushionLeft:"CushionLeft", cushionRight:"CushionRight", cushionCenter:"CushionCenter",
@@ -330,21 +338,21 @@ var SPLINE_OBJECTS={
   curtainLeft:"CurtainLeft", curtainRight:"CurtainRight",
   room:"Room"                /* grupo de la habitación (ventana, paredes) */
 };
-/* Variables que la escena Spline DEBE tener (editor de Spline → panel
-   Variables). Cada una es de tipo texto, salvo AutoRotate (booleano).
-   En el editor se conectan con States/Events: por ejemplo, la variable
-   CameraView dispara el estado de cámara "front" / "angle" / "top" / "room",
-   y DuvetColor cambia el color del material del edredón. */
+/* Variables REALES de la escena Spline (plan Hobby: solo permite 4
+   variables, verificadas en el archivo .splinecode publicado).
+   BedSize es texto ("King" por defecto en la escena); SheetColor,
+   DuvetColor y PillowOption son índices numéricos. NO existen SheetType,
+   CurtainColor, CameraView ni AutoRotate en esta escena: el tipo de
+   sábana solo cambia el precio; las cortinas se colorean cambiando el
+   material de CurtainLeft/CurtainRight; las vistas y el giro automático
+   se hacen girando el grupo "Bed" y con zoom (ver setView/toggleAuto). */
 var SPLINE_VARIABLES={
-  bedSize:"BedSize",       /* "Individual" | "Matrimonial" | "Queen" | "King" | "King Jumbo" */
-  sheetColor:"SheetColor", /* nombre del color, p. ej. "Rose" */
-  sheetType:"SheetType",   /* "Algodón Egipcio" | "Bambú Fresh" | "Satín Premium" */
-  duvetColor:"DuvetColor", /* "Azul Marino" | "Gris" | "Beige" | "Blanco" | "Blanco con Rayas" (solo colores reales, con foto) */
-  pillowOption:"PillowOption", /* texto de la opción elegida en el Paso 4 */
-  curtainColor:"CurtainColor", /* nombre del color de cortina o "Sin cortinas" */
-  cameraView:"CameraView", /* "front" | "angle" | "top" | "room" */
-  autoRotate:"AutoRotate"  /* true | false */
+  bedSize:"BedSize",       /* texto: "Individual" | "Matrimonial" | "Queen" | "King" | "King Jumbo" */
+  sheetColor:"SheetColor", /* número: índice 0-39 (20 egipcias + 20 de paleta, en el orden de la página) */
+  duvetColor:"DuvetColor", /* número: índice 0-4 (0 Azul Marino, 1 Gris, 2 Beige, 3 Blanco, 4 Blanco con Rayas) */
+  pillowOption:"PillowOption" /* número: índice 0-5 de las opciones del Paso 4 */
 };
+var stage=document.getElementById("stage3d");
 /* Foto real de la habitación que se muestra mientras no hay escena Spline
    conectada (o si la escena falla). Cambia con el color del edredón. Las
    fotos habitacion-real-*.jpg son fotos generadas iguales a una habitación
@@ -387,13 +395,17 @@ function splineFind(name){
   catch(e){return null;}
 }
 /* Cambio directo de color sobre el material del objeto (si la escena no usa
-   variables para ese color). Si el objeto o su material no existen, no pasa
-   nada: el configurador sigue funcionando. */
+   variables para ese color). Admite un material o un array de materiales.
+   Si el objeto o su material no existen, no pasa nada: el configurador
+   sigue funcionando. */
 function splineSetColor(objName,hex){
   var o=splineFind(objName);
-  if(!o||!o.material||!o.material.color)return false;
-  try{o.material.color.set(hex);return true;}
-  catch(e){return false;}
+  if(!o||!o.material)return false;
+  var mats=[].concat(o.material), ok=false;
+  mats.forEach(function(m){
+    if(m&&m.color){ try{m.color.set(hex);ok=true;}catch(e){} }
+  });
+  return ok;
 }
 function splineSetVisible(objName,on){
   var o=splineFind(objName);
@@ -401,39 +413,109 @@ function splineSetVisible(objName,on){
   try{o.visible=!!on;return true;}
   catch(e){return false;}
 }
+/* Índice del color de sábana elegido en la variable SheetColor de la
+   escena: 0-19 las 20 egipcias (EG) y 20-39 las 20 de paleta (PAL), en el
+   orden de la página. Las egipcias tienen foto (img); las de paleta no. */
+function sheetIndex(){
+  var s=st.sheetColor, i;
+  if(s.img){ for(i=0;i<EG.length;i++){ if(EG[i].name===s.name)return i; } }
+  for(i=0;i<PAL.length;i++){ if(PAL[i].name===s.name)return 20+i; }
+  return 0;
+}
+/* Estado del edredón en la escena: volteado (cara/reverso) y quitado.
+   La escena también tiene estas interacciones al tocarla: tocar el edredón
+   le da la vuelta (estado "Flipped", gira 180°) y tocar la solapa lo quita
+   (estado "Removed", escala 0.01). Los botones de la página hacen lo mismo
+   y además cambian el color del material, porque la escena no tiene un
+   objeto "DuvetReverse" separado. */
+var duvetFlipped=false, duvetRemoved=false;
+function flipDuvet(){
+  if(!splineLoaded){lastChange="La escena 3D aún no carga: el edredón se voltea cuando cargue.";showToast();return;}
+  if(st.step<3){lastChange="Llega al Paso 3 para ver el edredón y darle la vuelta.";showToast();return;}
+  if(duvetRemoved){lastChange="Primero pon el edredón para darle la vuelta.";showToast();return;}
+  var dc=DUVET_COLORS[st.duvetColor];
+  duvetFlipped=!duvetFlipped;
+  var duvet=splineFind(SPLINE_OBJECTS.duvet);
+  if(duvet){ try{duvet.rotation.x+=Math.PI;}catch(e){} }
+  splineSetColor(SPLINE_OBJECTS.duvet,duvetFlipped?dc.rev:dc.hex);
+  splineSetColor(SPLINE_OBJECTS.duvetFlap,duvetFlipped?dc.hex:dc.rev);
+  var b=document.getElementById("btnFlip");
+  if(b)b.textContent=duvetFlipped?"⟲ Ver cara del edredón":"⟲ Dar la vuelta al edredón";
+  lastChange=duvetFlipped?("Edredón: reverso ("+(dc.revName||"reverso")+")"):("Edredón: cara ("+dc.n+")");
+  showToast();
+}
+function toggleRemoveDuvet(){
+  if(!splineLoaded){lastChange="La escena 3D aún no carga: el edredón se quita cuando cargue.";showToast();return;}
+  if(st.step<3){lastChange="Llega al Paso 3 para quitar o poner el edredón.";showToast();return;}
+  duvetRemoved=!duvetRemoved;
+  splineSetVisible(SPLINE_OBJECTS.duvet,!duvetRemoved);
+  splineSetVisible(SPLINE_OBJECTS.duvetFlap,!duvetRemoved);
+  var b=document.getElementById("btnRemoveDuvet");
+  if(b)b.textContent=duvetRemoved?"＋ Poner edredón":"－ Quitar edredón";
+  lastChange=duvetRemoved?"Edredón quitado: se ven solo las sábanas":"Edredón puesto de nuevo";
+  showToast();
+}
+/* Al elegir otro color de edredón, el edredón vuelve a su cara, se pone
+   si estaba quitado y se restaura su escala (por si se quitó tocando la
+   solapa en la escena, que usa el estado "Removed" con escala 0.01). */
+function restoreDuvet(){
+  duvetRemoved=false; duvetFlipped=false;
+  var d=splineFind(SPLINE_OBJECTS.duvet);
+  if(d){
+    try{
+      if(d.scale&&d.scale.x<0.1)d.scale.set(1,1,1);
+      if(d.rotation){d.rotation.x=0;d.rotation.z=0;}
+    }catch(e){}
+  }
+  splineSetVisible(SPLINE_OBJECTS.duvet,true);
+  splineSetVisible(SPLINE_OBJECTS.duvetFlap,true);
+  var b=document.getElementById("btnRemoveDuvet"); if(b)b.textContent="－ Quitar edredón";
+  var f=document.getElementById("btnFlip"); if(f)f.textContent="⟲ Dar la vuelta al edredón";
+}
 /* Aplica el estado actual del configurador a la escena Spline (variables +
-   colores directos). Se llama en cada render(), así que cada cambio se ve
-   en vivo en cuanto la escena está cargada. Sin escena, solo actualiza la
-   foto real de respaldo. */
+   colores directos + armado paso a paso). Se llama en cada render(), así
+   que cada cambio se ve en vivo en cuanto la escena está cargada. Sin
+   escena, solo actualiza la foto real de respaldo. */
 function applyStateToSpline(){
   splineFallbackPhoto();
   if(!splineLoaded)return;
   var dc=DUVET_COLORS[st.duvetColor];
+  /* Variables REALES de la escena (plan Hobby: solo 4). BedSize es texto;
+     SheetColor, DuvetColor y PillowOption son índices numéricos. */
   splineSetVar(SPLINE_VARIABLES.bedSize,SIZES[st.size].n);
-  splineSetVar(SPLINE_VARIABLES.sheetColor,st.sheetColor.name);
-  splineSetVar(SPLINE_VARIABLES.sheetType,SHEET_TYPES[st.sheetType].n);
-  splineSetVar(SPLINE_VARIABLES.duvetColor,dc.n);
-  splineSetVar(SPLINE_VARIABLES.pillowOption,PILLOWS[st.pillow].n);
-  splineSetVar(SPLINE_VARIABLES.curtainColor,st.curtain>=0?CUR[st.curtain].name:"Sin cortinas");
-  splineSetVar(SPLINE_VARIABLES.cameraView,st.step===5?"room":"angle");
-  splineSetVar(SPLINE_VARIABLES.autoRotate,autoRot);
+  splineSetVar(SPLINE_VARIABLES.sheetColor,sheetIndex());
+  splineSetVar(SPLINE_VARIABLES.duvetColor,st.duvetColor);
+  splineSetVar(SPLINE_VARIABLES.pillowOption,st.pillow);
+  /* Colores directos sobre los materiales. La escena no tiene variable de
+     cortinas ni de reverso: las cortinas se colorean aquí, y el edredón
+     muestra cara o reverso según esté volteado (ver flipDuvet). */
   splineSetColor(SPLINE_OBJECTS.sheet,st.sheetColor.hex);
-  splineSetColor(SPLINE_OBJECTS.duvet,dc.hex);
-  splineSetColor(SPLINE_OBJECTS.duvetReverse,dc.rev);
-  splineSetColor(SPLINE_OBJECTS.duvetFlap,dc.rev);
-  if(st.curtain>=0)splineSetColor(SPLINE_OBJECTS.curtainLeft,CUR[st.curtain].hex);
-  if(st.curtain>=0)splineSetColor(SPLINE_OBJECTS.curtainRight,CUR[st.curtain].hex);
-  var p=st.pillow;
-  splineSetVisible(SPLINE_OBJECTS.pillowLeft,true);
-  splineSetVisible(SPLINE_OBJECTS.pillowRight,p===0||p===1||p===2||p===3);
-  splineSetVisible(SPLINE_OBJECTS.pillowLeft2,p===2);
-  splineSetVisible(SPLINE_OBJECTS.pillowRight2,p===2);
-  splineSetVisible(SPLINE_OBJECTS.cushionLeft,p===0||st.comp===3);
-  splineSetVisible(SPLINE_OBJECTS.cushionRight,p===0||st.comp===3);
-  splineSetVisible(SPLINE_OBJECTS.cushionCenter,st.comp===3);
-  splineSetVisible(SPLINE_OBJECTS.runner,st.comp===0||st.comp===2);
-  splineSetVisible(SPLINE_OBJECTS.curtainLeft,st.curtain>=0);
-  splineSetVisible(SPLINE_OBJECTS.curtainRight,st.curtain>=0);
+  splineSetColor(SPLINE_OBJECTS.duvet,duvetFlipped?dc.rev:dc.hex);
+  splineSetColor(SPLINE_OBJECTS.duvetFlap,duvetFlipped?dc.hex:dc.rev);
+  if(st.curtain>=0){
+    splineSetColor(SPLINE_OBJECTS.curtainLeft,CUR[st.curtain].hex);
+    splineSetColor(SPLINE_OBJECTS.curtainRight,CUR[st.curtain].hex);
+  }
+  /* Armado paso a paso: la cama se va armando conforme se avanza.
+     Paso 1: solo la cama. Paso 2: + sábanas. Paso 3: + edredón.
+     Paso 4: + almohadas (y cojines decorativos si la opción los trae).
+     Paso 5: + pie de cama y cortinas (si se eligieron). */
+  var s=st.step, p=st.pillow;
+  splineSetVisible(SPLINE_OBJECTS.bed,true);
+  splineSetVisible(SPLINE_OBJECTS.sheet,s>=2);
+  var duvetOn=s>=3&&!duvetRemoved;
+  splineSetVisible(SPLINE_OBJECTS.duvet,duvetOn);
+  splineSetVisible(SPLINE_OBJECTS.duvetFlap,duvetOn);
+  splineSetVisible(SPLINE_OBJECTS.pillowLeft,s>=4);
+  splineSetVisible(SPLINE_OBJECTS.pillowRight,s>=4&&(p===0||p===1||p===2||p===3));
+  splineSetVisible(SPLINE_OBJECTS.pillowLeft2,s>=4&&p===2);
+  splineSetVisible(SPLINE_OBJECTS.pillowRight2,s>=4&&p===2);
+  splineSetVisible(SPLINE_OBJECTS.cushionLeft,(s>=4&&p===0)||(s>=5&&st.comp===3));
+  splineSetVisible(SPLINE_OBJECTS.cushionRight,(s>=4&&p===0)||(s>=5&&st.comp===3));
+  splineSetVisible(SPLINE_OBJECTS.cushionCenter,s>=5&&st.comp===3);
+  splineSetVisible(SPLINE_OBJECTS.runner,s>=5&&(st.comp===0||st.comp===2));
+  splineSetVisible(SPLINE_OBJECTS.curtainLeft,s>=5&&st.curtain>=0);
+  splineSetVisible(SPLINE_OBJECTS.curtainRight,s>=5&&st.curtain>=0);
 }
 /* Monta el visor Spline en el escenario. Si no hay URL, muestra la foto
    real de la habitación. Si la escena tarda más de 12 s o falla, también
@@ -473,12 +555,12 @@ function initSpline(){
 
 /* ---------- Controles de vista (Spline) ----------
    El visor Spline ya gira con arrastre y acerca con rueda/pellizco de forma
-   nativa. Estos botones son atajos sobre la API del runtime: las vistas y
-   el giro automático funcionan con variables de la escena (CameraView /
-   AutoRotate, ver SPLINE_VARIABLES); el zoom usa app.setZoom(); girar
-   rota el grupo "Bed" de la escena. Sin escena conectada los botones no
-   hacen nada visible (la foto de respaldo no gira), pero nunca rompen nada. */
-var autoRot=false;
+   nativa. La escena NO tiene variables CameraView ni AutoRotate (plan
+   Hobby, solo 4 variables), así que las vistas y el giro automático se
+   hacen con la API del runtime: girar el grupo "Bed" y app.setZoom().
+   La cámara de la escena es fija: "Vista superior" aleja al máximo para
+   ver toda la habitación desde arriba, no mueve la cámara de verdad. */
+var autoRot=false, autoTimer=null;
 function updateAutoBtn(){
   var b=document.getElementById("btnAuto"); if(!b)return;
   b.textContent="Giro automático: "+(autoRot?"encendido":"apagado");
@@ -519,14 +601,33 @@ document.addEventListener("webkitfullscreenchange",function(){updateFsBtn();});
 function setView(v,btn){
   document.querySelectorAll(".viewbar button").forEach(function(b){b.classList.remove("on");});
   if(btn)btn.classList.add("on");
-  /* La vista se pide por variable; en el editor de Spline la variable
-     CameraView debe disparar los estados de cámara "front" / "angle" /
-     "top". Sin escena no hay cámara que mover. */
-  splineSetVar(SPLINE_VARIABLES.cameraView,v);
+  /* Sin variable CameraView en la escena: la vista se aproxima girando el
+     grupo "Bed" y ajustando el zoom. Frontal: cama de frente. 3/4: cama
+     girada 0.6 rad. Superior: cama de frente y zoom al mínimo para ver
+     toda la habitación (la cámara de la escena es fija). */
+  var bed=splineFind(SPLINE_OBJECTS.bed);
+  var app=splineAppReady();
+  function setZ(z){
+    if(app&&typeof app.setZoom==="function"){
+      splineZoom=Math.min(2.5,Math.max(0.5,z));
+      try{app.setZoom(splineZoom);}catch(e){console.warn("Spline: setZoom falló",e&&e.message);}
+    }
+  }
+  if(v==="front"){ if(bed){try{bed.rotation.y=0;}catch(e){}} setZ(1); }
+  else if(v==="angle"){ if(bed){try{bed.rotation.y=0.6;}catch(e){}} setZ(1); }
+  else if(v==="top"){ if(bed){try{bed.rotation.y=0;}catch(e){}} setZ(0.55); }
 }
 function toggleAuto(){
   autoRot=!autoRot;
-  splineSetVar(SPLINE_VARIABLES.autoRotate,autoRot);
+  if(autoTimer){clearInterval(autoTimer);autoTimer=null;}
+  if(autoRot){
+    /* Giro automático tipo tornamesa: gira el grupo "Bed" poco a poco.
+       Se detiene con el mismo botón. Sin escena cargada no hace nada. */
+    autoTimer=setInterval(function(){
+      var bed=splineFind(SPLINE_OBJECTS.bed);
+      if(bed){try{bed.rotation.y+=0.02;}catch(e){}}
+    },50);
+  }
   updateAutoBtn();
 }
 function zoomBed(f){
@@ -547,6 +648,7 @@ function rotateBed(dir){
 function cycleDuvet(d){
   var n=DUVET_COLORS.length;
   st.duvetColor=(st.duvetColor+d+n)%n;
+  restoreDuvet();
   lastChange="Edredón: "+duvetLabel(DUVET_COLORS[st.duvetColor])+" (reversible)";
   render();
 }
@@ -650,7 +752,7 @@ function setStep(n){st.step=n;render();}
 function setSize(i){st.size=i;lastChange="Tamaño: "+SIZES[i].n;render();}
 function setSheetType(i){st.sheetType=i;lastChange="Sábanas: "+SHEET_TYPES[i].n;render();}
 function setSheetColor(n,h,img){st.sheetColor={name:n,hex:h,img:img||null};lastChange="Sábanas: "+n;render();}
-function setDuvetColor(i){st.duvetColor=i;lastChange="Edredón: "+duvetLabel(DUVET_COLORS[i])+" (reversible)";render();}
+function setDuvetColor(i){st.duvetColor=i;restoreDuvet();lastChange="Edredón: "+duvetLabel(DUVET_COLORS[i])+" (reversible)";render();}
 function setPillow(i){st.pillow=i;lastChange="Almohadas: "+PILLOWS[i].n;render();}
 function setComp(i){st.comp=i;lastChange="Complementos: "+COMPS[i].n;render();}
 function setCurtain(i){st.curtain=i;lastChange=i>=0?"Cortinas: "+CUR[i].name:"Sin cortinas";render();}
