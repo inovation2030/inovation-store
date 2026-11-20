@@ -2,8 +2,11 @@
 <!-- Spline Viewer (web component). Versión fijada 2.0.204, CDN oficial de Spline:
      es la misma versión del runtime con la que se publicó la escena
      (la página publicada de Spline carga @splinetool/runtime@2.0.204).
+     Se usa la variante SOLO WebGL (spline-viewer.webgl.js, HTTP 200
+     verificado): el build dual (spline-viewer.js) intenta WebGPU primero
+     y en iOS/WebKit ese intento puede quedarse colgado sin caer a WebGL.
      Carga el elemento <spline-viewer> que muestra la escena .splinecode. -->
-<script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.204/build/spline-viewer.js"></script>
+<script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.204/build/spline-viewer.webgl.js"></script>
 <style>
 /* Viste tu Cama — diseño exacto de la referencia: azul marino + dorado */
 .ref-header{background:linear-gradient(180deg,#081a38,#0d2a52);border-bottom:3px solid #E8A90C}
@@ -124,6 +127,16 @@
 .ref-header .logo small{font-size:8px;letter-spacing:2px}
 .ref-header .logo img{height:40px}
 .stage3d .hint3d{max-width:52%;font-size:11px}
+}
+@media(max-width:480px){
+/* En móvil las 3 píldoras de arriba del escenario se encimaban (live pill
+   a la izquierda, 360° centrado y pantalla completa a la derecha, las 3 en
+   top:12px). Se apilan: live y pantalla completa quedan arriba, más
+   compactas, y el 360° baja a la esquina inferior derecha, encima de los
+   controles de cámara (que están en bottom:70px). Sin cambios en escritorio. */
+.stage3d .live3d{left:10px;top:10px;font-size:10px;letter-spacing:1px;padding:6px 9px;max-width:56%}
+.stage3d .fs-btn{right:10px;top:10px;padding:6px 9px;font-size:12px;min-height:36px}
+.stage3d .deg360{left:auto;right:12px;top:auto;bottom:126px;transform:none}
 }
 /* --- Corrección ZIP: progreso de pasos, aviso de cambio en vivo, resumen
    con precios por fila, y botones flotantes compactos SOLO en esta página --- */
@@ -381,10 +394,22 @@ function showSplineFallback(reason){
   splineFallbackPhoto();
 }
 /* La instancia Application del runtime de Spline. El web component
-   <spline-viewer> la expone como .app una vez cargada la escena. */
+   <spline-viewer> 2.0.204 NO expone .app (no existe ese getter en el
+   código del visor: el.app es siempre undefined). La instancia vive en el
+   campo interno el._spline, creado por _createApplication(). Se resuelve
+   en cada llamada (no se cachea solo) porque el visor puede recrear la
+   aplicación al perder/restaurar el contexto WebGL. */
 function splineAppReady(){
-  if(splineViewer&&splineViewer.app)return splineViewer.app;
-  return splineApp;
+  var app=null;
+  if(splineViewer){
+    try{app=splineViewer._spline||null;}catch(e){app=null;}
+  }
+  if(!app)app=splineApp;
+  if(!app)return null;
+  /* Debe parecer una Application: setVariable y findObjectByName. Si no,
+     es un objeto viejo o incompleto y las llamadas no harían nada. */
+  if(typeof app.setVariable!=="function"&&typeof app.findObjectByName!=="function")return null;
+  return app;
 }
 function splineSetVar(name,value){
   var app=splineAppReady();
@@ -557,6 +582,13 @@ function initSpline(){
   el.setAttribute("url",SPLINE_SCENE_URL);
   el.setAttribute("events-target","global");
   el.setAttribute("loading-anim-type","spinner-small-dark");
+  /* loading="eager": el visor con loading="auto" (por defecto) retrasa la
+     carga si el elemento no está en el viewport al inicio; en móvil el
+     escenario está arriba pero el lazy-load lo dejaba en espera.
+     renderer="webgl": explícito para el build solo-WebGL (el build
+     ignora cualquier otro valor y avisa en consola si no coincide). */
+  el.setAttribute("loading","eager");
+  el.setAttribute("renderer","webgl");
   el.addEventListener("load-start",function(){
     var l=document.getElementById("splineLoading"); if(l)l.style.display="flex";
     startSplineLoadTimer();
@@ -564,7 +596,10 @@ function initSpline(){
   el.addEventListener("load-complete",function(){
     splineLoaded=true; splineFailed=false;
     clearSplineTimers();
-    try{splineApp=el.app||null;}catch(e){splineApp=null;}
+    /* Accesor real: el._spline (la Application del runtime). el.app NO
+       existe en el visor 2.0.204 y siempre era undefined, así que antes
+       splineApp quedaba en null y los setVariable no llegaban a la escena. */
+    try{splineApp=(el._spline&&typeof el._spline.setVariable==="function")?el._spline:null;}catch(e){splineApp=null;}
     var l=document.getElementById("splineLoading"); if(l)l.style.display="none";
     var f=document.getElementById("splineFallback"); if(f)f.style.display="none";
     applyStateToSpline();
