@@ -43,23 +43,24 @@
 .cfg3d .swatches .sw.on{box-shadow:0 0 0 3px #F2B705}
 .stage-col{background:#e8edf1;display:flex;flex-direction:column;min-width:0}
 .stage3d{position:relative;background:#e8edf1;height:calc(100vh - 210px);min-height:560px;flex:1}
-.stage3d canvas{width:100%;height:100%;display:block;touch-action:none}
+.stage3d canvas{width:100%;height:100%;display:block;touch-action:pan-y}
 .stage3d:fullscreen{height:100vh;min-height:100vh}
 .stage3d:fullscreen canvas{height:100%}
-.fs-btn{position:absolute;right:14px;top:12px;background:rgba(255,255,255,.92);border:1px solid #dfe5ea;border-radius:20px;padding:7px 12px;font-size:13px;font-weight:700;color:#123a6b;cursor:pointer;z-index:5}
-.stage3d .hint3d{position:absolute;left:14px;bottom:14px;background:rgba(255,255,255,.88);color:#53616f;font-size:12px;padding:9px 12px;border-radius:8px;pointer-events:none;z-index:3}
+.fs-btn{position:absolute;right:14px;top:12px;background:rgba(255,255,255,.92);border:1px solid #dfe5ea;border-radius:20px;padding:7px 12px;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:700;color:#123a6b;cursor:pointer;z-index:5}
+.stage3d .hint3d{position:absolute;left:14px;bottom:70px;background:rgba(255,255,255,.88);color:#53616f;font-size:12px;padding:9px 12px;border-radius:8px;pointer-events:none;z-index:3;max-width:46%}
 .stage3d .live3d{position:absolute;left:14px;top:12px;background:#0B3D91;color:#fff;font-size:11px;letter-spacing:2px;padding:7px 12px;border-radius:20px;z-index:3}
 .stage3d .live3d b{color:#F2B705}
-.bed-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.9);border:1px solid #dfe5ea;border-radius:50%;width:52px;height:52px;font-size:28px;cursor:pointer;z-index:3;color:#123a6b}
-.bed-nav.l{left:14px}.bed-nav.r{right:14px}
-.deg360{position:absolute;left:50%;bottom:56px;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:20px;font-weight:700;z-index:3;pointer-events:none}
-.zoom3d{position:absolute;right:16px;bottom:120px;display:flex;flex-direction:column;gap:10px;z-index:3}
-.zoom3d button{width:46px;height:46px;border-radius:50%;border:1px solid #dfe5ea;background:#fff;font-size:24px;cursor:pointer;color:#123a6b}
+/* Controles de cámara en un solo grupo compacto abajo a la derecha del visor
+   (antes: flechas laterales sobre la cama + columna de zoom separada, que
+   tapaban el producto). 44x44 px mínimo táctil. */
+.stage-controls{position:absolute;right:12px;bottom:70px;display:flex;gap:8px;z-index:5}
+.stage-controls button{width:44px;height:44px;border-radius:50%;border:1px solid #dfe5ea;background:rgba(255,255,255,.95);font-size:24px;cursor:pointer;color:#123a6b;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.deg360{position:absolute;left:50%;top:12px;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:20px;font-weight:700;z-index:3;pointer-events:none}
 .gl-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#53616f;background:#e8edf1;text-align:center;padding:20px;z-index:2}
 .gl-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f7f6f2;text-align:center;padding:20px;z-index:4}
 .gl-fallback img{max-width:420px;width:100%;border-radius:12px}
 .color-strip{background:#fff;padding:14px 10px 10px;display:flex;align-items:center;gap:8px;border-top:1px solid #e3e8ee}
-.strip-arrow{flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid #dfe5ea;background:#fff;font-size:20px;cursor:pointer;color:#123a6b}
+.strip-arrow{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid #dfe5ea;background:#fff;font-size:20px;cursor:pointer;color:#123a6b}
 .color-items{display:flex;gap:14px;overflow-x:auto;flex:1;padding:2px}
 .csw{position:relative;flex:0 0 auto;width:74px;text-align:center;cursor:pointer}
 .csw img{width:64px;height:64px;object-fit:cover;border-radius:12px;border:3px solid #e3e8ee;display:block;margin:0 auto}
@@ -67,7 +68,7 @@
 .csw .tick{position:absolute;top:-4px;right:2px;width:22px;height:22px;border-radius:50%;background:#123a6b;color:#fff;display:grid;place-items:center;font-size:12px;border:2px solid #fff}
 .csw span{font-size:12px;color:#123a6b;display:block;padding-top:4px}
 .viewbar{display:flex;gap:8px;flex-wrap:wrap;margin:0;padding:12px 14px;background:#fff;border-top:1px solid #e3e8ee}
-.viewbar button{border:1px solid #e3e8ee;border-radius:20px;background:#fff;padding:9px 14px;cursor:pointer;font-size:14px;font-weight:600;color:#123a6b}
+.viewbar button{border:1px solid #e3e8ee;border-radius:20px;background:#fff;padding:9px 14px;min-height:44px;cursor:pointer;font-size:14px;font-weight:600;color:#123a6b}
 .viewbar button:hover,.viewbar button.on{border-color:#E8A90C;background:#fff8dd}
 .sheet-chip{text-align:center;margin:10px 0 2px;font-weight:700;color:#123a6b;background:#fff;padding:8px}
 .bed-size-line{text-align:center;color:#5a6a7a;background:#fff;padding:0 8px 12px;margin:0}
@@ -99,7 +100,7 @@
 .stage-heading .live-dot{color:#c8d8cb;letter-spacing:1px}
 .stage-footer{padding:13px 15px;background:#f3f0e9;color:#18283b;display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px}
 .stage-footer .swatches{display:flex;gap:7px;flex-wrap:wrap}
-.qsw{width:24px;height:24px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0;box-shadow:0 0 0 1px #c8c2b2}
+.qsw{width:44px;height:44px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0;box-shadow:0 0 0 1px #c8c2b2}
 .qsw.on{outline:2px solid #E8A90C;outline-offset:1px}
 .total-box{margin:18px 0 14px;display:grid;gap:6px}
 .total-box .total-lbl{margin:0}
@@ -112,7 +113,29 @@
 .ref-header .logo b{font-size:17px}
 .ref-header .logo small{font-size:8px;letter-spacing:2px}
 .ref-header .logo img{height:40px}
+.stage3d .hint3d{max-width:52%;font-size:11px}
 }
+/* --- Corrección ZIP: progreso de pasos, aviso de cambio en vivo, resumen
+   con precios por fila, y botones flotantes compactos SOLO en esta página --- */
+.step-count{color:#b9c9de;font-size:12px;margin:0 0 8px 46px}
+.step-progress{display:flex;gap:6px;margin:0 0 6px 46px}
+.step-progress i{flex:1;height:5px;border-radius:3px;background:#1c3a6b}
+.step-progress i.on{background:#F2B705}
+.step-progress i.done{background:#7ee2a0}
+#stepOpts{border-top:1px solid #1c3a6b;margin-top:16px;padding-top:4px}
+.change-toast{position:absolute;left:50%;top:64px;transform:translateX(-50%) translateY(-6px);background:rgba(11,61,145,.93);color:#fff;border:1px solid #F2B705;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:700;z-index:6;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.change-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.sel-row .price{margin-left:auto;color:#F2B705;font-weight:700;white-space:nowrap;font-size:14px}
+.sel-row span{flex:1;min-width:0}
+/* WhatsApp y ayuda: en ESTA página son botones compactos de 44px, solo icono,
+   abajo sin tapar la escena, los pasos ni el resumen. No se toca chat.js ni
+   el resto del sitio: estos estilos solo existen en viste-tu-cama.html. */
+body .wa-fab{left:10px!important;bottom:10px!important;padding:0!important;width:44px;height:44px;border-radius:50%!important;justify-content:center}
+body .wa-fab svg{width:24px;height:24px}
+body .wa-fab-label,body .chat-fab-label{display:none!important}
+body .chat-fab{right:10px!important;bottom:10px!important;padding:0!important;width:44px;height:44px;border-radius:50%!important;justify-content:center;font-size:20px}
+body .chat-panel{bottom:64px!important;right:10px!important}
+main{padding-bottom:84px!important}
 </style></head><body>
 <header class="site ref-header"><div class="header-in">
 <a class="logo" href="index.html"><img src="assets/logo.png" alt="Inovation Store"><span><b>Inovation Store<sup>®</sup></b><small>HOGAR PREMIUM</small></span></a>
@@ -130,6 +153,8 @@
 <div class="panel panel-steps">
 <div class="cfg-title"><span class="bed-ico">🛏️</span><h2>Viste tu Cama</h2></div>
 <p class="cfg-sub">Diseña tu combinación ideal</p>
+<p class="step-count" id="stepCount">Paso 3 de 5 · Edredón</p>
+<div class="step-progress" id="stepProgress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 <div id="steps"></div>
 <div id="stepOpts"></div>
 </div>
@@ -137,13 +162,17 @@
 <div class="stage-heading"><span>VISTA PREVIA</span><span class="live-dot">● CONFIGURACIÓN EN VIVO</span></div>
 <div class="stage3d" id="stage3d">
 <div class="live3d">● MODELO 3D EN VIVO · <b>Three.js</b></div>
+<div class="change-toast" id="changeToast" role="status"></div>
 <button class="fs-btn" id="fsBtn" type="button" onclick="toggleFS()" aria-label="Ver la habitación a pantalla completa">⛶ Pantalla completa</button>
 <div class="gl-loading" id="glLoading"><b>Cargando modelo 3D…</b><span>Si tarda más de unos segundos, revisa tu conexión.</span></div>
 <div class="gl-fallback" id="glFallback"><img src="assets/edredon-azul-marino.jpg" alt="Cama vestida"><p><b>La escena 3D no se pudo cargar en este teléfono/navegador.</b><br><span id="glError">Revisa tu conexión a internet y recarga la página.</span><br>El configurador de opciones de abajo sigue funcionando.</p></div>
-<button class="bed-nav l" type="button" onclick="rotateBed(-1)" aria-label="Girar a la izquierda">‹</button>
-<button class="bed-nav r" type="button" onclick="rotateBed(1)" aria-label="Girar a la derecha">›</button>
+<div class="stage-controls" role="group" aria-label="Controles de cámara">
+<button type="button" onclick="rotateBed(-1)" aria-label="Girar a la izquierda">‹</button>
+<button type="button" onclick="rotateBed(1)" aria-label="Girar a la derecha">›</button>
+<button type="button" onclick="zoomBed(-0.15)" aria-label="Alejar">−</button>
+<button type="button" onclick="zoomBed(0.15)" aria-label="Acercar">＋</button>
+</div>
 <div class="deg360">⟳ 360° ⟲</div>
-<div class="zoom3d"><button type="button" onclick="zoomBed(0.15)" aria-label="Acercar">＋</button><button type="button" onclick="zoomBed(-0.15)" aria-label="Alejar">−</button></div>
 <div class="hint3d">Arrastra para girar 360° · Rueda o pellizca para acercar · Dos dedos para desplazar</div>
 </div>
 <div class="color-strip">
@@ -152,9 +181,9 @@
 <button class="strip-arrow" type="button" onclick="cycleDuvet(1)" aria-label="Color siguiente">›</button>
 </div>
 <div class="viewbar">
-<button type="button" onclick="setView('front')">Vista frontal</button>
-<button type="button" onclick="setView('angle')" class="on" id="btnAngle">Vista 3/4</button>
-<button type="button" onclick="setView('top')">Vista superior</button>
+<button type="button" onclick="setView('front',this)">Vista frontal</button>
+<button type="button" onclick="setView('angle',this)" class="on" id="btnAngle">Vista 3/4</button>
+<button type="button" onclick="setView('top',this)">Vista superior</button>
 <button type="button" onclick="toggleAuto()" id="btnAuto">Giro automático: apagado</button>
 </div>
 <div class="stage-footer"><span>Colores rápidos del edredón — toca uno para cambiarlo en vivo</span><span class="swatches" id="quickSwatches"></span></div>
@@ -172,7 +201,7 @@
 <p><a href="index.html" style="color:#F2B705">← Volver a la tienda</a></p>
 </div>
 </div>
-<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D procedural con Three.js y texturas de las fotos reales de tus productos. Los modelos fotorrealistas de Blender (.glb) se podrán cargar en esta misma escena cuando estén listos.</p>
+<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D procedural con Three.js y texturas de las fotos reales de tus productos. <b>Modelo GLB pendiente:</b> no existe ningún modelo .glb en el proyecto (faltan bed_frame, mattress, fitted_sheet, duvet, pillow_left/right y headboard); la cama actual es procedural y la caída textil es una aproximación — para una caída de tela realista hace falta un modelo Blender exportado a .glb, que se podrá cargar en esta misma escena cuando esté listo.</p>
 </main>
 <aside id="cartDrawer" aria-label="Carrito">
 <h2>Tu carrito</h2><div id="cartItems"></div>
@@ -326,6 +355,45 @@ function loadTex(url){
   t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.anisotropy=4;
   texCache[url]=t; return t;
 }
+/* Textura ajustada a la proporción real del plano (ZIP: sin estiramientos).
+   La foto del edredón es 1024x990 (casi cuadrada) y el plano del edredón es
+   ~1.4:1; mapearla 1:1 estiraba los rombos. fitTex clona la textura y recorta
+   por el centro (repeat/offset) para que la proporción se conserve. */
+function fitTex(url,pw,pl){
+  if(!url)return null;
+  var key=url+"|"+pw.toFixed(2)+"x"+pl.toFixed(2);
+  if(texCache[key])return texCache[key];
+  var base=loadTex(url);
+  var t=base.clone();
+  var img=base.image;
+  var texAspect=(img&&img.width&&img.height)?img.width/img.height:1.03;
+  var planeAspect=pw/Math.max(pl,0.01);
+  var rx=1, ry=1, ox=0, oy=0;
+  if(planeAspect>texAspect){ry=texAspect/planeAspect;oy=(1-ry)/2;}
+  else{rx=planeAspect/texAspect;ox=(1-rx)/2;}
+  t.repeat.set(rx,ry); t.offset.set(ox,oy); t.needsUpdate=true;
+  texCache[key]=t; return t;
+}
+var mattressTexCache=null;
+/* Textura propia del colchón (material independiente, no comparte la del
+   edredón ni la de las sábanas): acolchado blanco muy tenue, procedural. */
+function makeMattressTex(){
+  if(mattressTexCache)return mattressTexCache;
+  var c=document.createElement("canvas"); c.width=c.height=256;
+  var x=c.getContext("2d");
+  x.fillStyle="#fbfaf6"; x.fillRect(0,0,256,256);
+  x.strokeStyle="rgba(190,185,170,0.5)"; x.lineWidth=1.5;
+  for(var i=-256;i<=512;i+=64){
+    x.beginPath(); x.moveTo(i,0); x.lineTo(i+256,256); x.stroke();
+    x.beginPath(); x.moveTo(i+256,0); x.lineTo(i,256); x.stroke();
+  }
+  var t=new THREE.CanvasTexture(c);
+  t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(3,3); t.anisotropy=4;
+  mattressTexCache=t; return t;
+}
+/* Miniatura rota: sustituto neutro dorado en vez de imagen rota. */
+function imgFallback(el){el.onerror=null;el.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%23c5a15b'/%3E%3C/svg%3E";}
+window.imgFallback=imgFallback;
 function mat(c,r,extra){
   var o=Object.assign({color:c,roughness:(r===undefined?0.85:r),metalness:0},extra||{});
   return new THREE.MeshStandardMaterial(o);
@@ -455,20 +523,30 @@ function duvetGeometry(w,len,type){
     }else{
       z=0.016*Math.sin(x*5)*Math.sin(y*4)+0.008*Math.sin(x*10+y*6);
     }
-    var edge=Math.max(0,(Math.abs(nx)-0.72)/0.28);
-    var edgeY=Math.max(0,(Math.abs(ny)-0.8)/0.2);
-    z-=0.20*Math.max(edge,edgeY*0.7);
+    var edge=Math.max(0,(Math.abs(nx)-0.5)/0.5);
+    var edgeY=Math.max(0,(Math.abs(ny)-0.75)/0.25);
+    /* Caída natural lateral: el borde empieza a caer a la mitad del ancho y
+       baja 0.38 m hasta rozar el marco de la cama. Antes caía solo 0.20 m y
+       empezaba al 72% del ancho, así que el edredón quedaba suspendido en el
+       aire a 15 cm del colchón. Ahora APOYA sobre el colchón y cuelga por los
+       costados como una tela real. */
+    z-=0.38*Math.max(edge,edgeY*0.8);
     pos.setZ(i,z);
   }
   geo.computeVertexNormals();
   geo.rotateX(-Math.PI/2);
   return geo;
 }
-function pillowMesh(x,y,z,w,material,tilt){
+/* Almohada a escala real de la cama, con ancho/profundidad/alto explícitos.
+   Antes cada almohada medía w/2 de escala (2.6 m en una Queen: las dos se
+   solapaban por completo) y flotaba 9 cm sobre el colchón. Ahora apoya sobre
+   la sábana (base ligeramente hundida en el colchón) y se inclina contra la
+   cabecera. */
+function pillowMesh(x,y,z,pw,pd,ph,material,tilt){
   var g=new THREE.SphereGeometry(1,24,16);
   var m=new THREE.Mesh(g,material);
-  m.scale.set(w/2,0.16,w*0.32);
-  m.position.set(x,y,z); m.rotation.x=tilt||-0.12; m.rotation.z=(Math.random()-0.5)*0.04;
+  m.scale.set(pw/2,ph/2,pd/2);
+  m.position.set(x,y,z); m.rotation.x=tilt||-0.38; m.rotation.z=(Math.random()-0.5)*0.04;
   m.castShadow=true; m.receiveShadow=true;
   return m;
 }
@@ -476,17 +554,24 @@ function buildBed(){
   if(!bedGroup)return;
   while(bedGroup.children.length){
     var o=bedGroup.children[0]; bedGroup.remove(o);
-    o.traverse(function(n){if(n.geometry)n.geometry.dispose();});
+    o.traverse(function(n){
+      if(n.geometry)n.geometry.dispose();
+      /* Las texturas en caché (fotos del edredón/cortinas) NO se eliminan:
+         material.dispose() no toca las texturas, así que es seguro. */
+      if(n.material){(Array.isArray(n.material)?n.material:[n.material]).forEach(function(m){m.dispose();});}
+    });
   }
   var w=SIZES[st.size].w, d=BED_D;
-  var wood=mat("#6b4a2f",0.65), darkWood=mat("#4d3a28",0.7), white=mat("#fbfaf6",0.9);
+  /* Materiales INDEPENDIENTES por pieza (ZIP): cada pieza crea su propio
+     material; antes colchón y almohadas compartían la misma instancia
+     `white`, así que un cambio en una pieza afectaba a la otra. */
+  var wood=mat("#6b4a2f",0.65), darkWood=mat("#4d3a28",0.7);
   var gold=mat("#c5a15b",0.35,{metalness:0.65});
   var sheetCol=st.sheetColor.hex;
-  /* SÁBANAS SIN FOTO: color puro (hex). La versión anterior pegaba la foto del
-     producto (sabana-*.jpg, una foto de dormitorio con imagen impresa verde/
-     amarilla) como mapa de la sábana, y por eso la sábana se veía con una imagen
-     impresa. Las fotos reales solo se usan como miniaturas en la interfaz HTML. */
+  /* SÁBANA AJUSTADA (fitted sheet): color puro, sin foto. */
   var sheetMat=new THREE.MeshStandardMaterial({color:sheetCol,roughness:0.9});
+  /* COLCHÓN: superficie principal, material propio con su textura tenue. */
+  var mattressMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:makeMattressTex(),roughness:0.9});
   var dc=DUVET_COLORS[st.duvetColor];
   var duvetType=DUVET_TYPES[st.duvetType].n;
   /* DOBLE VISTA con fotos generadas iguales al edredón real: la cara lleva la
@@ -496,8 +581,8 @@ function buildBed(){
      Marino de azul noche. La misma imagen se usa como bumpMap para que el
      acolchado en rombos tenga relieve de cerca. Al cambiar de color en el
      Paso 3 o en las muestras rápidas, AMBAS caras se actualizan. */
-  var faceTex=duvetPhotoTex(dc.tex);
-  var revTex=duvetPhotoTex(dc.revTex);
+  var faceTex=fitTex(dc.tex,w+0.55,2.3);
+  var revTex=fitTex(dc.revTex,w+0.55,2.3);
   var bumpScale=duvetType==="Texturizado"?0.06:duvetType==="Capitonado"?0.05:duvetType==="Premium"?0.02:0.025;
   var duvetMat, duvetRevMat;
   if(duvetType==="Premium"){
@@ -517,12 +602,24 @@ function buildBed(){
     var btn=new THREE.Mesh(new THREE.SphereGeometry(0.03,10,8),gold);
     btn.position.set(hx*(w/3),1.05+hy*0.66,-d/2+0.03); bedGroup.add(btn);
   }}
-  box(bedGroup,w,0.38,d,0,0.88,0,white);
-  box(bedGroup,w+0.02,0.07,d-0.06,0,MAT_TOP,0.01,sheetMat);
-  if(st.comp===1||st.comp===2){box(bedGroup,w+0.06,0.035,d+0.04,0,1.12,0,mat("#cbd9df",0.6));}
-  var duvetGeo=duvetGeometry(w+0.28,d*0.66,duvetType);
+  box(bedGroup,w,0.38,d,0,0.88,0,mattressMat);
+  /* SÁBANA AJUSTADA AL COLCHÓN: panel superior + 4 faldones que envuelven los
+     costados del colchón (como una sábana puesta de verdad). Antes era una
+     lámina fina apoyada encima, que se veía flotando. El panel superior queda
+     0.005 m sobre el colchón y los faldones bajan 0.30 m por los lados. */
+  box(bedGroup,w+0.06,0.05,d+0.02,0,MAT_TOP+0.005,0,sheetMat);
+  box(bedGroup,0.04,0.30,d, w/2+0.01,MAT_TOP-0.12,0,sheetMat);
+  box(bedGroup,0.04,0.30,d,-w/2-0.01,MAT_TOP-0.12,0,sheetMat);
+  box(bedGroup,w+0.06,0.30,0.04,0,MAT_TOP-0.12, d/2+0.01,sheetMat);
+  box(bedGroup,w+0.06,0.30,0.04,0,MAT_TOP-0.12,-d/2-0.01,sheetMat);
+  /* Protector/cubrecolchón VA DEBAJO de la sábana, no encima del edredón. */
+  if(st.comp===1||st.comp===2){box(bedGroup,w+0.02,0.03,d+0.02,0,MAT_TOP-0.02,0,mat("#cbd9df",0.6));}
+  /* EDREDÓN APOYADO SOBRE EL COLCHÓN: y = MAT_TOP+0.05 (antes +0.16: flotaba
+     15 cm) y más ancho/largo (w+0.55 x 2.3) para que cuelgue por los costados.
+     La caída lateral de duvetGeometry (-0.38) lo baja hasta el marco. */
+  var duvetGeo=duvetGeometry(w+0.55,2.3,duvetType);
   var duvet=new THREE.Mesh(duvetGeo,duvetMat);
-  duvet.position.set(0,MAT_TOP+0.16,0.42); duvet.castShadow=true; duvet.receiveShadow=true; bedGroup.add(duvet);
+  duvet.position.set(0,MAT_TOP+0.05,0.30); duvet.castShadow=true; duvet.receiveShadow=true; bedGroup.add(duvet);
   /* Reverso del edredón (misma geometría, cara trasera): al girar la cama o
      ver los bordes caídos se ve el color contrario, como un edredón real. */
   var duvetRev=new THREE.Mesh(duvetGeo,duvetRevMat);
@@ -530,48 +627,50 @@ function buildBed(){
      por debajo: desde el lateral se ve el reverso aunque la cara tape el centro.
      Antes estaba exactamente debajo de la cara, mismo tamaño, y era invisible. */
   duvetRev.scale.set(1.02,1,1.02);
-  duvetRev.position.set(0,MAT_TOP+0.15,0.42); duvetRev.castShadow=false; duvetRev.receiveShadow=true; bedGroup.add(duvetRev);
-  box(bedGroup,w+0.3,0.05,0.42,0,MAT_TOP+0.2,-0.62,sheetMat);
+  duvetRev.position.set(0,MAT_TOP+0.04,0.30); duvetRev.castShadow=false; duvetRev.receiveShadow=true; bedGroup.add(duvetRev);
   /* SOLAPA DOBLADA AL PIE, GRANDE Y CLARAMENTE DEL REVERSO: ya no es una caja
      plana (eso era lo que se veía como un rectángulo blanco cubriendo el
      edredón). Ahora es un plano drapeado con la misma geometría del edredón
      (mismo relieve de rombos), de 0.72 m de fondo cubriendo todo el pie de la
      cama, con la textura generada del REVERSO (dc.revTex) y un rollo de doblez
      en su borde superior. Al girar la cama se ve el reverso en la solapa. */
-  var flapMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:revTex,bumpMap:revTex,bumpScale:0.03,roughness:0.95,side:THREE.DoubleSide});
-  flapMat.userData.faceHex=dc.rev; flapMat.userData.faceTexUrl=dc.revTex; flapMat.userData.faceTex=revTex;
-  var flap=new THREE.Mesh(duvetGeometry(w+0.30,0.72,duvetType),flapMat);
-  flap.position.set(0,MAT_TOP+0.21,1.08); flap.castShadow=true; flap.receiveShadow=true; bedGroup.add(flap);
-  var foldRoll=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,w+0.30,16),flapMat);
-  foldRoll.rotation.z=Math.PI/2; foldRoll.position.set(0,MAT_TOP+0.24,0.72); foldRoll.castShadow=true; bedGroup.add(foldRoll);
-  if(st.comp===0||st.comp===2){box(bedGroup,w+0.08,0.05,0.46,0,MAT_TOP+0.22,1.25,mat("#9b806b",0.85));}
+  var flapMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:fitTex(dc.revTex,w+0.57,0.72),bumpMap:fitTex(dc.revTex,w+0.57,0.72),bumpScale:0.03,roughness:0.95,side:THREE.DoubleSide});
+  flapMat.userData.faceHex=dc.rev; flapMat.userData.faceTexUrl=dc.revTex; flapMat.userData.faceTex=fitTex(dc.revTex,w+0.57,0.72);
+  var flap=new THREE.Mesh(duvetGeometry(w+0.57,0.72,duvetType),flapMat);
+  flap.position.set(0,MAT_TOP+0.10,1.09); flap.castShadow=true; flap.receiveShadow=true; bedGroup.add(flap);
+  var foldRoll=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,w+0.57,16),flapMat);
+  foldRoll.rotation.z=Math.PI/2; foldRoll.position.set(0,MAT_TOP+0.13,0.73); foldRoll.castShadow=true; bedGroup.add(foldRoll);
+  if(st.comp===0||st.comp===2){box(bedGroup,w+0.08,0.05,0.46,0,MAT_TOP,1.25,mat("#9b806b",0.85));}
   /* Banca al pie de la cama */
   box(bedGroup,w*0.8,0.1,0.45,0,0.52,d/2+0.55,mat("#c5a15b",0.85));
   [-w*0.36,w*0.36].forEach(function(bx){box(bedGroup,0.08,0.5,0.4,bx,0.26,d/2+0.55,wood);});
   var pilOpt=st.pillow;
-  var sleepMat=white;
+  var pw=Math.min(w*0.40,1.05); /* ancho de almohada a escala de la cama */
+  var py=MAT_TOP+0.13, pz=-1.22; /* apoyada en la sábana, contra la cabecera */
+  var px=pw/2+0.06;
+  function sleepPillow(x,z,yy){return pillowMesh(x,yy===undefined?py:yy,z,pw,0.55,0.30,mat("#fbfaf6",0.9),-0.38);}
   if(pilOpt===0){
-    bedGroup.add(pillowMesh(-w/4,1.32,-1.12,w/2.1,sleepMat));
-    bedGroup.add(pillowMesh(w/4,1.32,-1.12,w/2.1,sleepMat));
-    bedGroup.add(pillowMesh(-w/5,1.44,-0.78,0.55,mat("#c5a15b",0.85)));
-    bedGroup.add(pillowMesh(w/5,1.44,-0.78,0.55,mat("#1f3a5f",0.85)));
+    bedGroup.add(sleepPillow(-px,pz));
+    bedGroup.add(sleepPillow(px,pz));
+    bedGroup.add(pillowMesh(-0.28,py+0.10,-0.82,0.5,0.42,0.26,mat("#c5a15b",0.85),-0.25));
+    bedGroup.add(pillowMesh(0.28,py+0.10,-0.82,0.5,0.42,0.26,mat("#1f3a5f",0.85),-0.25));
   }else if(pilOpt===1){
-    bedGroup.add(pillowMesh(-w/4,1.32,-1.12,w/2.1,sleepMat));
-    bedGroup.add(pillowMesh(w/4,1.32,-1.12,w/2.1,sleepMat));
+    bedGroup.add(sleepPillow(-px,pz));
+    bedGroup.add(sleepPillow(px,pz));
   }else if(pilOpt===2){
-    [-0.62,0.62].forEach(function(rz){
-      bedGroup.add(pillowMesh(-w/4,1.32,-1.12+rz*0.35,w/2.1,sleepMat));
-      bedGroup.add(pillowMesh(w/4,1.32,-1.12+rz*0.35,w/2.1,sleepMat));
-    });
+    bedGroup.add(sleepPillow(-px,-1.18));
+    bedGroup.add(sleepPillow(px,-1.18));
+    bedGroup.add(sleepPillow(-px,-0.70,py+0.08));
+    bedGroup.add(sleepPillow(px,-0.70,py+0.08));
   }else if(pilOpt===3){
-    bedGroup.add(pillowMesh(-w/4,1.32,-1.12,w/2.1,mat("#f2ead8",0.95)));
-    bedGroup.add(pillowMesh(w/4,1.32,-1.12,w/2.1,mat("#f2ead8",0.95)));
+    bedGroup.add(pillowMesh(-px,py,pz,pw,0.55,0.30,mat("#f2ead8",0.95),-0.38));
+    bedGroup.add(pillowMesh(px,py,pz,pw,0.55,0.30,mat("#f2ead8",0.95),-0.38));
   }else{
-    bedGroup.add(pillowMesh(0,1.32,-1.12,w/1.8,sleepMat)); /* 1 almohada (Standard o King) */
+    bedGroup.add(pillowMesh(0,py,pz,pw,0.55,0.30,mat("#fbfaf6",0.9),-0.38)); /* 1 almohada (Standard o King) */
   }
   if(st.comp===3){
     for(var ci=-1;ci<=1;ci++){
-      bedGroup.add(pillowMesh(ci*0.5,1.46,-0.6,0.5,mat(ci===0?"#c5a15b":"#b5a28b",0.85),-0.25));
+      bedGroup.add(pillowMesh(ci*0.5,py+0.12,-0.55,0.5,0.42,0.26,mat(ci===0?"#c5a15b":"#b5a28b",0.85),-0.25));
     }
   }
   /* Cortinas Blackout Thermal a los lados de la ventana (Paso 5).
@@ -582,7 +681,7 @@ function buildBed(){
   if(st.curtain>=0){
     var cc=CUR[st.curtain];
     cMat=new THREE.MeshStandardMaterial({color:cc.img?"#ffffff":cc.hex,roughness:0.95,side:THREE.DoubleSide});
-    if(cc.img)cMat.map=loadTex(cc.img);
+    if(cc.img)cMat.map=fitTex(cc.img,1.35,3.45);
   }else{
     cMat=new THREE.MeshStandardMaterial({color:"#ffffff",roughness:0.9,side:THREE.DoubleSide,transparent:true,opacity:0.55});
   }
@@ -603,46 +702,104 @@ function buildBed(){
   });
 }
 var lastAspect=0;
-/* Encuadre de la HABITACION completa, no solo de la cama.
-   Causa del bug de la captura IMG_0912 (celular 390x844): con FOV 38 y
-   camara fija en (5.8,5.0,8.4) el FOV horizontal en un retrato estrecho
-   era de solo ~18 grados, asi que a la distancia del objetivo solo se
-   veian ~3.5 m de ancho (la cama) y la habitacion (alfombra 5.8 m,
-   cortinas en x +/-2.45, mesitas, paredes) quedaba fuera de cuadro y la
-   escena parecia una foto plana de una cama.
-   frameRoom() calcula la distancia desde el aspecto real: cabe el ancho
-   de la habitacion (7.2 m: cortinas + remates, mesitas, alfombra) y su
-   alto (4.6 m: piso a varilla de cortinas) con un FOV mas amplio en
-   retrato. Se reencuadra solo cuando el aspecto cambia (giro de
-   pantalla, pantalla completa, cambio de tamano), nunca mientras el
-   usuario gira la camara con el dedo. */
+var camAnim=null;
+/* ---------- Encuadre por Box3 REAL del conjunto cama (ZIP: frameObject) ------
+   Antes se encuadraba la HABITACIÓN (7.2 x 4.6 m): la cama quedaba al 20-35%
+   del visor. Ahora se encuadra el Box3 real de bedGroup (estructura, cabecera,
+   colchón, edredón, almohadas, banca): la cama ocupa ~80-90% de la dimensión
+   limitante del visor, centrada, sin recortes, en iPhone vertical/horizontal,
+   tablet y escritorio. FOV más cerrado (40-48° en vez de 55°) para que las
+   proporciones no se deformen al alejar/acercar la cámara. En el Paso 5
+   (cortinas) se encuadra la habitación completa para ver la ventana. */
 var ROOM_TARGET={x:0,y:1.3,z:-0.2}, ROOM_W=7.2, ROOM_H=4.6;
-function fitDistance(){
+var BED_FIT_MARGIN=1.15; /* 1/0.87: la cama llena ~87% de la dimensión
+   limitante del visor (ZIP: 80-90%), sin recortes. */
+function bedBounds(){
+  if(!bedGroup)return null;
+  bedGroup.updateWorldMatrix(true,true);
+  var b=new THREE.Box3().setFromObject(bedGroup);
+  if(b.isEmpty())return null;
+  return b;
+}
+function frameFov(){
+  var a=stage.clientWidth/Math.max(1,stage.clientHeight);
+  return a<0.7?48:a<1.2?44:40;
+}
+/* Distancia de encuadre desde la PROYECCIÓN REAL del Box3 de la cama
+   (ZIP starter frameObject): se proyectan las 8 esquinas del Box3 sobre los
+   ejes derecha/arriba de la cámara para la dirección de vista (az, el) y se
+   toma la distancia que hace caber la mayor de las dos extensiones. El
+   término de profundidad analítico anterior ((size.z/2)/t*0.7) sobreestimaba
+   la distancia en escritorio y dejaba la cama al 61% de la altura del visor;
+   con la proyección real la cama llena ~87% de la dimensión limitante en
+   iPhone vertical y en escritorio, sin deformarse al hacer zoom (la cámara
+   solo se aleja/acercar, las proporciones del modelo son fijas). */
+function fitDistanceFor(size,az,el){
+  if(az===undefined)az=0.61; if(el===undefined)el=0.38; /* vista 3/4 por defecto */
+  var fov=THREE.MathUtils.degToRad(camera.fov);
+  var t=Math.tan(fov/2);
+  var aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
+  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
+  var rx=dz, rz=-dx, rl=Math.hypot(rx,rz)||1; rx/=rl; rz/=rl; /* eje derecha */
+  var ux=rz*dy, uy=rz*(-dx)-rx*(-dz), uz=rx*(-dy); /* eje arriba = right × forward */
+  var hx=size.x/2, hy=size.y/2, hz=size.z/2;
+  var maxH=hx*Math.abs(rx)+hz*Math.abs(rz);
+  var maxV=hx*Math.abs(ux)+hy*Math.abs(uy)+hz*Math.abs(uz);
+  var dV=maxV/t, dH=maxH/(t*aspect);
+  return Math.max(dV,dH)*BED_FIT_MARGIN;
+}
+/* Transición suave de cámara (450 ms, ease in-out). Se cancela al tocar. */
+function flyTo(pos,tgt,instant){
+  if(!camera||!controls)return;
+  if(instant){
+    camera.position.copy(pos); controls.target.copy(tgt);
+    camera.updateProjectionMatrix(); controls.update(); return;
+  }
+  camAnim={p0:camera.position.clone(),p1:pos.clone(),t0:controls.target.clone(),t1:tgt.clone(),start:performance.now(),dur:450,wasAuto:controls.autoRotate};
+  controls.autoRotate=false; controls.enabled=false;
+}
+function frameObject(instant){
+  if(!camera||!controls||!stage)return;
+  var b=bedBounds(); if(!b)return;
+  var center=b.getCenter(new THREE.Vector3());
+  var size=b.getSize(new THREE.Vector3());
+  camera.aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
+  camera.fov=frameFov();
+  var az=0.61, el=0.38;
+  var dist=fitDistanceFor(size,az,el);
+  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
+  flyTo(new THREE.Vector3(center.x+dx*dist,center.y+dy*dist,center.z+dz*dist),center,instant);
+  var maxDim=Math.max(size.x,size.y,size.z);
+  controls.minDistance=maxDim*0.5;
+  controls.maxDistance=maxDim*2.8;
+  camera.near=Math.max(0.01,maxDim/1000); camera.far=maxDim*100;
+  camera.updateProjectionMatrix();
+  lastAspect=camera.aspect;
+}
+function fitDistanceRoom(){
   var w=stage.clientWidth,h=stage.clientHeight;
   if(!w||!h)return 10;
   var aspect=w/h;
-  var vFov=aspect<0.7?55:aspect<1?50:40;
-  var vTan=Math.tan(vFov*Math.PI/360);
+  var vTan=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2);
   var hTan=vTan*aspect;
   return Math.max((ROOM_W/2)/Math.max(hTan,0.05),(ROOM_H/2)/vTan)*1.15;
 }
-function frameRoom(){
+function frameRoom(instant){
   if(!camera||!controls||!stage)return;
   var w=stage.clientWidth,h=stage.clientHeight;
   if(!w||!h)return;
-  var aspect=w/h;
-  camera.aspect=aspect;
-  camera.fov=aspect<0.7?55:aspect<1?50:40;
-  var dist=fitDistance();
-  /* Vista 3/4 (no cenital): azimut ~35 grados, elevacion ~22 grados,
-     para que la profundidad de la habitacion sea evidente. */
+  camera.aspect=w/h;
+  camera.fov=frameFov();
+  var dist=fitDistanceRoom();
   var az=0.61, el=0.38;
   var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
-  camera.position.set(ROOM_TARGET.x+dx*dist, ROOM_TARGET.y+dy*dist, ROOM_TARGET.z+dz*dist);
-  controls.target.set(ROOM_TARGET.x,ROOM_TARGET.y,ROOM_TARGET.z);
+  flyTo(new THREE.Vector3(ROOM_TARGET.x+dx*dist,ROOM_TARGET.y+dy*dist,ROOM_TARGET.z+dz*dist),new THREE.Vector3(ROOM_TARGET.x,ROOM_TARGET.y,ROOM_TARGET.z),instant);
+  controls.minDistance=4.2; controls.maxDistance=24;
   camera.updateProjectionMatrix();
-  controls.update();
-  lastAspect=aspect;
+  lastAspect=camera.aspect;
+}
+function frameForStep(){
+  if(st.step===5)frameRoom(); else frameObject();
 }
 function resize3D(){
   if(!renderer||!camera||!stage)return;
@@ -651,7 +808,15 @@ function resize3D(){
   var aspect=w/h;
   camera.aspect=aspect; camera.updateProjectionMatrix();
   renderer.setSize(w,h,false);
-  if(Math.abs(aspect-lastAspect)>0.08) frameRoom();
+  if(Math.abs(aspect-lastAspect)>0.08) frameForStep();
+}
+function redraw3D(){
+  /* Tras reconstruir la cama (cambio de color/tipo/tamaño) el buffer del
+     canvas puede quedar desfasado y verse solo una franja: se fuerza el
+     resize + un render inmediato. */
+  if(!renderer||!scene||!camera)return;
+  resize3D();
+  renderer.render(scene,camera);
 }
 function init3D(){
   var isMobile=window.innerWidth<768;
@@ -673,14 +838,21 @@ function init3D(){
   controls.enableDamping=true; controls.dampingFactor=0.07;
   controls.maxPolarAngle=Math.PI/2.04; controls.minDistance=4.2; controls.maxDistance=24;
   controls.autoRotateSpeed=0.8; controls.update();
-  frameRoom(); /* encuadre inicial: toda la habitacion segun el aspecto */
+  /* Táctil (ZIP): un dedo gira, dos dedos zoom/desplazar, y el deslizamiento
+     VERTICAL desplaza la página (antes touch-action:none bloqueaba el scroll
+     fuera del visor en el celular). */
+  renderer.domElement.style.touchAction="pan-y";
+  controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
+  /* El encuadre inicial va DESPUÉS de construir la cama: frameObject mide el
+     Box3 real de bedGroup, y antes de buildBed() el grupo está vacío. */
   /* Giro automatico de INTRO: la camara se mueve sola al cargar para que
      se VEA que es 3D en vivo (una foto no se mueve). Se apaga con el
      primer arrastre del usuario, con el boton, o a los 20 s. */
   autoRot=true; introRot=true; controls.autoRotate=true; updateAutoBtn();
   renderer.domElement.addEventListener("pointerdown",function(){
+    if(camAnim){camAnim=null;controls.enabled=true;controls.autoRotate=autoRot;}
     if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
-  },{once:true});
+  });
   setTimeout(function(){
     if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
   },20000);
@@ -694,6 +866,7 @@ function init3D(){
   bedGroup=new THREE.Group(); scene.add(bedGroup);
   curtainGroup=new THREE.Group(); scene.add(curtainGroup);
   buildRoom(); buildBed();
+  frameObject(true); /* encuadre inicial: Box3 real de la cama, sin animación */
   if(window.ResizeObserver){
     new ResizeObserver(function(){resize3D();}).observe(stage);
   }
@@ -703,6 +876,13 @@ function init3D(){
   setTimeout(resize3D,300);
   (function animate(){
     requestAnimationFrame(animate);
+    if(camAnim){
+      var k=Math.min(1,(performance.now()-camAnim.start)/camAnim.dur);
+      var e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      camera.position.lerpVectors(camAnim.p0,camAnim.p1,e);
+      controls.target.lerpVectors(camAnim.t0,camAnim.t1,e);
+      if(k>=1){var wA=camAnim.wasAuto; camAnim=null; controls.enabled=true; if(wA&&autoRot)controls.autoRotate=true;}
+    }
     controls.update(); renderer.render(scene,camera);
     if(!window.__vtcReady){
       window.__vtcReady=true;
@@ -778,17 +958,22 @@ function toggleFS(){
 }
 document.addEventListener("fullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
 document.addEventListener("webkitfullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
-function setView(v){
+function setView(v,btn){
   if(!camera)return;
   document.querySelectorAll(".viewbar button").forEach(function(b){b.classList.remove("on");});
+  if(btn)btn.classList.add("on");
+  var bounds=bedBounds();
+  var center=bounds?bounds.getCenter(new THREE.Vector3()):new THREE.Vector3(0,1.2,0);
+  var size=bounds?bounds.getSize(new THREE.Vector3()):null;
   if(v==="front"){
-    var d=fitDistance();
-    camera.position.set(0,ROOM_TARGET.y+0.9,ROOM_TARGET.z+d);
-    controls.target.set(ROOM_TARGET.x,ROOM_TARGET.y,ROOM_TARGET.z);
+    var distF=size?fitDistanceFor(size,0,0.08):8;
+    flyTo(new THREE.Vector3(center.x,center.y+0.3,center.z+distF),center);
   }
-  else if(v==="top"){camera.position.set(0,10.5,0.01);controls.target.set(0,1.2,0);}
-  else{frameRoom();var ba=document.getElementById("btnAngle");if(ba)ba.classList.add("on");}
-  controls.update();
+  else if(v==="top"){
+    var distT=size?fitDistanceFor(size,0.61,1.45):8;
+    flyTo(new THREE.Vector3(center.x,center.y+distT,center.z+0.01),center);
+  }
+  else frameObject();
 }
 function toggleAuto(){
   if(!controls)return;
@@ -799,7 +984,7 @@ function toggleAuto(){
 function zoomBed(f){
   if(!camera)return;
   var dir=camera.position.clone().sub(controls.target).multiplyScalar(1-f);
-  var len=THREE.MathUtils.clamp(dir.length(),4.2,24);
+  var len=THREE.MathUtils.clamp(dir.length(),controls.minDistance,controls.maxDistance);
   dir.setLength(len); camera.position.copy(controls.target).add(dir); controls.update();
 }
 function rotateBed(dir){
@@ -812,12 +997,22 @@ function rotateBed(dir){
 }
 function cycleDuvet(d){
   var n=DUVET_COLORS.length;
-  st.duvetColor=(st.duvetColor+d+n)%n; render();
+  st.duvetColor=(st.duvetColor+d+n)%n;
+  lastChange="Edredón: "+DUVET_COLORS[st.duvetColor].n+" / "+DUVET_COLORS[st.duvetColor].revName+" (doble vista)";
+  render();
 }
 
 /* ---------- Interfaz del configurador ---------- */
 var STEP_ICONS=["🛏️","🗂️","📦","🛌","🛏️"];
 var STEP_NAMES=["Tamaño de cama","Sábanas","Edredón","Almohadas","Complementos"];
+var lastChange="";
+function showToast(){
+  var toast=document.getElementById("changeToast");
+  if(!toast||!lastChange)return;
+  toast.textContent=lastChange;
+  toast.classList.remove("show"); void toast.offsetWidth; toast.classList.add("show");
+  clearTimeout(toast._t); toast._t=setTimeout(function(){toast.classList.remove("show");},1800);
+}
 function pickSheet(el){setSheetColor(el.getAttribute("data-n"),el.getAttribute("data-h"),el.getAttribute("data-img")||null);}
 function pickCurtain(el){setCurtain(parseInt(el.getAttribute("data-i"),10));}
 function render(){
@@ -825,51 +1020,55 @@ function render(){
     var done=(i+1)<st.step;
     return '<div class="step'+(st.step===i+1?" on":"")+'" onclick="setStep('+(i+1)+')"><span class="num">'+(i+1)+'</span><span class="ico">'+STEP_ICONS[i]+'</span><b>'+n+'</b>'+(done?'<span class="check">✓</span>':"")+'</div>';
   }).join("");
+  var pc=document.getElementById("stepCount");
+  if(pc)pc.textContent="Paso "+st.step+" de 5 · "+STEP_NAMES[st.step-1];
+  var pp=document.getElementById("stepProgress");
+  if(pp){pp.innerHTML=[0,1,2,3,4].map(function(i){return '<i class="'+(i+1<st.step?"done":i+1===st.step?"on":"")+'"></i>';}).join("");}
   var h="";
   if(st.step===1){
     h='<div class="opt-label">Tipo de cama</div>'+SIZES.map(function(s,i){
-      return '<button class="opt'+(st.size===i?" on":"")+'" onclick="setSize('+i+')">'+s.n+(s.d?' · '+s.d:'')+' · Edredón $'+DUVET_PRICES[i].toLocaleString("es-MX")+' · Sábanas $'+SHEET_SIZE_PRICES[i].toLocaleString("es-MX")+'</button>';
+      return '<button class="opt'+(st.size===i?" on":"")+'" onclick="setSize('+i+')">'+(st.size===i?"✓ ":"")+s.n+(s.d?' · '+s.d:'')+' · Edredón $'+DUVET_PRICES[i].toLocaleString("es-MX")+' · Sábanas $'+SHEET_SIZE_PRICES[i].toLocaleString("es-MX")+'</button>';
     }).join("");
   }
   if(st.step===2){
     h='<div class="opt-label">Tipo de sábana</div>'+SHEET_TYPES.map(function(s,i){
-      return '<button class="opt'+(st.sheetType===i?" on":"")+'" onclick="setSheetType('+i+')">'+s.n+' · $'+(SHEET_SIZE_PRICES[st.size]+s.adj).toLocaleString("es-MX")+'</button>';
+      return '<button class="opt'+(st.sheetType===i?" on":"")+'" onclick="setSheetType('+i+')">'+(st.sheetType===i?"✓ ":"")+s.n+' · $'+(SHEET_SIZE_PRICES[st.size]+s.adj).toLocaleString("es-MX")+'</button>';
     }).join("");
     h+='<p style="color:#b9c9de;font-size:13px">Precios de sábanas por tamaño: Individual $500 · Matrimonial $600 · Queen $700 · King $800. King Jumbo usa el precio de King (no dado).</p>';
-    h+='<div class="opt-label">Color de sábanas — Estilo Egipcio (20)</div><div class="swatches">'+EG.map(function(c){
-      return '<img class="sw'+(st.sheetColor.name===c.name?" on":"")+'" title="'+c.name+'" src="'+c.img+'" data-n="'+c.name+'" data-h="'+c.hex+'" data-img="'+c.img+'" onclick="pickSheet(this)" style="object-fit:cover">';
+    h+='<div class="opt-label">Color de sábanas — Estilo Egipcio (20) · $'+sheetPrice().toLocaleString("es-MX")+' ('+SIZES[st.size].n+')</div><div class="swatches">'+EG.map(function(c){
+      return '<img class="sw'+(st.sheetColor.name===c.name?" on":"")+'" title="'+c.name+'" src="'+c.img+'" data-n="'+c.name+'" data-h="'+c.hex+'" data-img="'+c.img+'" onclick="pickSheet(this)" onerror="imgFallback(this)" style="object-fit:cover">';
     }).join("")+'</div>';
-    h+='<div class="opt-label">Color de sábanas — Paleta (20)</div><div class="swatches">'+PAL.map(function(c){
+    h+='<div class="opt-label">Color de sábanas — Paleta (20) · $'+sheetPrice().toLocaleString("es-MX")+' ('+SIZES[st.size].n+')</div><div class="swatches">'+PAL.map(function(c){
       return '<div class="sw'+(st.sheetColor.name===c.name?" on":"")+'" title="'+c.name+'" style="background:'+c.hex+'" data-n="'+c.name+'" data-h="'+c.hex+'" onclick="pickSheet(this)"></div>';
     }).join("")+'</div>';
   }
   if(st.step===3){
     h='<div class="opt-label">Tipo de edredón</div><div class="type-grid">'+DUVET_TYPES.map(function(s,i){
-      return '<div class="type-card'+(st.duvetType===i?" on":"")+'" onclick="setDuvetType('+i+')">'+(st.duvetType===i?'<span class="tick">✓</span>':"")+'<img src="'+TYPE_IMG[s.n]+'" alt="'+s.n+'"><span>'+s.n+' · $'+(DUVET_PRICES[st.size]+(s.p-1099)).toLocaleString("es-MX")+'</span></div>';
-    }).join("")+'</div><p style="color:#b9c9de;font-size:13px">Color: usa la tira de colores con foto debajo de la cama 3D.</p>';
+      return '<div class="type-card'+(st.duvetType===i?" on":"")+'" onclick="setDuvetType('+i+')">'+(st.duvetType===i?'<span class="tick">✓</span>':"")+'<img src="'+TYPE_IMG[s.n]+'" alt="'+s.n+'" onerror="imgFallback(this)"><span>'+s.n+' · $'+(DUVET_PRICES[st.size]+(s.p-1099)).toLocaleString("es-MX")+'</span></div>';
+    }).join("")+'</div><p style="color:#b9c9de;font-size:13px">Color: usa la tira de colores con foto debajo de la cama 3D. Elegido: '+DUVET_TYPES[st.duvetType].n+' · '+DUVET_COLORS[st.duvetColor].n+' / '+DUVET_COLORS[st.duvetColor].revName+' (doble vista) · $'+duvetPrice().toLocaleString("es-MX")+'.</p>';
   }
   if(st.step===4){
     h='<div class="opt-label">Almohadas</div>'+PILLOWS.map(function(s,i){
-      return '<button class="opt'+(st.pillow===i?" on":"")+'" onclick="setPillow('+i+')">'+s.n+' · $'+s.p.toLocaleString("es-MX")+'</button>';
+      return '<button class="opt'+(st.pillow===i?" on":"")+'" onclick="setPillow('+i+')">'+(st.pillow===i?"✓ ":"")+s.n+' · $'+s.p.toLocaleString("es-MX")+'</button>';
     }).join("");
   }
   if(st.step===5){
     h='<div class="opt-label">Complementos</div>'+COMPS.map(function(s,i){
-      return '<button class="opt'+(st.comp===i?" on":"")+'" onclick="setComp('+i+')">'+s.n+' · '+(s.p?"+$"+s.p:"Incluido")+'</button>';
+      return '<button class="opt'+(st.comp===i?" on":"")+'" onclick="setComp('+i+')">'+(st.comp===i?"✓ ":"")+s.n+' · '+(s.p?"+$"+s.p:"Incluido")+'</button>';
     }).join("");
     h+='<div class="opt-label">Cortinas Blackout Thermal — '+(st.curtain>=0?money(curtainPrice()):'sin cortinas')+'</div><div class="swatches">'+CUR.map(function(c,i){
-      if(c.img)return '<img class="sw'+(st.curtain===i?" on":"")+'" title="'+c.name+'" src="'+c.img+'" onclick="pickCurtain(this)" data-i="'+i+'" style="object-fit:cover">';
+      if(c.img)return '<img class="sw'+(st.curtain===i?" on":"")+'" title="'+c.name+'" src="'+c.img+'" onclick="pickCurtain(this)" data-i="'+i+'" onerror="imgFallback(this)" style="object-fit:cover">';
       return '<div class="sw'+(st.curtain===i?" on":"")+'" title="'+c.name+'" style="background:'+c.hex+'" onclick="pickCurtain(this)" data-i="'+i+'"></div>';
     }).join("")+'</div>';
     h+='<div class="opt-label">Medida de cortina</div>'+CUR_SIZES.map(function(sz,i){
-      return '<button class="opt'+(st.curtainSize===i?" on":"")+'" onclick="setCurtainSize('+i+')">'+sz.n+' · 1 panel $'+sz.p[0].toLocaleString("es-MX")+(sz.p[1]?' · 2 paneles $'+sz.p[1].toLocaleString("es-MX"):' · precio único')+'</button>';
+      return '<button class="opt'+(st.curtainSize===i?" on":"")+'" onclick="setCurtainSize('+i+')">'+(st.curtainSize===i?"✓ ":"")+sz.n+' · 1 panel $'+sz.p[0].toLocaleString("es-MX")+(sz.p[1]?' · 2 paneles $'+sz.p[1].toLocaleString("es-MX"):' · precio único')+'</button>';
     }).join("");
-    h+='<div class="opt-label">Paneles</div><button class="opt'+(st.curtainPanels===1?" on":"")+'" onclick="setCurtainPanels(1)">1 panel · $'+CUR_SIZES[st.curtainSize].p[0].toLocaleString("es-MX")+'</button>'+(CUR_SIZES[st.curtainSize].p[1]?'<button class="opt'+(st.curtainPanels===2?" on":"")+'" onclick="setCurtainPanels(2)">2 paneles · $'+CUR_SIZES[st.curtainSize].p[1].toLocaleString("es-MX")+'</button>':"");
-    h+='<button class="opt'+(st.curtain===-1?" on":"")+'" onclick="setCurtain(-1)">Sin cortinas</button>';
+    h+='<div class="opt-label">Paneles</div><button class="opt'+(st.curtainPanels===1?" on":"")+'" onclick="setCurtainPanels(1)">'+(st.curtainPanels===1?"✓ ":"")+'1 panel · $'+CUR_SIZES[st.curtainSize].p[0].toLocaleString("es-MX")+'</button>'+(CUR_SIZES[st.curtainSize].p[1]?'<button class="opt'+(st.curtainPanels===2?" on":"")+'" onclick="setCurtainPanels(2)">'+(st.curtainPanels===2?"✓ ":"")+'2 paneles · $'+CUR_SIZES[st.curtainSize].p[1].toLocaleString("es-MX")+'</button>':"");
+    h+='<button class="opt'+(st.curtain===-1?" on":"")+'" onclick="setCurtain(-1)">'+(st.curtain===-1?"✓ ":"")+'Sin cortinas</button>';
   }
   document.getElementById("stepOpts").innerHTML=h;
   document.getElementById("duvetColors").innerHTML=DUVET_COLORS.map(function(c,i){
-    return '<div class="csw'+(st.duvetColor===i?" on":"")+'" onclick="setDuvetColor('+i+')">'+(st.duvetColor===i?'<span class="tick">✓</span>':"")+'<img src="'+c.img+'" alt="'+c.n+'"><span>'+c.n+' / '+c.revName+'</span></div>';
+    return '<div class="csw'+(st.duvetColor===i?" on":"")+'" onclick="setDuvetColor('+i+')">'+(st.duvetColor===i?'<span class="tick">✓</span>':"")+'<img src="'+c.img+'" alt="'+c.n+'" onerror="imgFallback(this)"><span>'+c.n+' / '+c.revName+'</span></div>';
   }).join("");
   /* Colores rápidos del edredón en el pie del escenario (layout del ejemplo). */
   var qs=document.getElementById("quickSwatches");
@@ -882,29 +1081,33 @@ function render(){
   var sheetImg=st.sheetColor.img||"assets/sabana-crema.jpg";
   var compImg=(st.curtain>=0&&CUR[st.curtain].img)?CUR[st.curtain].img:"assets/edredon-gris.jpg";
   var rows=[
-    ["Cama",SIZES[st.size].n+(SIZES[st.size].d?" Size":""),"assets/edredon-apilados.jpg"],
-    ["Sábanas",SHEET_TYPES[st.sheetType].n+" · "+st.sheetColor.name+" · "+SIZES[st.size].n+" · $"+sheetPrice().toLocaleString("es-MX"),sheetImg],
-    ["Edredón",DUVET_TYPES[st.duvetType].n+" · "+dc.n+" / "+dc.revName+" (doble vista) · "+SIZES[st.size].n+" · $"+duvetPrice().toLocaleString("es-MX"),dc.img],
-    ["Almohadas",PILLOWS[st.pillow].n,"assets/almohada-par.jpg"],
-    ["Complementos",COMPS[st.comp].n+(st.curtain>=0?" · Cortinas "+CUR[st.curtain].name+" "+CUR_SIZES[st.curtainSize].n+" · "+st.curtainPanels+" panel"+(st.curtainPanels>1?"es":"")+" · $"+curtainPrice().toLocaleString("es-MX"):""),compImg]
+    ["Cama",SIZES[st.size].n+(SIZES[st.size].d?" Size":""),"assets/edredon-apilados.jpg",0],
+    ["Sábanas",SHEET_TYPES[st.sheetType].n+" · "+st.sheetColor.name+" · "+SIZES[st.size].n,sheetImg,sheetPrice()],
+    ["Edredón",DUVET_TYPES[st.duvetType].n+" · "+dc.n+" / "+dc.revName+" (doble vista) · "+SIZES[st.size].n,dc.img,duvetPrice()],
+    ["Almohadas",PILLOWS[st.pillow].n,"assets/almohada-par.jpg",PILLOWS[st.pillow].p],
+    ["Complementos",COMPS[st.comp].n+(st.curtain>=0?" · Cortinas "+CUR[st.curtain].name+" "+CUR_SIZES[st.curtainSize].n+" · "+st.curtainPanels+" panel"+(st.curtainPanels>1?"es":""):""),compImg,COMPS[st.comp].p+curtainPrice()]
   ];
   document.getElementById("selList").innerHTML=rows.map(function(r){
-    return '<div class="sel-row"><img src="'+r[2]+'" alt=""><span>'+r[0]+': <b>'+r[1]+'</b></span></div>';
+    return '<div class="sel-row"><img src="'+r[2]+'" alt="" onerror="imgFallback(this)"><span>'+r[0]+': <b>'+r[1]+'</b></span><span class="price">'+(r[3]?money(r[3]):"Incluido")+'</span></div>';
   }).join("");
   document.getElementById("cfgTotal").textContent=money(calcTotal());
+  showToast();
   if(scene){buildBed();}
+  /* Redibujo forzado tras reconstruir la cama: sin esto el canvas podía
+     quedarse en una franja superior hasta tocar pantalla completa. */
+  if(window.requestAnimationFrame){requestAnimationFrame(function(){redraw3D();});}
 }
-function setStep(n){st.step=n;render();}
-function setSize(i){st.size=i;render();}
-function setSheetType(i){st.sheetType=i;render();}
-function setSheetColor(n,h,img){st.sheetColor={name:n,hex:h,img:img||null};render();}
-function setDuvetType(i){st.duvetType=i;render();}
-function setDuvetColor(i){st.duvetColor=i;render();}
-function setPillow(i){st.pillow=i;render();}
-function setComp(i){st.comp=i;render();}
-function setCurtain(i){st.curtain=i;render();}
-function setCurtainSize(i){st.curtainSize=i;if(!CUR_SIZES[i].p[1])st.curtainPanels=1;render();}
-function setCurtainPanels(n){if(n===2&&!CUR_SIZES[st.curtainSize].p[1])return;st.curtainPanels=n;render();}
+function setStep(n){st.step=n;render();frameForStep();}
+function setSize(i){st.size=i;lastChange="Tamaño: "+SIZES[i].n;render();frameForStep();}
+function setSheetType(i){st.sheetType=i;lastChange="Sábanas: "+SHEET_TYPES[i].n;render();}
+function setSheetColor(n,h,img){st.sheetColor={name:n,hex:h,img:img||null};lastChange="Sábanas: "+n;render();}
+function setDuvetType(i){st.duvetType=i;lastChange="Edredón: "+DUVET_TYPES[i].n;render();}
+function setDuvetColor(i){st.duvetColor=i;lastChange="Edredón: "+DUVET_COLORS[i].n+" / "+DUVET_COLORS[i].revName+" (doble vista)";render();}
+function setPillow(i){st.pillow=i;lastChange="Almohadas: "+PILLOWS[i].n;render();}
+function setComp(i){st.comp=i;lastChange="Complementos: "+COMPS[i].n;render();}
+function setCurtain(i){st.curtain=i;lastChange=i>=0?"Cortinas: "+CUR[i].name:"Sin cortinas";render();}
+function setCurtainSize(i){st.curtainSize=i;if(!CUR_SIZES[i].p[1])st.curtainPanels=1;lastChange="Cortinas: "+CUR_SIZES[i].n;render();}
+function setCurtainPanels(n){if(n===2&&!CUR_SIZES[st.curtainSize].p[1])return;st.curtainPanels=n;lastChange="Cortinas: "+n+" panel"+(n>1?"es":"");render();}
 function addCfgToCart(){
   var t=calcTotal();
   var msg=document.getElementById("cfgMessage"); if(msg)msg.textContent="Set agregado al carrito · Total "+money(t);
