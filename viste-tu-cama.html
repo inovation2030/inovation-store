@@ -535,19 +535,62 @@ function buildBed(){
     fin.position.set(s*3.0,3.55,-2.72); curtainGroup.add(fin);
   });
 }
+var lastAspect=0;
+/* Encuadre de la HABITACION completa, no solo de la cama.
+   Causa del bug de la captura IMG_0912 (celular 390x844): con FOV 38 y
+   camara fija en (5.8,5.0,8.4) el FOV horizontal en un retrato estrecho
+   era de solo ~18 grados, asi que a la distancia del objetivo solo se
+   veian ~3.5 m de ancho (la cama) y la habitacion (alfombra 5.8 m,
+   cortinas en x +/-2.45, mesitas, paredes) quedaba fuera de cuadro y la
+   escena parecia una foto plana de una cama.
+   frameRoom() calcula la distancia desde el aspecto real: cabe el ancho
+   de la habitacion (7.2 m: cortinas + remates, mesitas, alfombra) y su
+   alto (4.6 m: piso a varilla de cortinas) con un FOV mas amplio en
+   retrato. Se reencuadra solo cuando el aspecto cambia (giro de
+   pantalla, pantalla completa, cambio de tamano), nunca mientras el
+   usuario gira la camara con el dedo. */
+var ROOM_TARGET={x:0,y:1.3,z:-0.2}, ROOM_W=7.2, ROOM_H=4.6;
+function fitDistance(){
+  var w=stage.clientWidth,h=stage.clientHeight;
+  if(!w||!h)return 10;
+  var aspect=w/h;
+  var vFov=aspect<0.7?55:aspect<1?50:40;
+  var vTan=Math.tan(vFov*Math.PI/360);
+  var hTan=vTan*aspect;
+  return Math.max((ROOM_W/2)/Math.max(hTan,0.05),(ROOM_H/2)/vTan)*1.15;
+}
+function frameRoom(){
+  if(!camera||!controls||!stage)return;
+  var w=stage.clientWidth,h=stage.clientHeight;
+  if(!w||!h)return;
+  var aspect=w/h;
+  camera.aspect=aspect;
+  camera.fov=aspect<0.7?55:aspect<1?50:40;
+  var dist=fitDistance();
+  /* Vista 3/4 (no cenital): azimut ~35 grados, elevacion ~22 grados,
+     para que la profundidad de la habitacion sea evidente. */
+  var az=0.61, el=0.38;
+  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
+  camera.position.set(ROOM_TARGET.x+dx*dist, ROOM_TARGET.y+dy*dist, ROOM_TARGET.z+dz*dist);
+  controls.target.set(ROOM_TARGET.x,ROOM_TARGET.y,ROOM_TARGET.z);
+  camera.updateProjectionMatrix();
+  controls.update();
+  lastAspect=aspect;
+}
 function resize3D(){
   if(!renderer||!camera||!stage)return;
   var w=stage.clientWidth,h=stage.clientHeight;
   if(!w||!h)return;
-  camera.aspect=w/h; camera.updateProjectionMatrix();
+  var aspect=w/h;
+  camera.aspect=aspect; camera.updateProjectionMatrix();
   renderer.setSize(w,h,false);
+  if(Math.abs(aspect-lastAspect)>0.08) frameRoom();
 }
 function init3D(){
   var isMobile=window.innerWidth<768;
   scene=new THREE.Scene();
   scene.background=new THREE.Color("#edf1f4");
-  camera=new THREE.PerspectiveCamera(38,stage.clientWidth/Math.max(1,stage.clientHeight),0.1,100);
-  camera.position.set(5.8,5.0,8.4);
+  camera=new THREE.PerspectiveCamera(45,stage.clientWidth/Math.max(1,stage.clientHeight),0.1,100);
   renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,isMobile?1.5:2));
   renderer.setSize(stage.clientWidth,stage.clientHeight,false);
@@ -560,9 +603,20 @@ function init3D(){
     showFallback("El navegador perdió el contexto WebGL (memoria del teléfono). Recarga la página.");
   });
   controls=new THREE.OrbitControls(camera,renderer.domElement);
-  controls.target.set(0,1.2,0); controls.enableDamping=true; controls.dampingFactor=0.07;
-  controls.maxPolarAngle=Math.PI/2.04; controls.minDistance=4.2; controls.maxDistance=14;
-  controls.autoRotateSpeed=1.4; controls.update();
+  controls.enableDamping=true; controls.dampingFactor=0.07;
+  controls.maxPolarAngle=Math.PI/2.04; controls.minDistance=4.2; controls.maxDistance=24;
+  controls.autoRotateSpeed=0.8; controls.update();
+  frameRoom(); /* encuadre inicial: toda la habitacion segun el aspecto */
+  /* Giro automatico de INTRO: la camara se mueve sola al cargar para que
+     se VEA que es 3D en vivo (una foto no se mueve). Se apaga con el
+     primer arrastre del usuario, con el boton, o a los 20 s. */
+  autoRot=true; introRot=true; controls.autoRotate=true; updateAutoBtn();
+  renderer.domElement.addEventListener("pointerdown",function(){
+    if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
+  },{once:true});
+  setTimeout(function(){
+    if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
+  },20000);
   scene.add(new THREE.HemisphereLight(0xffffff,0x8a94a3,1.6));
   var key=new THREE.DirectionalLight(0xfff2df,2.6);
   key.position.set(-4,8,5); key.castShadow=true;
@@ -611,7 +665,11 @@ function start3D(){
 }
 
 /* ---------- Controles de vista ---------- */
-var autoRot=false;
+var autoRot=false, introRot=false;
+function updateAutoBtn(){
+  var b=document.getElementById("btnAuto"); if(!b)return;
+  b.textContent="Giro automático: "+(autoRot?"encendido":"apagado");
+}
 /* Pantalla completa robusta: la versión anterior solo llamaba a
    el.requestFullscreen() sin promesa ni respaldo, y en el navegador en vivo
    no activaba nada (2 intentos). Ahora: webkit fallback, manejo de la
@@ -656,20 +714,25 @@ document.addEventListener("webkitfullscreenchange",function(){updateFsBtn();if(t
 function setView(v){
   if(!camera)return;
   document.querySelectorAll(".viewbar button").forEach(function(b){b.classList.remove("on");});
-  if(v==="front"){camera.position.set(0,2.8,9.2);}
-  else if(v==="top"){camera.position.set(0,10.5,0.01);}
-  else{camera.position.set(5.6,4.6,7.6);var ba=document.getElementById("btnAngle");if(ba)ba.classList.add("on");}
-  controls.target.set(0,1.2,0); controls.update();
+  if(v==="front"){
+    var d=fitDistance();
+    camera.position.set(0,ROOM_TARGET.y+0.9,ROOM_TARGET.z+d);
+    controls.target.set(ROOM_TARGET.x,ROOM_TARGET.y,ROOM_TARGET.z);
+  }
+  else if(v==="top"){camera.position.set(0,10.5,0.01);controls.target.set(0,1.2,0);}
+  else{frameRoom();var ba=document.getElementById("btnAngle");if(ba)ba.classList.add("on");}
+  controls.update();
 }
 function toggleAuto(){
   if(!controls)return;
+  introRot=false;
   autoRot=!autoRot; controls.autoRotate=autoRot;
-  document.getElementById("btnAuto").textContent="Giro automático: "+(autoRot?"encendido":"apagado");
+  updateAutoBtn();
 }
 function zoomBed(f){
   if(!camera)return;
   var dir=camera.position.clone().sub(controls.target).multiplyScalar(1-f);
-  var len=THREE.MathUtils.clamp(dir.length(),4.2,14);
+  var len=THREE.MathUtils.clamp(dir.length(),4.2,24);
   dir.setLength(len); camera.position.copy(controls.target).add(dir); controls.update();
 }
 function rotateBed(dir){
