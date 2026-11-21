@@ -12,29 +12,38 @@
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 h1{font:600 26px/1.15 Georgia,"Times New Roman",serif;margin:0 0 4px}
-header.art-head{padding:18px 16px 12px;max-width:1180px;margin:auto}header.art-head p{margin:0;color:var(--mut)}
-.wrap{max-width:1180px;margin:auto;display:grid;gap:14px;padding:0 12px 24px}
+header.art-head{padding:24px 16px 16px;max-width:1180px;margin:auto}header.art-head p{margin:0;color:var(--mut)}
+.wrap{max-width:1180px;margin:auto;display:grid;gap:22px;padding:0 12px 24px}
 @media(min-width:900px){.wrap{grid-template-columns:1.25fr 1fr;align-items:start}.stage{position:sticky;top:12px;height:min(78vh,720px)}}
-.stage{position:relative;height:46vh;min-height:280px;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,var(--s1),var(--s2));border:1px solid var(--line)}
+.stage{position:relative;height:62svh;min-height:400px;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,var(--s1),var(--s2));border:1px solid var(--line)}
 @media(max-width:899px){.stage{position:sticky;top:0;z-index:5}}
 canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}
 .msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--mut);pointer-events:none}
 .tools{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
-.tools button{background:color-mix(in srgb,var(--card) 88%,transparent);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer;backdrop-filter:blur(6px)}
+.tools button{background:color-mix(in srgb,var(--card) 88%,transparent);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 11px;font:inherit;font-size:12.5px;cursor:pointer;backdrop-filter:blur(6px)}
 .tools button.on{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px 16px}
-section{padding:14px 0;border-bottom:1px solid var(--line)}section:last-of-type{border:0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 18px 20px}
+section{padding:20px 0;border-bottom:1px solid var(--line)}section:last-of-type{border:0}
 h2{font:600 16px/1.2 Georgia,serif;margin:0 0 10px}
 .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.seg.three{grid-template-columns:repeat(3,1fr)}
 .seg button,.btn2{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:9px 6px;font:inherit;font-size:13px;cursor:pointer;text-align:center}
 .seg button small{display:block;color:var(--mut);font-size:11px}
 .seg button.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset;font-weight:600}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0}
-.sw{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;align-items:center}
-.sw button{width:34px;height:34px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
-.sw button.on{box-shadow:0 0 0 2.5px var(--gold)}
-.sw input{width:34px;height:34px;border:0;padding:0;background:none;cursor:pointer}
+/* Puntos de color: clase propia ".dots" (la clase ".sw" de styles.css la
+   pisaba con width/height 34px y los puntos se apilaban en columna). */
+.dots{display:flex;flex-wrap:wrap;gap:10px;margin:0;align-items:center}
+.dots button{flex:0 0 auto;width:34px;height:34px;aspect-ratio:1/1;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.dots button.on{box-shadow:0 0 0 2.5px var(--gold)}
 .name{color:var(--mut);font-size:13px;margin-bottom:4px}
+/* Selector de color de sábanas: su propio bloque con espacio, muestra
+   grande del color actual + nombre, y los 20 puntos en su propia fila. */
+.sh-color{margin:16px 0 4px;padding-top:14px;border-top:1px solid var(--line)}
+.sh-label{font-size:13px;color:var(--mut);margin-bottom:10px}
+.sh-current{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.sh-big{flex:0 0 auto;width:46px;height:46px;aspect-ratio:1/1;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 2px var(--gold);background:#f2ead8}
+.sh-name{font-size:15px;font-weight:600}
+.fabric{margin-top:16px}
 .switch{position:relative;width:44px;height:26px;flex:none}.switch input{opacity:0;position:absolute;inset:0;margin:0;cursor:pointer;z-index:1}
 .switch i{position:absolute;inset:0;border-radius:99px;background:var(--line);transition:.2s}.switch i:after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
 .switch input:checked+i{background:var(--gold)}.switch input:checked+i:after{transform:translateX(18px)}
@@ -96,15 +105,19 @@ main.vtc-main{max-width:1180px;margin:0 auto;padding:0 0 40px}
 <section><h2>Tamaño</h2><div class="seg" id="sizes"></div></section>
 <section><h2>Edredón</h2>
 <div class="row"><span>Mostrar edredón</span><label class="switch"><input type="checkbox" id="duv" checked><i></i></label></div>
-<div class="mods" id="mods"></div><div class="name" id="duvN"></div><div class="sw" id="duvS"></div>
+<div class="mods" id="mods"></div><div class="name" id="duvN"></div><div class="dots" id="duvS"></div>
 <div class="name">Tela: algodón egipcio</div>
 <div class="seg" id="face" style="grid-template-columns:repeat(2,1fr);margin-top:8px"></div></section>
 <section><h2>Sábanas</h2>
 <div class="row"><span>Sábana ajustable</span><label class="switch"><input type="checkbox" id="fit" checked><i></i></label></div>
 <div class="row"><span>Sábana superior</span><label class="switch"><input type="checkbox" id="top" checked><i></i></label></div>
 <div class="row"><span>Fundas de almohada</span><label class="switch"><input type="checkbox" id="cs" checked><i></i></label></div>
-<div class="name" id="shN"></div><div class="sw" id="shS"></div>
-<div class="name">Tela: algodón egipcio</div></section>
+<div class="sh-color">
+<div class="sh-label">Color de las sábanas</div>
+<div class="sh-current"><span class="sh-big" id="shBig"></span><span class="sh-name" id="shN"></span></div>
+<div class="dots" id="shS"></div>
+</div>
+<div class="name fabric">Tela: algodón egipcio</div></section>
 <section><h2>Almohadas de bambú</h2>
 <div class="row"><span>Agregar almohadas de bambú</span><label class="switch"><input type="checkbox" id="bam"><i></i></label></div>
 <div class="seg" id="bsz" style="grid-template-columns:repeat(2,1fr)"></div>
@@ -151,16 +164,18 @@ const FEEL={alg:{n:'Algodón egipcio',r:.85,k:0}};
 /* Sábanas reales (20 colores de Alberto). */
 const SHC=[['Violet','#6a4a8a'],['Rose','#d97a8a'],['Baby Blue','#a8c8e0'],['Black','#222222'],['Beage','#d8c9a8'],['Burgundy','#7a1f2b'],['Chocolate','#5a3a28'],['Gold','#c9a227'],['Orange','#e07b2a'],['Champagne','#e8d9b0'],['Military Green','#5a6b4a'],['Marine','#1f3a5f'],['Grape','#6b3a7a'],['Olive','#7a7a4a'],['Royal Blue','#2a4a9a'],['Baby Rose','#f2c8d0'],['Rojo Vino','#8a2a3a'],['Camel','#c19a6b'],['Red','#c02020'],['Crema','#f2ead8']];SHC.fixed=true;
 /* Modelos de edredón: ver DUV abajo. */
-/* Edredones REALES de Alberto (5, con sus fotos). La textura es la foto
-   real del acolchado (assets/duvet-tex-*.jpg); Blanco con Rayas usa su
-   foto real. Reversos solo donde el producto lo respalda: Azul Marino ↔
-   Gris; los demás son de un solo color (reverso = cara). */
+/* Edredones REALES de Alberto (5). Acolchado: CUADROS EN CAPITONADO
+   (no rombos), como sus fotos IMG_4735/6248/6253: cuadros grandes
+   abullonados con costuras marcadas. Reversos reales: Azul Marino ↔ Gris
+   claro; Gris = Gris carbón (cara) / Gris Oxford (reverso); Blanco con
+   Rayas = blanca lisa (cara) / blanca con rayas de gris claro (reverso).
+   Beige y Blanco son de un solo color (reverso = cara). */
 const DUV=[
-{id:'azul',n:'Azul Marino',d:'Reverso Gris',a:{tex:'assets/duvet-tex-azul-marino.jpg',c:'#232a45'},b:{tex:'assets/duvet-tex-gris.jpg',c:'#9aa0a8'}},
-{id:'gris',n:'Gris',d:'Reverso Azul Marino',a:{tex:'assets/duvet-tex-gris.jpg',c:'#9aa0a8'},b:{tex:'assets/duvet-tex-azul-marino.jpg',c:'#46536f'}},
-{id:'beige',n:'Beige',d:'Liso, reverso beige',a:{tex:'assets/duvet-tex-beige.jpg',c:'#e0d2b8'},b:{tex:'assets/duvet-tex-beige.jpg',c:'#e0d2b8'}},
-{id:'blanco',n:'Blanco',d:'Liso, reverso blanco',a:{tex:'assets/duvet-tex-blanco.jpg',c:'#f4f3f1'},b:{tex:'assets/duvet-tex-blanco.jpg',c:'#f4f3f1'}},
-{id:'rayas',n:'Blanco con Rayas',d:'Reverso blanco con rayas',a:{tex:'assets/edredon-blanco-rayas.jpg',c:'#f4f3f1'},b:{tex:'assets/edredon-blanco-rayas.jpg',c:'#f4f3f1'}}];
+{id:'azul',n:'Azul Marino',d:'Reverso Gris',a:{c:'#232a45'},b:{c:'#9aa0a6'}},
+{id:'gris',n:'Gris',d:'Gris carbón · Reverso Gris Oxford',a:{c:'#26292e'},b:{c:'#9aa0a6'}},
+{id:'beige',n:'Beige',d:'Liso, reverso beige',a:{c:'#e0d2b8'},b:{c:'#e0d2b8'}},
+{id:'blanco',n:'Blanco',d:'Liso, reverso blanco',a:{c:'#f4f3f1'},b:{c:'#f4f3f1'}},
+{id:'rayas',n:'Blanco con Rayas',d:'Reverso gris claro rayado con blanco',a:{c:'#f4f3f1'},b:{c:'#f4f3f1',stripes:'#b3b9c2'}}];
 /* Bambú real: Standard $800 c/u, par $1,500; King $900 c/u, par $1,700.
    Cortinas blackout reales (17 colores): SOLO visuales, no se cobran. */
 const BAM={qn:{one:800,pair:1500},kg:{one:900,pair:1700}};
@@ -182,7 +197,7 @@ const CUR=[
 {id:'c15',n:'Mineral',c:'#7a9a8a',t:'p',img:'assets/cortina-mineral.jpg'},
 {id:'c16',n:'Pink',c:'#f2a0c0',t:'p',img:'assets/cortina-pink.jpg'},
 {id:'c17',n:'Perla',c:'#f0ede8',t:'p',img:'assets/cortina-perla.jpg'}];
-const s={size:'qn',duv:true,model:'azul',duvC:'#1f2f55',duvF:'alg',flip:false,fit:true,top:true,cs:true,shC:'#ffffff',shF:'alg',bam:false,bsz:'qn',bqt:2,cur:false,cm:'c6',cpn:2};
+const s={size:'qn',duv:true,model:'azul',duvC:'#1f2f55',duvF:'alg',flip:false,fit:true,top:true,cs:true,shC:'#f2ead8',shF:'alg',bam:false,bsz:'qn',bqt:2,cur:false,cm:'c6',cpn:2};
 const curModel=()=>DUV.find(d=>d.id===s.model);
 const msg=$('#msg');
 if(!window.THREE){msg.textContent='No se pudo cargar el visor 3D. Revisa tu conexión y recarga la página.';return}
@@ -200,19 +215,29 @@ function tex(k){const c=document.createElement('canvas');c.width=c.height=128;co
  if(k==='q'){const g=x.createRadialGradient(64,64,8,64,64,92);g.addColorStop(0,'#fff');g.addColorStop(1,'#c9c9c9');x.fillStyle=g;x.fillRect(0,0,128,128);x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=2;x.setLineDash([7,4]);x.strokeRect(1,1,126,126)}
  else{for(let i=0;i<128;i+=2)for(let j=0;j<128;j+=2){const v=222+Math.random()*33|0;x.fillStyle='rgb('+v+','+v+','+v+')';x.fillRect(i,j,2,2)}}
  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return t}
-const TQ=tex('q'),TW=tex('w');let DT=[];
-function faceTex(f){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');
- if(f.t==='s'){x.fillStyle=f.c;x.fillRect(0,0,256,256)}
- else{const n=f.k||2,h=256/n;for(let i=0;i<n;i++){x.fillStyle=f.c;x.fillRect(0,i*h,256,h);x.fillStyle=f.c2;x.fillRect(0,i*h+h*.45,256,h*.55)}}
- x.globalCompositeOperation='multiply';const g=x.createRadialGradient(128,128,20,128,128,185);g.addColorStop(0,'#fff');g.addColorStop(1,'#bdbdbd');x.fillStyle=g;x.fillRect(0,0,256,256);
- x.strokeStyle='rgba(0,0,0,.28)';x.lineWidth=3;x.strokeRect(0,0,256,256);
- const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return t}
+const TW=tex('w');let DT=[];
+/* Textura de edredón: CUADROS EN CAPITONADO (procedural). Mosaico de
+   512 px = 1.2 m con 4×4 cuadros (cuadro de 30 cm, igual que la geometría
+   del acolchado): centro del cuadro más claro, bordes oscurecidos y
+   costura marcada. Si la cara es rayada, las rayas de gris claro van
+   sobre la base blanca, rectas y parejas, y el capitonado va encima. */
+function capTex(f){const key='cap:'+(f.c||'')+'|'+(f.stripes||'');if(TEXC[key])return TEXC[key];
+ const S=512,N=4,cs=S/N,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d');
+ x.fillStyle=f.c;x.fillRect(0,0,S,S);
+ if(f.stripes){x.fillStyle=f.stripes;for(let y=0;y<S;y+=60)x.fillRect(0,y,S,26)}
+ for(let i=0;i<N;i++)for(let j=0;j<N;j++){const cx=i*cs,cy=j*cs;
+  const g=x.createRadialGradient(cx+cs/2,cy+cs/2,cs*.06,cx+cs/2,cy+cs/2,cs*.75);
+  g.addColorStop(0,'rgba(255,255,255,.22)');g.addColorStop(.7,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(0,0,0,.22)');
+  x.fillStyle=g;x.fillRect(cx,cy,cs,cs)}
+ x.strokeStyle='rgba(0,0,0,.30)';x.lineWidth=3;
+ for(let k=0;k<=N;k++){x.beginPath();x.moveTo(k*cs+.5,0);x.lineTo(k*cs+.5,S);x.stroke();x.beginPath();x.moveTo(0,k*cs+.5);x.lineTo(S,k*cs+.5);x.stroke()}
+ const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=4;TEXC[key]=t;return t}
+function duvetFaceTex(f){return capTex(f)}
 const mat=(h,r,m)=>new THREE.MeshStandardMaterial({color:col(h),roughness:r,map:m||null,side:THREE.DoubleSide});
 /* Texturas reales del edredón (fotos del producto). Se cargan una vez y se
    reutilizan; NO se destruyen al reconstruir la escena (las de lienzo sí). */
 const TEXC={};
 function imgTex(url){if(!TEXC[url]){const t=new THREE.TextureLoader().load(url);t.encoding=THREE.sRGBEncoding;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=4;TEXC[url]=t}return TEXC[url]}
-function duvetFaceTex(f){if(f.tex)return imgTex(f.tex);const t=faceTex(f);DT.push(t);return t}
 function sh(m){m.castShadow=m.receiveShadow=true;return m}
 function box(w,h,d,m,x,y,z,sx,sy,sz){const b=sh(new THREE.Mesh(new THREE.BoxGeometry(w,h,d,sx||1,sy||1,sz||1),m));b.position.set(x,y,z);G.add(b);return b}
 /* tela que cubre el colchón y cae por los lados y los pies */
@@ -220,11 +245,14 @@ function cover(hw,zs,ze,ex,drop,bulge,y0,puff,cell,m,uvk,nf,bump){
  const L=ze+(nf?0:ex)-zs,W=2*hw+2*ex,g=new THREE.PlaneGeometry(W,L,100,100);g.rotateX(-Math.PI/2);
  const p=g.attributes.position,uv=g.attributes.uv;
  for(let i=0;i<p.count;i++){const ox=p.getX(i),oz=p.getZ(i);let x=ox,z=oz+L/2+zs,y=y0,tx=0,tz=0;const ax=Math.abs(ox),sx=Math.sign(ox)||1;
-  if(puff){const f=Math.abs(Math.sin(Math.PI*ox/cell))*Math.abs(Math.sin(Math.PI*oz/cell));y+=puff*Math.sqrt(f)}
+  /* Acolchado capitonado: relieve SUAVE en cuadros (seno al cuadrado, sin
+     cúspides) — el |sin| con raíz cuadrada daba arrugas caóticas. */
+  const pf=puff?Math.sin(Math.PI*ox/cell)**2*Math.sin(Math.PI*oz/cell)**2:0;
+  if(puff)y+=puff*pf;
   if(ax>hw){tx=Math.min(1,(ax-hw)/ex);x=sx*(hw+bulge*Math.sin(tx*Math.PI/2))}
   if(!nf&&z>ze){tz=Math.min(1,(z-ze)/ex);z=ze+bulge*Math.sin(tz*Math.PI/2)}
   const t=Math.max(tx,tz);y-=drop*(1-Math.cos(t*Math.PI/2));
-  if(puff){y-=puff*Math.sqrt(Math.abs(Math.sin(Math.PI*ox/cell))*Math.abs(Math.sin(Math.PI*oz/cell)))*t}
+  if(puff)y-=puff*pf*t;
   y+=(bump===undefined?.03:bump)*Math.exp(-Math.pow((z-zs-.05)/.09,2))*(puff?1:.3);
   p.setXYZ(i,x,y,z);uv.setXY(i,ox*uvk+.5,oz*uvk+.5)}
  g.computeVertexNormals();const me=sh(new THREE.Mesh(g,m));G.add(me)}
@@ -259,31 +287,40 @@ function extras(){seg($('#bsz'),[['qn','Standard<small>71 × 48 cm</small>'],['k
 function build(){
  G.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()});G.clear();DT.forEach(t=>t.dispose());DT=[];
  const S=SIZES[s.size],w=S.w,l=S.l,hw=w/2;
- const wood=mat('#7a5a3c',.7),fab=mat('#5d6577',.95),dk=mat('#4a5163',.95);
+ const wood=mat('#7a5a3c',.7),fab=mat('#666e80',.95),dk=mat('#545c6e',.95);
  box(w+.16,.3,l+.1,wood,0,.15,0);
  box(w+.16,1.05,.08,dk,0,.525,-l/2-.12);
  const n=Math.round((w+.16)/.2),bw=(w+.16)/n;for(let i=0;i<n;i++)box(bw-.014,.8,.1,fab,-(w+.16)/2+bw*(i+.5),.62,-l/2-.09,1,6,1);
- const rug=mat('#aeb4c2',1);box(w+1.5,.01,l+1.2,rug,0,.005,.1);
- [-1,1].forEach(k=>{const x=k*(hw+.38);box(.42,.5,.4,wood,x,.25,-l/2+.12);
+ const rug=mat('#aeb4c2',1);box(w+.8,.012,l+.6,rug,0,.006,.1);
+ [-1,1].forEach(k=>{const x=k*(hw+.26);box(.42,.5,.4,wood,x,.25,-l/2+.12);
   const lm=new THREE.Mesh(new THREE.CylinderGeometry(.09,.14,.2,28,1,true),new THREE.MeshStandardMaterial({color:col('#f3ead6'),emissive:col('#ffe2a8'),emissiveIntensity:.35,side:THREE.DoubleSide}));lm.position.set(x,.72,-l/2+.12);sh(lm);G.add(lm);
   box(.02,.18,.02,mat('#c6a04a',.4),x,.59,-l/2+.12)});
- box(w,.28,l,mat('#f1efe9',.9,TQ),0,.44,0);
+ box(w,.28,l,mat('#f1efe9',.9,TW),0,.44,0);
  const shM=mat(s.shC,FEEL[s.shF].r,TW);
  if(s.fit)box(w+.03,.325,l+.03,shM,0,.4325,0);
- if(s.top||!s.duv&&false)cover(hw,-l/2+.4,l/2,.24,.22,.035,.603,0,.3,shM,9);
+ if(s.top||!s.duv&&false)cover(hw,-l/2+.4,l/2,.28,.26,.04,.603,.01,.3,shM,9);
+ /* Sin edredón, la sábana superior se ve con su doblez al pie de las
+    almohadas: la cama queda vestida, no pelada. */
+ if(!s.duv&&s.top)box(w+.04,.025,.2,shM,0,.622,-l/2+.5);
  if(s.duv){const M=curModel(),fa=s.flip?M.b:M.a,fb=s.flip?M.a:M.b,ta=duvetFaceTex(fa),tb=duvetFaceTex(fb),r=FEEL[s.duvF].r;
   const ma=new THREE.MeshStandardMaterial({color:0xffffff,roughness:r,map:ta,side:THREE.DoubleSide}),mb=new THREE.MeshStandardMaterial({color:0xffffff,roughness:r,map:tb,side:THREE.DoubleSide}),zb=-l/2+.6;
-  cover(hw,zb,zb+.36,.28,.31,.075,.617,.02,.3,mb,.45,true,0);
-  cover(hw,zb+.35,l/2,.28,.31,.075,.612,.032,.3,ma,.45,false,.06)}
+  /* Cara rayada: menos relieve para que las rayas queden rectas y parejas
+     (el acolchado fuerte las ondula); la cara lisa lleva el relieve
+     completo del capitonado. */
+  cover(hw,zb,zb+.36,.28,.31,.075,.617,fb.stripes?.02:.03,.3,mb,.83,true,0);
+  cover(hw,zb+.35,l/2,.28,.31,.075,.612,fa.stripes?.028:.045,.3,ma,.83,false,.06)}
  let bm=null;if(s.bam&&!s.cs){bm=bamTex();DT.push(bm)}
  const bz=s.bam?(s.bsz==='kg'?[.91,.51]:[.71,.48]):[.62,.46],pn=s.size==='ind'?1:(s.bam?s.bqt:2),pw=Math.min(bz[0],(w-.1)/pn*.95),pc=s.cs?mat(s.shC,FEEL[s.shF].r,TW):(bm?mat('#ffffff',.9,bm):mat('#f2efe8',FEEL[s.shF].r,TW));
  for(let i=0;i<pn;i++){const x=(i-(pn-1)/2)*(w/pn);const pm=sh(new THREE.Mesh(pillow(pw,bz[1],s.bam?.17:.15),pc));pm.position.set(x,.68,-l/2+.3);pm.rotation.x=.2;G.add(pm)}
  if(s.cur)room(l);sun.target.position.set(0,.4,0);scene.add(sun.target)}
-/* cámara */
-const T=new THREE.Vector3(0,.55,0);let cur={th:.7,ph:1.15,r:5.6},tg={...cur},auto=false;
-const views={front:[0,1.3],tq:[.8,1.1],top:[0,.1]};
-function baseR(){const S=SIZES[s.size];return 4.6+S.w*1.1}
-function setView(k){const v=views[k];let d=v[0]-cur.th;d=Math.atan2(Math.sin(d),Math.cos(d));tg.th=cur.th+d;tg.ph=v[1];tg.r=k==='top'?baseR()+1.2:baseR();document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===k))}
+/* cámara — Frontal = desde los pies, cabecera atrás, cama centrada y
+   grande. La cámara arranca EXACTA en Frontal desde el primer cuadro
+   (antes arrancaba a 0.7 rad y se veía de lado). Plataforma más chica y
+   cámara más lejos para que la cama llene el escenario sin recortarse. */
+const T=new THREE.Vector3(0,.30,0);let cur={th:0,ph:1.10,r:baseR()},tg={...cur},auto=false;
+const views={front:[0,1.10],tq:[.8,1.02],top:[0,.08]};
+function baseR(){const S=SIZES[s.size];return 2.9*(S.w+.8)}
+function setView(k){const v=views[k];let d=v[0]-cur.th;d=Math.atan2(Math.sin(d),Math.cos(d));tg.th=cur.th+d;tg.ph=v[1];tg.r=k==='top'?baseR()+1:(k==='tq'?baseR()*1.18:baseR());document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===k))}
 function place(){const sp=Math.sin(cur.ph);cam.position.set(T.x+cur.r*sp*Math.sin(cur.th),T.y+cur.r*Math.cos(cur.ph),T.z+cur.r*sp*Math.cos(cur.th));cam.lookAt(T)}
 const cv=$('#cv'),pts=new Map();let pd=0;
 cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);if(pts.size===2){const a=[...pts.values()];pd=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])}});
@@ -308,10 +345,11 @@ const fmt=n=>'$'+Math.round(n).toLocaleString('es-MX')+' MXN';
 function swatches(el,key,nameEl,L){L=L||[];el.innerHTML='';L.forEach(([n,h])=>{const b=document.createElement('button');b.style.background=h;b.title=n;b.setAttribute('aria-label',n);
   b.className=s[key].toLowerCase()===h?'on':'';b.onclick=()=>{s[key]=h;if(key==='duvC')s.flip=false;sync()};el.appendChild(b)});
  if(!L.fixed){const i=document.createElement('input');i.type='color';i.value=s[key];i.title='Otro color';i.oninput=()=>{s[key]=i.value;sync(true)};el.appendChild(i)}
- const f=L.find(c=>c[1]===s[key].toLowerCase());nameEl.textContent=f?f[0]:(String(s[key]).toLowerCase()==='#ffffff'?'Blanco':'Color personalizado')}
+ const f=L.find(c=>c[1]===s[key].toLowerCase());nameEl.textContent=f?f[0]:(String(s[key]).toLowerCase()==='#ffffff'?'Blanco':'Color personalizado');
+ if(key==='shC'){const big=document.querySelector('#shBig');if(big)big.style.background=s[key]}}
 function feel(el,key){el.innerHTML='';for(const k in FEEL){const b=document.createElement('button');b.textContent=FEEL[k].n;b.className=s[key]===k?'on':'';b.onclick=()=>{s[key]=k;sync()};el.appendChild(b)}}
 function sizes(){const el=$('#sizes');el.innerHTML='';for(const k in SIZES){const b=document.createElement('button');b.innerHTML=SIZES[k].n+(SIZES[k].d?'<small>'+SIZES[k].d+' cm</small>':'');b.className=s.size===k?'on':'';b.onclick=()=>{s.size=k;setView(document.querySelector('[data-v].on').dataset.v);sync()};el.appendChild(b)}}
-const css=f=>f.tex?f.c:(f.t==='s'?f.c:'repeating-linear-gradient(0deg,'+f.c+' 0 8px,'+f.c2+' 8px 18px)');
+const css=f=>f.stripes?('repeating-linear-gradient(180deg,'+f.c+' 0 9px,'+f.stripes+' 9px 15px)'):f.c;
 function mods(){const el=$('#mods');el.innerHTML='';DUV.forEach(m=>{const b=document.createElement('button');b.className='mdl'+(s.model===m.id?' on':'');
  b.innerHTML='<span class="pv" style="background:'+css(m.a)+'"><i style="background:'+css(m.b)+'"></i></span>'+m.n+'<small>'+m.d+'</small>';b.onclick=()=>{s.model=m.id;s.flip=false;sync()};el.appendChild(b)});
  const m=DUV.find(d=>d.id===s.model);$('#duvS').style.display='none';$('#duvN').textContent=m.n+' · '+m.d}
@@ -335,8 +373,8 @@ function sync(light){const T2=totals(),S=T2.S;
 ['duv','fit','top','cs','bam','cur'].forEach(k=>$('#'+k).onchange=e=>{s[k]=e.target.checked;sync()});
 $('#flipT').onclick=()=>{if(s.duv){s.flip=!s.flip;sync(true)}};
 $('#add').onclick=()=>{window.dispatchEvent(new CustomEvent('inovation:add-to-cart',{detail:{...s,total:Math.round(totals().t)}}));const t=$('#toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)};
-size();sync();setView('front');cur={...tg};cur.th=.7;
-window.__vtc={state:()=>s,totals:totals,SIZES:SIZES,DUV:DUV,SHC:SHC,CUR:CUR,curModel:curModel};
+size();sync();setView('front');cur={...tg};
+window.__vtc={state:()=>s,totals:totals,SIZES:SIZES,DUV:DUV,SHC:SHC,CUR:CUR,curModel:curModel,scene:scene,cam:cam,G:G,T:T,camState:()=>({th:cur.th,ph:cur.ph,r:cur.r}),views:views};
 })();
 </script>
 <script>
