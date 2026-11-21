@@ -172,18 +172,23 @@ const FEEL={alg:{n:'Algodón egipcio',r:.85,k:0}};
 /* Sábanas reales (20 colores de Alberto). */
 const SHC=[['Violet','#6a4a8a'],['Rose','#d97a8a'],['Baby Blue','#a8c8e0'],['Black','#222222'],['Beage','#d8c9a8'],['Burgundy','#7a1f2b'],['Chocolate','#5a3a28'],['Gold','#c9a227'],['Orange','#e07b2a'],['Champagne','#e8d9b0'],['Military Green','#5a6b4a'],['Marine','#1f3a5f'],['Grape','#6b3a7a'],['Olive','#7a7a4a'],['Royal Blue','#2a4a9a'],['Baby Rose','#f2c8d0'],['Rojo Vino','#8a2a3a'],['Camel','#c19a6b'],['Red','#c02020'],['Crema','#f2ead8']];SHC.fixed=true;
 /* Modelos de edredón: ver DUV abajo. */
-/* Edredones REALES de Alberto (5). Acolchado: CUADROS EN CAPITONADO
-   (no rombos), como sus fotos IMG_4735/6248/6253: cuadros grandes
-   abullonados con costuras marcadas. Reversos reales: Azul Marino ↔ Gris
-   claro; Gris = Gris carbón (cara) / Gris Oxford (reverso); Blanco con
-   Rayas = blanca lisa (cara) / blanca con rayas de gris claro (reverso).
-   Beige y Blanco son de un solo color (reverso = cara). */
+/* Edredones REALES de Alberto (6). Acolchado: CUADROS EN CAPITONADO
+   (no rombos), como sus fotos IMG_4735/6248/6253/5854/5856: cuadros
+   grandes abullonados con costuras marcadas. Caras corregidas por
+   Alberto 2026-11-21 03:10-03:11 ("Son todos los edredones"):
+   Beige = Beige / Chocolate; Negro = #1b1820 (casi negro con leve tinte
+   azul marino, medido en sus fotos IMG_5854/5856) / Gris carbón (el MISMO
+   gris del reverso del Azul Marino); Azul Marino = Azul Marino / Gris
+   carbón; Blanco = Blanco en ambos lados; Blanco con Rayas = blanca con
+   rayas gris claro (cara) / Gris claro liso (reverso); Gris = Gris
+   carbón (cara) / Gris Oxford (reverso). */
 const DUV=[
-{id:'azul',n:'Azul Marino',d:'Reverso Gris',a:{c:'#232a45'},b:{c:'#9aa0a6'}},
+{id:'azul',n:'Azul Marino',d:'Azul Marino · Reverso Gris carbón',a:{c:'#232a45'},b:{c:'#26292e'}},
 {id:'gris',n:'Gris',d:'Gris carbón · Reverso Gris Oxford',a:{c:'#26292e'},b:{c:'#9aa0a6'}},
-{id:'beige',n:'Beige',d:'Liso, reverso beige',a:{c:'#e0d2b8'},b:{c:'#e0d2b8'}},
-{id:'blanco',n:'Blanco',d:'Liso, reverso blanco',a:{c:'#f4f3f1'},b:{c:'#f4f3f1'}},
-{id:'rayas',n:'Blanco con Rayas',d:'Reverso gris claro rayado con blanco',a:{c:'#f4f3f1'},b:{c:'#f4f3f1',stripes:'#b3b9c2'}}];
+{id:'beige',n:'Beige',d:'Beige · Reverso Chocolate',a:{c:'#e0d2b8'},b:{c:'#5a3a28'}},
+{id:'blanco',n:'Blanco',d:'Blanco en ambos lados',a:{c:'#f4f3f1'},b:{c:'#f4f3f1'}},
+{id:'rayas',n:'Blanco con Rayas',d:'Blanco con rayas gris claro · Reverso Gris claro',a:{c:'#f4f3f1',stripes:'#b3b9c2'},b:{c:'#b3b9c2'}},
+{id:'negro',n:'Negro',d:'Negro · Reverso Gris carbón',a:{c:'#1b1820'},b:{c:'#26292e'}}];
 /* Bambú real: Standard $800 c/u, par $1,500; King $900 c/u, par $1,700.
    Cortinas blackout reales (17 colores): SOLO visuales, no se cobran. */
 const BAM={qn:{one:800,pair:1500},kg:{one:900,pair:1700}};
@@ -205,7 +210,7 @@ const CUR=[
 {id:'c15',n:'Mineral',c:'#7a9a8a',t:'p',img:'assets/cortina-mineral.jpg'},
 {id:'c16',n:'Pink',c:'#f2a0c0',t:'p',img:'assets/cortina-pink.jpg'},
 {id:'c17',n:'Perla',c:'#f0ede8',t:'p',img:'assets/cortina-perla.jpg'}];
-const s={size:'qn',duv:true,model:'azul',duvC:'#1f2f55',duvF:'alg',flip:false,fit:true,top:true,cs:true,shC:'#f2ead8',shF:'alg',bam:false,bsz:'qn',bqt:2,cur:false,cm:'c6',cpn:2};
+const s={size:'qn',duv:true,model:'azul',duvC:'#1f2f55',duvF:'alg',flip:false,fit:true,top:true,cs:true,shC:'#f2ead8',shF:'alg',bam:false,bsz:'qn',bqt:2,cur:false,cm:'c1',cpn:2};
 const curModel=()=>DUV.find(d=>d.id===s.model);
 const msg=$('#msg');
 if(!window.THREE){msg.textContent='No se pudo cargar el visor 3D. Revisa tu conexión y recarga la página.';return}
@@ -378,7 +383,11 @@ function sync(light){const T2=totals(),S=T2.S;
  $('#lines').innerHTML=L.join('<br>');
  $('#wa').href='https://wa.me/525636858623?text='+encodeURIComponent('Hola Inovation Store, quiero cotizar este set: '+L.join('; ').replace(/<br>/g,'')+'. Total estimado '+fmt(T2.t));
  build()}
-['duv','fit','top','cs','bam','cur'].forEach(k=>$('#'+k).onchange=e=>{s[k]=e.target.checked;sync()});
+/* Al encender "Ver cortinas y ventana" el escenario se trae a la vista:
+   antes el escenario ya no era sticky y quedaba fuera de pantalla al
+   activar el interruptor, así que el usuario no veía aparecer las
+   cortinas ("No aparecen las cortinas") aunque sí se construían. */
+['duv','fit','top','cs','bam','cur'].forEach(k=>$('#'+k).onchange=e=>{s[k]=e.target.checked;sync();if(k==='cur'&&s.cur){const st=$('#stage');window.scrollTo({top:st.getBoundingClientRect().top+window.scrollY-88,behavior:'smooth'})}});
 $('#flipT').onclick=()=>{if(s.duv){s.flip=!s.flip;sync(true)}};
 $('#add').onclick=()=>{window.dispatchEvent(new CustomEvent('inovation:add-to-cart',{detail:{...s,total:Math.round(totals().t)}}));const t=$('#toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)};
 size();sync();setView('front');cur={...tg};
