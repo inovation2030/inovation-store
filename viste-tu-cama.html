@@ -1,5 +1,58 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Viste tu Cama 3D | Inovation Store</title><link rel="stylesheet" href="styles.css"><link rel="preload" href="assets/three.min.js" as="script"><link rel="preload" href="assets/bed.glb" as="fetch" crossorigin="anonymous"><style>
-/* Viste tu Cama — diseño exacto de la referencia: azul marino + dorado */
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Viste tu Cama 3D | Inovation Store</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{--bg:#f3f5f9;--card:#fff;--ink:#14213d;--mut:#667089;--line:#dde2ec;--pri:#14213d;--pri-ink:#fff;--gold:#b8923b;--s1:#ffffff;--s2:#dfe5f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1320;--card:#171d2e;--ink:#eef1f8;--mut:#9aa4bd;--line:#2a3350;--pri:#d9b25a;--pri-ink:#14213d;--gold:#d9b25a;--s1:#2a3454;--s2:#0e1320}}
+:root[data-theme="dark"]{--bg:#0e1320;--card:#171d2e;--ink:#eef1f8;--mut:#9aa4bd;--line:#2a3350;--pri:#d9b25a;--pri-ink:#14213d;--gold:#d9b25a;--s1:#2a3454;--s2:#0e1320}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1{font:600 26px/1.15 Georgia,"Times New Roman",serif;margin:0 0 4px}
+header.art-head{padding:18px 16px 12px;max-width:1180px;margin:auto}header.art-head p{margin:0;color:var(--mut)}
+.wrap{max-width:1180px;margin:auto;display:grid;gap:14px;padding:0 12px 24px}
+@media(min-width:900px){.wrap{grid-template-columns:1.25fr 1fr;align-items:start}.stage{position:sticky;top:12px;height:min(78vh,720px)}}
+.stage{position:relative;height:46vh;min-height:280px;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,var(--s1),var(--s2));border:1px solid var(--line)}
+@media(max-width:899px){.stage{position:sticky;top:0;z-index:5}}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}
+.msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--mut);pointer-events:none}
+.tools{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.tools button{background:color-mix(in srgb,var(--card) 88%,transparent);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer;backdrop-filter:blur(6px)}
+.tools button.on{background:var(--pri);color:var(--pri-ink);border-color:var(--pri)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 16px 16px}
+section{padding:14px 0;border-bottom:1px solid var(--line)}section:last-of-type{border:0}
+h2{font:600 16px/1.2 Georgia,serif;margin:0 0 10px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.seg.three{grid-template-columns:repeat(3,1fr)}
+.seg button,.btn2{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:9px 6px;font:inherit;font-size:13px;cursor:pointer;text-align:center}
+.seg button small{display:block;color:var(--mut);font-size:11px}
+.seg button.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset;font-weight:600}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0}
+.sw{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;align-items:center}
+.sw button{width:34px;height:34px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.sw button.on{box-shadow:0 0 0 2.5px var(--gold)}
+.sw input{width:34px;height:34px;border:0;padding:0;background:none;cursor:pointer}
+.name{color:var(--mut);font-size:13px;margin-bottom:4px}
+.switch{position:relative;width:44px;height:26px;flex:none}.switch input{opacity:0;position:absolute;inset:0;margin:0;cursor:pointer;z-index:1}
+.switch i{position:absolute;inset:0;border-radius:99px;background:var(--line);transition:.2s}.switch i:after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.switch input:checked+i{background:var(--gold)}.switch input:checked+i:after{transform:translateX(18px)}
+.switch input:focus-visible+i{outline:2px solid var(--ink);outline-offset:2px}
+.buy{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);margin:0 -16px -16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));border-radius:0 0 16px 16px}
+.tot{display:flex;justify-content:space-between;align-items:baseline}.tot b{font:600 24px Georgia,serif}
+.lines{color:var(--mut);font-size:13px;margin:4px 0 10px}
+.cta{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cta a,.cta button{display:block;text-align:center;text-decoration:none;border-radius:12px;padding:12px;font:600 14px inherit;font-family:inherit;cursor:pointer;border:1px solid var(--pri)}
+.cta .p{background:var(--pri);color:var(--pri-ink)}.cta .s{background:transparent;color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--pri);color:var(--pri-ink);padding:10px 16px;border-radius:99px;opacity:0;transition:.25s;pointer-events:none;z-index:9}.toast.show{opacity:1}
+.mods{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.mdl{display:flex;flex-direction:column;gap:2px;text-align:left;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:12px;padding:8px;font:inherit;font-size:13px;cursor:pointer}
+.mdl.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset}
+.mdl small{color:var(--mut);font-size:11px}
+.pv{position:relative;display:block;height:44px;border-radius:8px;margin-bottom:6px;border:1px solid var(--line)}
+.pv i{position:absolute;right:5px;bottom:5px;width:18px;height:18px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+/* --- Cabecera azul de la tienda (igual que el resto del sitio) --- */
 .ref-header{background:linear-gradient(180deg,#081a38,#0d2a52);border-bottom:3px solid #E8A90C}
 .ref-header .header-in{max-width:1400px;min-height:72px}
 .ref-header .logo b{font-family:Georgia,'Times New Roman',serif;font-size:26px;letter-spacing:.5px}
@@ -10,165 +63,15 @@
 .ref-header .cart-btn{background:none;border:0;color:#fff;font-size:24px;padding:8px 10px;position:relative;box-shadow:none}
 .ref-header .cart-btn .count{position:absolute;top:0;right:0;background:#E8A90C;color:#123a6b;min-width:20px;height:20px;font-size:11px}
 .ref-header nav.main .drop .submenu{top:calc(100% + 6px)}
-.cfg3d{display:grid;grid-template-columns:300px 1fr 330px;gap:0;align-items:start;background:linear-gradient(180deg,#0b2247,#0a1a33);border-radius:16px;overflow:visible;border:1px solid #1c3a6b}
-.cfg3d .panel{background:transparent;color:#fff;border:0;border-radius:0;padding:20px}
-.cfg3d .panel h2{color:#fff}
-.panel-steps .cfg-title{display:flex;gap:12px;align-items:center;margin:0 0 4px}
-.panel-steps .cfg-title .bed-ico{font-size:34px;color:#F2B705}
-.panel-steps h2{margin:0;font-size:26px}
-.panel-steps .cfg-sub{color:#b9c9de;font-size:14px;margin:0 0 18px 46px}
-.step{display:flex;align-items:center;gap:12px;padding:13px 12px;border:1px solid #1c3a6b;border-radius:12px;margin-bottom:10px;cursor:pointer;background:#0e2c56;color:#dbe6f5}
-.step .num{width:34px;height:34px;border-radius:50%;background:#33507e;color:#fff;display:grid;place-items:center;font-weight:700;flex:0 0 auto;font-size:15px}
-.step .ico{font-size:20px;flex:0 0 auto}
-.step b{font-size:15px;font-weight:600}
-.step .check{margin-left:auto;color:#7ee2a0;font-weight:800;font-size:18px}
-.step.on{background:linear-gradient(90deg,#E8A90C,#F2B705);color:#123a6b;border-color:#F2B705}
-.step.on .num{background:#123a6b;color:#F2B705}
-.step.on .check{color:#123a6b}
-.step.on b{font-weight:800}
-.opt-label{color:#fff;font-weight:700;margin:16px 0 8px;font-size:15px}
-.opt{display:block;width:100%;text-align:left;background:#0e2c56;color:#fff;border:1px solid #1c3a6b;border-radius:9px;padding:11px 12px;margin:6px 0;cursor:pointer;font-size:14px}
-.opt.on{border-color:#F2B705;background:#123a5f;font-weight:700}
-.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.type-card{position:relative;background:#0e2c56;border:2px solid #1c3a6b;border-radius:10px;padding:6px;cursor:pointer;text-align:center;color:#fff}
-.type-card.on{border-color:#F2B705;background:#123a5f}
-.type-card img{width:100%;height:64px;object-fit:cover;border-radius:7px;display:block}
-.type-card span{font-size:12px;display:block;padding:5px 0 2px}
-.type-card .tick{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;background:#123a6b;color:#fff;display:grid;place-items:center;font-size:13px;border:2px solid #F2B705}
-.cfg3d .swatches .sw{box-shadow:0 0 0 1px #33507e}
-#stepOpts .swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-#stepOpts .swatches .sw{width:100%;height:auto;aspect-ratio:1/1;border-radius:10px;object-fit:cover}
-.panel-steps{overflow:visible}
-#stepOpts{overflow:visible}
-.cfg3d .swatches .sw.on{box-shadow:0 0 0 3px #F2B705}
-.stage-col{background:#e8edf1;display:flex;flex-direction:column;min-width:0}
-.stage3d{position:relative;background:#e8edf1;height:calc(100vh - 210px);min-height:560px;flex:1}
-.stage3d canvas{width:100%;height:100%;display:block;touch-action:pan-y}
-.stage3d:fullscreen{height:100vh;min-height:100vh}
-.stage3d:fullscreen canvas{height:100%}
-/* Barra de controles INDEPENDIENTE, debajo del escenario (no encima): gira,
-   zoom, pantalla completa, giro automático, vistas, voltear y quitar el
-   edredón. Nada tapa la cama ni las instrucciones. 44 px mínimo táctil. */
-.stage-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;padding:10px 12px;background:#fff;border-top:1px solid #e3e8ee}
-.stage-toolbar .tb-label{font-weight:800;color:#123a6b;font-size:14px;letter-spacing:1px;white-space:nowrap}
-.stage-toolbar button{min-height:44px;border:1px solid #e3e8ee;border-radius:20px;background:#fff;padding:9px 13px;cursor:pointer;font-size:14px;font-weight:600;color:#123a6b}
-.stage-toolbar button:hover,.stage-toolbar button.on{border-color:#E8A90C;background:#fff8dd}
-.stage-toolbar button.tb-round{width:44px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center}
-.stage-toolbar .tb-sep{width:1px;height:28px;background:#e3e8ee;flex:0 0 auto}
-/* Instrucciones FUERA del escenario, en su propia línea debajo de la barra:
-   nunca se superponen con los controles. */
-.stage-hint{background:#f7f6f2;color:#53616f;font-size:12px;text-align:center;padding:8px 12px;border-top:1px solid #e3e8ee}
-.gl-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#53616f;background:#e8edf1;text-align:center;padding:20px;z-index:2}
-.gl-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f7f6f2;text-align:center;padding:20px;z-index:4}
-.gl-fallback .gl-err-icon{font-size:44px;line-height:1}
-.gl-fallback b{font-size:17px;color:#123a6b}
-.gl-fallback p{margin:0;color:#53616f;font-size:14px;line-height:1.5;max-width:420px}
-.color-strip{background:#fff;padding:14px 10px 10px;display:flex;align-items:center;gap:8px;border-top:1px solid #e3e8ee}
-.strip-arrow{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid #dfe5ea;background:#fff;font-size:20px;cursor:pointer;color:#123a6b}
-.color-items{display:flex;gap:14px;overflow-x:auto;flex:1;padding:2px}
-.csw{position:relative;flex:0 0 auto;width:74px;text-align:center;cursor:pointer}
-.csw img{width:64px;height:64px;object-fit:cover;border-radius:12px;border:3px solid #e3e8ee;display:block;margin:0 auto}
-.csw.on img{border-color:#E8A90C}
-.csw .tick{position:absolute;top:-4px;right:2px;width:22px;height:22px;border-radius:50%;background:#123a6b;color:#fff;display:grid;place-items:center;font-size:12px;border:2px solid #fff}
-.csw span{font-size:12px;color:#123a6b;display:block;padding-top:4px}
-.sheet-chip{text-align:center;margin:10px 0 2px;font-weight:700;color:#123a6b;background:#fff;padding:8px}
-.bed-size-line{text-align:center;color:#5a6a7a;background:#fff;padding:0 8px 12px;margin:0}
-.panel-sel .sel-head{display:flex;gap:12px;align-items:center;border-bottom:2px solid #F2B705;padding-bottom:12px;margin-bottom:6px}
-.panel-sel .sel-head .bed-ico{font-size:30px;color:#F2B705}
-.panel-sel h2{margin:0;font-size:24px}
-.sel-row{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #1c3a6b;color:#dbe6f5;font-size:14px}
-.sel-row img{width:52px;height:52px;object-fit:cover;border-radius:8px;flex:0 0 auto}
-.sel-row b{color:#fff;font-weight:600}
-.panel-sel .total{color:#fff;font-size:34px;text-align:right}
-.panel-sel .total-lbl{color:#b9c9de;margin:14px 0 0}
-.btn-mp{display:block;width:100%;background:#fff;color:#123a6b;border:0;border-radius:28px;padding:13px 16px;font-weight:700;cursor:pointer;font-size:16px;text-align:center}
-.btn-mp b{color:#009ee3}
-.seals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;font-size:12px;color:#dbe6f5;margin-top:16px}
-.seals .s-ico{font-size:26px;display:block;margin-bottom:4px}
-@media(max-width:900px){
-.cfg3d{grid-template-columns:1fr;overflow:visible}
-.panel-steps,.panel-sel{overflow:visible}
-.stage-col{order:-1}
-.panel-steps{order:0}
-.panel-sel{order:1}
-.stage3d{height:66svh;min-height:480px;flex:none}
-/* Escenario móvil 66svh (2026-11-21): con 100svh la cama solo ocupaba
-   ~53% de la altura del escenario en el iPhone (su caja proyectada es
-   mucho más ancha que alta en vista diagonal, así que el ajuste por área
-   la dejaba baja). Con 66svh + objetivo de área 0.88 la cama ocupa ~68%
-   de la altura del escenario. flex:none: el flex:1 de .stage3d anulaba
-   el height. */
-.stage3d canvas{height:100%}
-.ref-header .logo b{font-size:20px}
-}
-/* --- Layout del ejemplo (Muse): encabezado de vista previa, pie con colores
-   rápidos, caja de total y modo pantalla completa sin API --- */
-.stage-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#0b2247;color:#e8cc89;font-size:12px;letter-spacing:2px;padding:12px 16px;font-weight:700}
-.stage-heading .live-dot{color:#c8d8cb;letter-spacing:1px}
-.stage-footer{padding:13px 15px;background:#f3f0e9;color:#18283b;display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:13px}
-.stage-footer .swatches{display:flex;gap:7px;flex-wrap:wrap}
-.qsw{width:44px;height:44px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0;box-shadow:0 0 0 1px #c8c2b2}
-.qsw.on{outline:2px solid #E8A90C;outline-offset:1px}
-.total-box{margin:18px 0 14px;display:grid;gap:6px}
-.total-box .total-lbl{margin:0}
-.total-box .total{margin:0}
-.total-box small{font-size:11px;color:#b9c9de;text-align:right}
-.cart-message{min-height:20px;font-size:13px;color:#F2B705;margin:10px 0 0;text-align:center}
-.stage3d.fs-fallback{position:fixed;inset:0;z-index:9999;height:100vh!important;min-height:100vh!important;background:#e8edf1}
-@media(max-width:768px){
-.ref-header .hide-m{display:none}
-.ref-header .logo b{font-size:17px}
-.ref-header .logo small{font-size:8px;letter-spacing:2px}
-.ref-header .logo img{height:40px}
-}
-@media(max-width:480px){
-/* Barra de controles en móvil: envuelve en varias filas centradas, botones
-   táctiles de 44 px, sin superposiciones (ya no hay píldoras sobre el
-   escenario). */
-.stage-toolbar{gap:6px;padding:8px}
-.stage-toolbar button{padding:8px 10px;font-size:13px}
-.stage-hint{font-size:11px}
-}
-/* --- Corrección ZIP: progreso de pasos, aviso de cambio en vivo, resumen
-   con precios por fila, y botones flotantes compactos SOLO en esta página --- */
-.step-count{color:#b9c9de;font-size:12px;margin:0 0 8px 46px}
-.step-progress{display:flex;gap:6px;margin:0 0 6px 46px}
-.step-progress i{flex:1;height:5px;border-radius:3px;background:#1c3a6b}
-.step-progress i.on{background:#F2B705}
-.step-progress i.done{background:#7ee2a0}
-#stepOpts{border-top:1px solid #1c3a6b;margin-top:16px;padding-top:4px}
-.change-toast{position:absolute;left:50%;top:64px;transform:translateX(-50%) translateY(-6px);background:rgba(11,61,145,.93);color:#fff;border:1px solid #F2B705;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:700;z-index:6;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis}
-.change-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.sel-row .price{margin-left:auto;color:#F2B705;font-weight:700;white-space:nowrap;font-size:14px}
-.sel-row span{flex:1;min-width:0}
-/* WhatsApp y ayuda FUERA del área interactiva: los botones flotantes de
-   chat.js quedan ocultos SOLO en esta página (no se toca chat.js ni el
-   resto del sitio) y en su lugar hay una barra de contacto fija en el flujo
-   de la página, debajo del configurador: nunca tapan la escena 3D, los
-   controles ni las instrucciones. El panel del asistente sigue funcionando:
-   se abre desde la barra de contacto. */
 body .wa-fab,body .chat-fab{display:none!important}
-body .chat-panel{bottom:16px!important;right:16px!important}
-main{padding-bottom:24px!important}
-.contact-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:18px;padding:14px 16px;background:#fff;border:1px solid #e3e8ee;border-radius:12px}
-.contact-bar a,.contact-bar button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:24px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;border:0}
-.contact-bar .contact-wa{background:#25D366;color:#fff}
-.contact-bar .contact-chat{background:#F2B705;color:#123a6b}
-.contact-bar span{color:#53616f;font-size:13px}
-/* --- Diseño del artifact (2026-11-21): secciones con interruptores en
-   una sola página, sin asistente de 5 pasos. --- */
-.cfg-section{border-top:1px solid #1c3a6b;margin-top:16px;padding-top:14px}
-.cfg-section:first-of-type{border-top:0;margin-top:0;padding-top:4px}
-.cfg-section h3{color:#fff;font-size:17px;margin:0 0 10px;display:flex;align-items:baseline;gap:8px}
-.cfg-section h3 .sec-price{margin-left:auto;color:#F2B705;font-weight:700;font-size:13px;white-space:nowrap}
-.toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #1c3a6b;border-radius:10px;margin-bottom:8px;cursor:pointer;background:#0e2c56;color:#fff;font-size:15px}
-.toggle input{width:22px;height:22px;accent-color:#F2B705;flex:0 0 auto;cursor:pointer}
-.toggle b{font-weight:600}
-.toggle .tgl-price{margin-left:auto;color:#F2B705;font-weight:700;font-size:13px;white-space:nowrap}
-.fabric-lbl{color:#b9c9de;font-size:13px;margin:12px 0 6px}
-.sec-note{color:#b9c9de;font-size:13px;line-height:1.5;margin:8px 0 0}
-.sec-body.off{opacity:.45;pointer-events:none}
-</style></head><body>
+main.vtc-main{max-width:1180px;margin:0 auto;padding:0 0 40px}
+.btn-mp{display:block;width:100%;background:#fff;color:#123a6b;border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;font-size:15px;text-align:center;margin-top:8px}
+.btn-mp b{color:#009ee3}
+@media(max-width:900px){.ref-header .logo b{font-size:20px}}
+@media(max-width:768px){.ref-header .hide-m{display:none}.ref-header .logo b{font-size:17px}.ref-header .logo small{font-size:8px;letter-spacing:2px}.ref-header .logo img{height:40px}}
+</style>
+</head>
+<body>
 <header class="site ref-header"><div class="header-in">
 <a class="logo" href="index.html"><img src="assets/logo.png" alt="Inovation Store"><span><b>Inovation Store<sup>®</sup></b><small>HOGAR PREMIUM</small></span></a>
 <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
@@ -179,55 +82,44 @@ main{padding-bottom:24px!important}
 <button class="cart-btn" type="button" onclick="openCart()" aria-label="Carrito">🛒<span class="count cart-count">0</span></button>
 </div>
 </div></header>
-<main style="max-width:1400px">
-<h1 class="page">Viste tu Cama</h1><p class="lead">Elige tamaño, color y tela. Gira la cama con el dedo o el ratón.</p>
-<div class="cfg3d">
-<div class="panel panel-steps">
-<div class="cfg-title"><span class="bed-ico">🛏️</span><h2>Viste tu cama</h2></div>
-<p class="cfg-sub">Elige tamaño, color y tela. Gira la cama con el dedo o el ratón.</p>
-<div id="cfgSections"></div>
-</div>
-<div class="stage-col">
-<div class="stage-heading"><span>VISTA PREVIA</span><span class="live-dot">● CONFIGURACIÓN EN VIVO</span></div>
-<div class="stage3d" id="stage3d">
-<div class="change-toast" id="changeToast" role="status"></div>
-<div class="gl-loading" id="glLoading"><b>Cargando la cama…</b><span>Si tarda más de unos segundos, revisa tu conexión.</span></div>
-<div class="gl-fallback" id="glFallback"><span class="gl-err-icon">⚠️</span><p><b>La escena 3D no se pudo cargar en este teléfono/navegador.</b><br><span id="glError">Revisa tu conexión a internet y recarga la página.</span><br>El configurador de opciones de abajo sigue funcionando.</p></div>
-</div>
-<div class="stage-toolbar" role="group" aria-label="Controles de cámara y vista">
-<span class="tb-label">⟳ 360°</span>
-<button type="button" class="tb-round" onclick="rotateBed(-1)" aria-label="Girar a la izquierda">‹</button>
-<button type="button" class="tb-round" onclick="rotateBed(1)" aria-label="Girar a la derecha">›</button>
-<span class="tb-sep" aria-hidden="true"></span>
-<button type="button" class="tb-round" onclick="zoomBed(-0.15)" aria-label="Alejar">−</button>
-<button type="button" class="tb-round" onclick="zoomBed(0.15)" aria-label="Acercar">＋</button>
-<span class="tb-sep" aria-hidden="true"></span>
-<button type="button" id="fsBtn" onclick="toggleFS()" aria-label="Ver la habitación a pantalla completa">⛶ Pantalla completa</button>
-<button type="button" onclick="toggleAuto()" id="btnAuto">Giro automático: apagado</button>
-<span class="tb-sep" aria-hidden="true"></span>
-<button type="button" class="view-btn" onclick="setView('front',this)">Vista frontal</button>
-<button type="button" class="view-btn on" onclick="setView('angle',this)" id="btnAngle">Vista 3/4</button>
-<button type="button" class="view-btn" onclick="setView('top',this)">Vista superior</button>
-<span class="tb-sep" aria-hidden="true"></span>
-<button type="button" onclick="flipDuvet()" id="btnFlip">⟲ Dar la vuelta al edredón</button>
-</div>
-<div class="stage-hint">Arrastra para girar 360° · Rueda o pellizca para acercar · Dos dedos para desplazar</div>
-</div>
-<div class="panel panel-sel">
-<div class="sel-head"><span class="bed-ico">🛏️</span><h2>Tu selección</h2></div>
-<div id="selList"></div>
-<div class="total-box"><p class="total-lbl">Total estimado</p><p class="total" id="cfgTotal">$3,599 MXN</p><small>Precios reales de Inovation Store.</small></div>
-<button class="btn-wa" type="button" onclick="quoteWhatsApp()">💬 Cotizar por WhatsApp</button>
-<button class="btn" type="button" style="width:100%" onclick="addCfgToCart()">🛒 Agregar al carrito</button>
-<p><button class="btn-mp" type="button" onclick="addCfgToCart();alert('Compra con Mercado Pago: se guardó tu set en el carrito. El cobro con Mercado Pago se integra en el checkout.')">Comprar con 🤝 <b>mercado pago</b></button></p>
-<p class="cart-message" id="cfgMessage" role="status"></p>
-<div class="seals"><div><span class="s-ico">🚚</span>Envío a todo<br>México</div><div><span class="s-ico">🛡️</span>Compra<br>segura</div><div><span class="s-ico">✅</span>Garantía<br>10 años</div></div>
-<p><a href="index.html" style="color:#F2B705">← Volver a la tienda</a></p>
-</div>
-</div>
-<div class="contact-bar"><a class="contact-wa" href="https://wa.me/525636858623?text=Hola%20Inovation%20Store%2C%20quiero%20informaci%C3%B3n%20sobre%20sus%20productos" target="_blank" rel="noopener">💬 WhatsApp</a><button class="contact-chat" type="button" onclick="openChatPanel()">💬 Asistente</button><span>¿Dudas con tu set? Escríbenos por WhatsApp o con el asistente.</span></div>
-<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D con Three.js y el modelo real de la cama en GLB (assets/bed.glb, construido en Blender con piezas nombradas: estructura, cabecera, colchón, sábana ajustada, sábana superior, edredón doble vista, almohadas de bambú con fundas, cortinas y banca), con texturas de las fotos reales de tus productos. Si el modelo GLB no carga, la página muestra la cama procedural de respaldo con las mismas opciones y precios.</p>
+<main class="vtc-main">
+<header class="art-head"><h1>Viste tu cama</h1><p>Elige tamaño, color y tela. Gira la cama con el dedo o el ratón.</p></header>
+<div class="wrap">
+<div class="stage" id="stage">
+<canvas id="cv" aria-label="Vista 3D de la cama"></canvas>
+<div class="msg" id="msg">Cargando la cama…</div>
+<div class="tools">
+<button data-v="front" class="on">Frontal</button><button data-v="tq">3/4</button><button data-v="top">Superior</button>
+<button id="auto">Girar 360°</button><button id="flipT">Dar la vuelta</button><button id="zm">−</button><button id="zp">+</button><button id="fs">Pantalla completa</button>
+</div></div>
+<div class="panel">
+<section><h2>Tamaño</h2><div class="seg" id="sizes"></div></section>
+<section><h2>Edredón</h2>
+<div class="row"><span>Mostrar edredón</span><label class="switch"><input type="checkbox" id="duv" checked><i></i></label></div>
+<div class="mods" id="mods"></div><div class="name" id="duvN"></div><div class="sw" id="duvS"></div>
+<div class="name">Tela: algodón egipcio</div>
+<div class="seg" id="face" style="grid-template-columns:repeat(2,1fr);margin-top:8px"></div></section>
+<section><h2>Sábanas</h2>
+<div class="row"><span>Sábana ajustable</span><label class="switch"><input type="checkbox" id="fit" checked><i></i></label></div>
+<div class="row"><span>Sábana superior</span><label class="switch"><input type="checkbox" id="top" checked><i></i></label></div>
+<div class="row"><span>Fundas de almohada</span><label class="switch"><input type="checkbox" id="cs" checked><i></i></label></div>
+<div class="name" id="shN"></div><div class="sw" id="shS"></div>
+<div class="name">Tela: algodón egipcio</div></section>
+<section><h2>Almohadas de bambú</h2>
+<div class="row"><span>Agregar almohadas de bambú</span><label class="switch"><input type="checkbox" id="bam"><i></i></label></div>
+<div class="seg" id="bsz" style="grid-template-columns:repeat(2,1fr)"></div>
+<div class="seg" id="bqt" style="grid-template-columns:repeat(2,1fr);margin-top:8px"></div>
+<div class="name" style="margin-top:8px">Memory foam, tacto suave. Apaga las fundas para ver el bambú.</div></section>
+<section><h2>Cortinas blackout</h2>
+<div class="row"><span>Ver cortinas y ventana</span><label class="switch"><input type="checkbox" id="cur"><i></i></label></div>
+<div class="mods" id="curm"></div>
+<div class="seg" id="cpn" style="grid-template-columns:repeat(2,1fr);margin-top:8px"></div></section>
+<div class="buy"><div class="tot"><span>Total estimado</span><b id="tot"></b></div><div class="lines" id="lines"></div>
+<div class="cta"><button class="s" id="add">Agregar al carrito</button><a class="p" id="wa" target="_blank" rel="noopener">Cotizar por WhatsApp</a></div>
+<button class="btn-mp" type="button" id="mpBtn">Comprar con <b>mercado pago</b></button></div>
+</div></div>
 </main>
+<div class="toast" id="toast">Agregado al carrito</div>
 <aside id="cartDrawer" aria-label="Carrito">
 <h2>Tu carrito</h2><div id="cartItems"></div>
 <p>Total: <b id="cartTotal">$0 MXN</b></p>
@@ -245,1139 +137,233 @@ main{padding-bottom:24px!important}
 </div></footer>
 <script src="app.js"></script>
 <script src="chat.js"></script>
-<!-- Three.js r147 VENDIDO EN LOCAL y síncrono (assets/three.min.js +
-     OrbitControls.js + GLTFLoader.js): todo se sirve desde el propio repo,
-     CERO descargas de CDN externos, así la escena arranca en pocos segundos
-     en el iPhone. Nada de runtimes pesados ni WASM. -->
 <script src="assets/three.min.js"></script>
-<script src="assets/OrbitControls.js"></script>
-<script src="assets/GLTFLoader.js"></script>
 <script>
-/* ---------- Datos del catálogo (mismos precios de la tienda) ---------- */
-var EG=[
-{name:"Violet",img:"assets/sabana-violet.jpg",hex:"#6a4a8a"},{name:"Rose",img:"assets/sabana-rose.jpg",hex:"#d97a8a"},
-{name:"Baby Blue",img:"assets/sabana-baby-blue.jpg",hex:"#a8c8e0"},{name:"Black",img:"assets/sabana-black.jpg",hex:"#222222"},
-{name:"Beage",img:"assets/sabana-beage.jpg",hex:"#d8c9a8"},{name:"Burgundy",img:"assets/sabana-burgundy.jpg",hex:"#7a1f2b"},
-{name:"Chocolate",img:"assets/sabana-chocolate.jpg",hex:"#5a3a28"},{name:"Gold",img:"assets/sabana-gold.jpg",hex:"#c9a227"},
-{name:"Orange",img:"assets/sabana-orange.jpg",hex:"#e07b2a"},{name:"Champagne",img:"assets/sabana-champagne.jpg",hex:"#e8d9b0"},
-{name:"Military Green",img:"assets/sabana-military-green.jpg",hex:"#5a6b4a"},{name:"Marine",img:"assets/sabana-marine.jpg",hex:"#1f3a5f"},
-{name:"Grape",img:"assets/sabana-grape.jpg",hex:"#6b3a7a"},{name:"Olive",img:"assets/sabana-olive.jpg",hex:"#7a7a4a"},
-{name:"Royal Blue",img:"assets/sabana-royal-blue.jpg",hex:"#2a4a9a"},{name:"Baby Rose",img:"assets/sabana-baby-rose.jpg",hex:"#f2c8d0"},
-{name:"Rojo Vino",img:"assets/sabana-rojo-vino.jpg",hex:"#8a2a3a"},{name:"Camel",img:"assets/sabana-camel.jpg",hex:"#c19a6b"},
-{name:"Red",img:"assets/sabana-red.jpg",hex:"#c02020"},{name:"Crema",img:"assets/sabana-crema.jpg",hex:"#f2ead8"}];
-
-var CUR=[
-{name:"Chocolate",hex:"#5a3a28",img:"assets/cortina-chocolate.jpg"},{name:"Turquesa",hex:"#2ab8d8",img:"assets/cortina-turquesa.jpg"},
-{name:"Verde salvia",hex:"#a8c8a0",img:"assets/cortina-verde-salvia.jpg"},{name:"Turquesa marino",hex:"#146a7a",img:"assets/cortina-turquesa-marino.jpg"},
-{name:"Rojo",hex:"#c02030",img:"assets/cortina-tinto.jpg"},{name:"Piedra",hex:"#b8b0a0",img:"assets/cortina-piedra.jpg"},
-{name:"Negro",hex:"#1a1a1a",img:"assets/cortina-negro.jpg"},{name:"Morado",hex:"#6b3a8a",img:"assets/cortina-morado.jpg"},
-{name:"Marrón",hex:"#6a4a2a",img:"assets/cortina-marron.jpg"},{name:"Marrón cebada",hex:"#a8824a",img:"assets/cortina-marron-cebada.jpg"},
-{name:"Marino",hex:"#1f3a5f",img:"assets/cortina-marino.jpg"},{name:"Gris carbón",hex:"#3a3a40",img:"assets/cortina-gris-carbon.jpg"},
-{name:"Ciruela",hex:"#6a2a4a",img:"assets/cortina-ciruela.jpg"},{name:"Gris",hex:"#8a8a90",img:"assets/cortina-gris.jpg"},
-{name:"Mineral",hex:"#7a9a8a",img:"assets/cortina-mineral.jpg"},{name:"Pink",hex:"#f2a0c0",img:"assets/cortina-pink.jpg"},
-{name:"Perla",hex:"#f0ede8",img:"assets/cortina-perla.jpg"}];
-
-var SIZES=[{n:"Individual",d:"100 x 200 cm",w:1.9},{n:"Matrimonial",d:"135 x 200 cm",w:2.3},{n:"Queen",d:"160 x 200 cm",w:2.6},{n:"King",d:"200 x 200 cm",w:3.0},{n:"King Jumbo",d:"",w:3.4}];
-var DUVET_PRICES=[999,1099,1199,1299,1499]; /* edredón por tamaño de cama */
-var SHEET_SIZE_PRICES=[500,600,700,800,800]; /* sábanas por tamaño; King Jumbo: precio no dado, se usa el de King ($800) */
-
-/* Edredones REALES de Alberto, solo los de sus fotos: Azul Marino, Gris,
-   Beige, Blanco y Blanco con Rayas (assets/edredon-*.jpg). NO hay Vino,
-   Verde Oliva ni Rosa: esos colores se inventaron aquí y se quitaron.
-   El edredón es hipoalergénico y REVERSIBLE (doble vista): la cara y el
-   reverso se muestran solo cuando la foto real del producto lo respalda:
-   Gris cara / Azul Marino reverso (foto edredon-gris-azul.jpg) y su par
-   Azul Marino cara / Gris reverso. Beige, Blanco y Blanco con Rayas no
-   tienen foto del reverso, así que NO se les inventa color de reverso:
-   revName vacío y rev = color de la cara. */
-/* Texturas del edredón: fotos GENERADAS a partir de las fotos reales del
-   producto (Alberto: "puedes crear fotos solo que sea igual que el
-   edredón"). Solo existen para los 4 colores lisos reales; Blanco con
-   Rayas usa su foto real. tex = cara, revTex = reverso (doble vista). */
-var DUVET_COLORS=[{n:"Azul Marino",hex:"#232a45",rev:"#9aa0a8",revName:"Gris",img:"assets/edredon-azul-marino.jpg",tex:"assets/duvet-tex-azul-marino.jpg",revTex:"assets/duvet-tex-gris.jpg"},{n:"Gris",hex:"#9aa0a8",rev:"#46536f",revName:"Azul Marino",img:"assets/edredon-gris.jpg",tex:"assets/duvet-tex-gris.jpg",revTex:"assets/duvet-tex-azul-marino.jpg"},{n:"Beige",hex:"#e0d2b8",rev:"#e0d2b8",revName:"",img:"assets/edredon-beige.jpg",tex:"assets/duvet-tex-beige.jpg",revTex:"assets/duvet-tex-beige.jpg"},{n:"Blanco",hex:"#f4f3f1",rev:"#f4f3f1",revName:"",img:"assets/edredon-blanco.jpg",tex:"assets/duvet-tex-blanco.jpg",revTex:"assets/duvet-tex-blanco.jpg"},{n:"Blanco con Rayas",hex:"#f4f3f1",rev:"#f4f3f1",revName:"",img:"assets/edredon-blanco-rayas.jpg",tex:"assets/edredon-blanco-rayas.jpg",revTex:"assets/edredon-blanco-rayas.jpg"}];
-
-
-/* Estado del artifact (2026-11-21): secciones con interruptores en una
-   sola página. Valores por defecto del artifact: edredón visible, sábana
-   ajustable + superior + fundas puestas, bambú NO agregado, cortinas
-   ocultas. Cortina por defecto: Piedra (la misma que se mostraba antes). */
-var st={size:2,showDuvet:true,duvetColor:0,duvetFace:"front",
-  fittedSheet:true,topSheet:true,pillowcases:true,
-  sheetColor:{name:"Blanco",hex:"#ffffff",img:null},
-  bamboo:false,showCurtains:false,curtain:5};
-function money(n){return "$"+Number(n).toLocaleString("es-MX")+" MXN";}
-function sheetPrice(){return SHEET_SIZE_PRICES[st.size];}
-function duvetPrice(){return DUVET_PRICES[st.size];}
-function duvetLabel(dc){return dc.n+(dc.revName?" / "+dc.revName:"");}
-/* Almohadas de bambú: 2 Bamboo Standard $1,500 (Individual/Matrimonial/
-   Queen) o 2 Bamboo King $1,700 (King/King Jumbo). Precios reales. */
-function bambooPrice(){return st.size>=3?1700:1500;}
-function bambooLabel(){return st.size>=3?"2 Bamboo King":"2 Bamboo Standard";}
-function sheetIncluded(){return st.fittedSheet||st.topSheet||st.pillowcases;}
-function calcTotal(){
-  /* Total = suma de lo seleccionado: sábanas (si alguna pieza está
-     puesta) + edredón (si está visible) + bambú (si está agregado).
-     Las cortinas son solo visuales y no se cobran; ya no hay
-     complementos/cubrecolchón. Queen por defecto: 700 + 1199 = $1,899 MXN.
-     Queen + bambú: $3,399 MXN. */
-  var t=0;
-  if(sheetIncluded())t+=sheetPrice();
-  if(st.showDuvet)t+=duvetPrice();
-  if(st.bamboo)t+=bambooPrice();
-  return t;
-}
-
-/* ---------- Escena 3D (Three.js clásico r147) ---------- */
-var stage=document.getElementById("stage3d");
-var scene,camera,renderer,controls,bedGroup,curtainGroup,windowGroup,windowCover,texCache={};
-var glbGroup=null, glbParts=null, glbReady=false; /* Modelo GLB real (Blender): cuando carga, sustituye a la cama procedural. */
-var BED_D=3.1, MAT_TOP=1.06;
-function showFallback(reason){
-  var f=document.getElementById("glFallback"), l=document.getElementById("glLoading");
-  if(l)l.style.display="none";
-  if(f){f.style.display="flex";}
-  var e=document.getElementById("glError");
-  if(e&&reason)e.textContent=reason;
-}
-/* Sin foto de respaldo: si WebGL falla, se muestra solo el mensaje de
-   error honesto (glFallback). Las fotos reales solo viven en las tarjetas
-   y miniaturas de selección, nunca como la cama del visor. */
-function webglOK(){
-  try{
-    var c=document.createElement("canvas");
-    return !!(window.WebGLRenderingContext && (c.getContext("webgl")||c.getContext("experimental-webgl")));
-  }catch(e){return false;}
-}
-/* Three.js ya viene cargado por las etiquetas <script> síncronas locales
-   (assets/three.min.js + OrbitControls.js + GLTFLoader.js): no hay cadena
-   de CDN ni timeouts de 5 s por fuente. Si falta algo, se muestra solo el
-   mensaje de error honesto (nunca una foto en lugar de la cama). */
-function ensureThree(){
-  return Promise.resolve(!!(window.THREE && THREE.OrbitControls && THREE.GLTFLoader));
-}
-function loadTex(url){
-  if(!url)return null;
-  if(texCache[url])return texCache[url];
-  var t=new THREE.TextureLoader().load(url);
-  t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.anisotropy=4;
-  texCache[url]=t; return t;
-}
-/* Textura ajustada a la proporción real del plano (ZIP: sin estiramientos).
-   La foto del edredón es 1024x990 (casi cuadrada) y el plano del edredón es
-   ~1.4:1; mapearla 1:1 estiraba los rombos. fitTex clona la textura y recorta
-   por el centro (repeat/offset) para que la proporción se conserve. */
-function fitTex(url,pw,pl){
-  if(!url)return null;
-  var key=url+"|"+pw.toFixed(2)+"x"+pl.toFixed(2);
-  if(texCache[key])return texCache[key];
-  var base=loadTex(url);
-  var t=base.clone();
-  var img=base.image;
-  var texAspect=(img&&img.width&&img.height)?img.width/img.height:1.03;
-  var planeAspect=pw/Math.max(pl,0.01);
-  var rx=1, ry=1, ox=0, oy=0;
-  if(planeAspect>texAspect){ry=texAspect/planeAspect;oy=(1-ry)/2;}
-  else{rx=planeAspect/texAspect;ox=(1-rx)/2;}
-  t.repeat.set(rx,ry); t.offset.set(ox,oy); t.needsUpdate=true;
-  texCache[key]=t; return t;
-}
-var mattressTexCache=null;
-/* Textura propia del colchón (material independiente, no comparte la del
-   edredón ni la de las sábanas): acolchado blanco muy tenue, procedural. */
-function makeMattressTex(){
-  if(mattressTexCache)return mattressTexCache;
-  var c=document.createElement("canvas"); c.width=c.height=256;
-  var x=c.getContext("2d");
-  x.fillStyle="#fbfaf6"; x.fillRect(0,0,256,256);
-  x.strokeStyle="rgba(190,185,170,0.5)"; x.lineWidth=1.5;
-  for(var i=-256;i<=512;i+=64){
-    x.beginPath(); x.moveTo(i,0); x.lineTo(i+256,256); x.stroke();
-    x.beginPath(); x.moveTo(i+256,0); x.lineTo(i,256); x.stroke();
-  }
-  var t=new THREE.CanvasTexture(c);
-  t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(3,3); t.anisotropy=4;
-  mattressTexCache=t; return t;
-}
-/* Miniatura rota: sustituto neutro dorado en vez de imagen rota. */
-function imgFallback(el){el.onerror=null;el.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%23c5a15b'/%3E%3C/svg%3E";}
-window.imgFallback=imgFallback;
-function mat(c,r,extra){
-  var o=Object.assign({color:c,roughness:(r===undefined?0.85:r),metalness:0},extra||{});
-  return new THREE.MeshStandardMaterial(o);
-}
-/* Material de TELA (MeshPhysicalMaterial r147): el `sheen` da el brillo
-   suave y difuso de las fibras — sábanas, edredón, almohadas y cortinas se
-   ven textiles en vez de plástico. La madera y el metal siguen con
-   MeshStandardMaterial. Sheen 0.12 (2026-11-21): con 0.4 el brillo blanco
-   del sheen lavaba el azul marino a gris plata en los ángulos rasantes —
-   el edredón se veía bolsa de plástico. El edredón usa sheen 0 aparte. */
-function fabricMat(c,r,extra){
-  var o=Object.assign({color:c,roughness:(r===undefined?0.92:r),metalness:0,sheen:0.12,sheenRoughness:0.8,sheenColor:0xffffff},extra||{});
-  return new THREE.MeshPhysicalMaterial(o);
-}
-function sstepJS(a,b,x){var t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);}
-function box(parent,w,h,d,x,y,z,material){
-  var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
-  m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; parent.add(m); return m;
-}
-function buildRoom(){
-  /* --- Piso de madera: tablones con tonos alternos --- */
-  var floorBase=new THREE.Mesh(new THREE.PlaneGeometry(30,30),mat("#7a5a38",0.9));
-  floorBase.rotation.x=-Math.PI/2; floorBase.position.y=-0.05; floorBase.receiveShadow=true; scene.add(floorBase);
-  var plankCols=["#a67c52","#9a7448","#b08a5e","#8f6b42","#a37a50"];
-  for(var pi=-7;pi<7;pi++){
-    var plank=new THREE.Mesh(new THREE.PlaneGeometry(1,30),mat(plankCols[((pi%5)+5)%5],0.9));
-    plank.rotation.x=-Math.PI/2; plank.position.set(pi+0.5,-0.04,0); plank.receiveShadow=true; scene.add(plank);
-  }
-  /* --- Alfombra con borde dorado --- */
-  var rugOut=new THREE.Mesh(new THREE.PlaneGeometry(5.8,4.8),mat("#c5a15b",1));
-  rugOut.rotation.x=-Math.PI/2; rugOut.position.set(0,0.005,0.4); rugOut.receiveShadow=true; scene.add(rugOut);
-  var rug=new THREE.Mesh(new THREE.PlaneGeometry(5.4,4.4),mat("#d9c9a3",1));
-  rug.rotation.x=-Math.PI/2; rug.position.set(0,0.012,0.4); rug.receiveShadow=true; scene.add(rug);
-  var rugIn=new THREE.Mesh(new THREE.PlaneGeometry(4.6,3.6),mat("#1f3a5f",1));
-  rugIn.rotation.x=-Math.PI/2; rugIn.position.set(0,0.018,0.4); rugIn.receiveShadow=true; scene.add(rugIn);
-  /* --- Pared del fondo con VENTANA grande (x -1.8..1.8, y 1.05..3.35) ---
-     Tono cálido (2026-11-21): el crema pálido anterior se quemaba a
-     blanco puro con las luces fuertes y dejaba un vacío blanco arriba. */
-  /* Grupo de la ventana (artifact 2026-11-21): cielo, sol, marco y
-     alféizar se ocultan juntos cuando "Ver cortinas y ventana" está
-     apagado; la tapa de pared cubre el hueco. */
-  windowGroup=new THREE.Group(); scene.add(windowGroup);
-  var wallMat=mat("#e6d9bd",0.95);
-  function wallPiece(w,h,x,y){
-    var p=new THREE.Mesh(new THREE.PlaneGeometry(w,h),wallMat);
-    p.position.set(x,y,-2.9); p.receiveShadow=true; scene.add(p); return p;
-  }
-  wallPiece(5.2,4.4,-4.4,2.2);   /* izquierda de la ventana */
-  wallPiece(5.2,4.4,4.4,2.2);    /* derecha de la ventana */
-  wallPiece(3.6,1.05,0,0.525);   /* debajo de la ventana */
-  wallPiece(3.6,1.05,0,3.875);   /* encima de la ventana */
-  /* Vista por la ventana: cielo, sol suave, nubes y colinas. Sol con
-     resplandor difuminado (2026-11-21): el círculo amarillo duro se veía
-     de caricatura. */
-  var sky=new THREE.Mesh(new THREE.PlaneGeometry(3.6,2.3),new THREE.MeshBasicMaterial({color:"#bcdff2"}));
-  sky.position.set(0,2.2,-2.98); windowGroup.add(sky);
-  (function(){
-    var c=document.createElement("canvas"); c.width=c.height=128;
-    var x=c.getContext("2d");
-    var g=x.createRadialGradient(64,64,4,64,64,64);
-    g.addColorStop(0,"rgba(255,224,138,0.95)"); g.addColorStop(0.35,"rgba(255,224,138,0.55)"); g.addColorStop(1,"rgba(255,224,138,0)");
-    x.fillStyle=g; x.fillRect(0,0,128,128);
-    var t=new THREE.CanvasTexture(c);
-    var glow=new THREE.Mesh(new THREE.PlaneGeometry(1.5,1.5),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));
-    glow.position.set(-1.0,2.85,-2.96); windowGroup.add(glow);
-  })();
-  var hill=new THREE.Mesh(new THREE.PlaneGeometry(3.6,0.55),new THREE.MeshBasicMaterial({color:"#8aa877"}));
-  hill.position.set(0,1.32,-2.96); windowGroup.add(hill);
-  [[-0.3,2.5,0.5],[0.9,2.9,0.65]].forEach(function(c){
-    var cloud=new THREE.Mesh(new THREE.SphereGeometry(c[2],12,8),new THREE.MeshBasicMaterial({color:"#ffffff",transparent:true,opacity:0.85}));
-    cloud.scale.set(1.6,0.45,0.2); cloud.position.set(c[0],c[1],-2.96); windowGroup.add(cloud);
-  });
-  /* Marco de la ventana + alféizar + barrotes (blanco y dorado) */
-  var frameMat=mat("#ffffff",0.6), goldTrim=mat("#c5a15b",0.35,{metalness:0.7});
-  box(windowGroup,3.8,0.1,0.08,0,3.4,-2.86,frameMat);
-  box(windowGroup,3.8,0.1,0.08,0,1.0,-2.86,frameMat);
-  box(windowGroup,0.1,2.5,0.08,-1.85,2.2,-2.86,frameMat);
-  box(windowGroup,0.1,2.5,0.08,1.85,2.2,-2.86,frameMat);
-  box(windowGroup,0.07,2.3,0.05,0,2.2,-2.9,frameMat);      /* barrote vertical */
-  box(windowGroup,3.6,0.07,0.05,0,2.2,-2.9,frameMat);      /* barrote horizontal */
-  box(windowGroup,4.0,0.09,0.22,0,0.96,-2.8,goldTrim);     /* alféizar */
-  /* Tapa de la ventana: panel de pared que cubre el hueco cuando "Ver
-     cortinas y ventana" está apagado. Queda 0.03 m detrás del plano de
-     la pared, así que no se ve cuando la ventana está puesta (la tapa se
-     oculta) y tapa el hueco cuando no lo está. */
-  windowCover=new THREE.Mesh(new THREE.PlaneGeometry(3.9,2.5),mat("#e6d9bd",0.95));
-  windowCover.position.set(0,2.2,-2.93); scene.add(windowCover);
-  /* --- Paredes laterales (tono cálido, 2026-11-21) --- */
-  var left=new THREE.Mesh(new THREE.PlaneGeometry(12,4.4),mat("#ded2b8",0.95));
-  left.rotation.y=Math.PI/2; left.position.set(-6,2.16,0); left.receiveShadow=true; scene.add(left);
-  var right=new THREE.Mesh(new THREE.PlaneGeometry(12,4.4),mat("#e2d6ba",0.95));
-  right.rotation.y=-Math.PI/2; right.position.set(6,2.16,0); right.receiveShadow=true; scene.add(right);
-  box(scene,14,0.14,0.06,0,0.07,-2.86,mat("#ffffff",0.7));
-  /* --- Cuadro grande en la pared del fondo, a la izquierda de la ventana:
-     llena el vacío blanco que se veía arriba de la cama en la vista 3/4. */
-  box(scene,1.7,1.2,0.05,-4.4,2.5,-2.84,mat("#c5a15b",0.35,{metalness:0.7}));
-  var artL=new THREE.Mesh(new THREE.PlaneGeometry(1.54,1.04),mat("#1f3a5f",0.9));
-  artL.position.set(-4.4,2.5,-2.81); scene.add(artL);
-  var artL2=new THREE.Mesh(new THREE.PlaneGeometry(1.1,0.6),mat("#c5a15b",0.85));
-  artL2.position.set(-4.4,2.5,-2.80); scene.add(artL2);
-  /* --- Cuadro en la pared (a la derecha de la ventana, no encima) --- */
-  box(scene,1.5,1.0,0.05,4.6,2.5,-2.84,mat("#c5a15b",0.35,{metalness:0.7}));
-  var art=new THREE.Mesh(new THREE.PlaneGeometry(1.34,0.84),mat("#1f3a5f",0.9));
-  art.position.set(4.6,2.5,-2.81); scene.add(art);
-  var art2=new THREE.Mesh(new THREE.PlaneGeometry(1.1,0.8),mat("#7a8a5a",0.9));
-  art2.rotation.y=Math.PI/2; art2.position.set(-5.94,2.4,0.6); scene.add(art2);
-  /* --- Mesitas de noche con lámparas, libro y jarrón --- */
-  [-1,1].forEach(function(s){
-    var x=s*2.35;
-    box(scene,0.7,0.62,0.55,x,0.31,-2.35,mat("#6b4a2f",0.7));
-    var lamp=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.07,0.42,16),mat("#c5a15b",0.4,{metalness:0.6}));
-    lamp.position.set(x,0.85,-2.35); lamp.castShadow=true; scene.add(lamp);
-    var shade=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.22,0.24,16),mat("#f5ead0",0.9,{emissive:"#ffdf9e",emissiveIntensity:0.35}));
-    shade.position.set(x,1.12,-2.35); shade.castShadow=true; scene.add(shade);
-    var pl=new THREE.PointLight(0xffdf9e,2,3.5); pl.position.set(x,1.05,-2.2); scene.add(pl);
-  });
-  box(scene,0.34,0.05,0.24,-2.35,0.65,-2.3,mat("#7a1f2b",0.85)); /* libro en mesita izquierda */
-  var vase=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.09,0.22,12),mat("#2a6a8a",0.5));
-  vase.position.set(2.35,0.73,-2.3); vase.castShadow=true; scene.add(vase);
-  /* --- Planta en la esquina derecha --- */
-  var pot=new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.16,0.4,14),mat("#a85a3a",0.85));
-  pot.position.set(5.1,0.2,-2.2); pot.castShadow=true; scene.add(pot);
-  [[0,0.75,0],[0.18,0.6,0.1],[-0.16,0.62,-0.08]].forEach(function(o){
-    var leaf=new THREE.Mesh(new THREE.SphereGeometry(0.26,12,10),mat("#4a7a3a",0.95));
-    leaf.scale.set(1,1.5,1); leaf.position.set(5.1+o[0],o[1],-2.2+o[2]); leaf.castShadow=true; scene.add(leaf);
-  });
-}
-/* ---------- TEXTURA DEL EDREDÓN: FOTO GENERADA IGUAL QUE EL EDREDÓN REAL ----------
-   Cambio de dirección de Alberto: SÍ se pueden crear fotos, con la condición de
-   que sean IGUALES que su edredón real. Las texturas son imágenes generadas a
-   partir de sus fotos reales (assets/duvet-tex-*.jpg): solo el edredón extendido
-   en plano cenital, con su acolchado en rombos, sus pliegues y su color exacto,
-   SIN dormitorio ni cama ni fondo. Por eso ya NO se usa el lienzo procedural:
-   el lienzo anterior era el que dejaba el edredón pálido/blanco (base blanca +
-   brillos blancos) y sin relieve visible de cerca.
-   La textura generada se usa como map Y como bumpMap (el relieve del acolchado
-   viene de la propia foto), y el color del material es blanco porque la imagen
-   YA lleva el color exacto (Gris = gris medio #919096 medido; Azul Marino =
-   azul noche #232639). La cara lleva su textura y el reverso la suya (doble
-   vista). Las sábanas NO llevan textura: son color puro (ver buildBed). */
-function duvetPhotoTex(url){
-  if(!url)return null;
-  return loadTex(url);
-}
-/* Drape textil con pliegues suaves (misma fórmula que build_bed.py, para
-   que la cama procedural de respaldo se vea igual que el modelo GLB):
-   rollos LARGOS y suaves a lo largo de la cama, ondulación del acolchado
-   SIN picos (|sin| tenía cúspides que arrugaban el edredón como bolsa de
-   plástico) y rizo fino, sobre una superficie casi PLANA que sigue el
-   colchón — el relieve del acolchado lo da la foto (bumpMap), no la
-   geometría. La caída empieza SOLO en la banda de voladizo más allá del
-   borde del colchón (|nx| > 0.825). El pie cae sobre el pie del colchón
-   en los últimos 0.30 m; la cabecera solo se remete 0.08 bajo las
-   almohadas. En coords locales +y = cabecera, -y = pie. La solapa
-   (isFlap) lleva además el rollo redondeado del doblez en el borde de la
-   cabecera, con el labio remetido, y su borde del pie sigue la pendiente
-   del edredón. Suavizado 2026-11-21 igual que build_bed.py. */
-/* Desplazamiento de la superficie del edredón en coords del mundo (x, z),
-   relativo a su base (MAT_TOP+0.16). Es la misma fórmula del drape de
-   build_bed.py: el puño de la sábana superior la reutiliza para apoyar
-   EXACTAMENTE sobre el edredón sin flotar ni hundirse. */
-function duvetSurfaceDisp(x,z){
-  var yl=0.30-z; /* local y del plano (cabecera +) en el mundo */
-  var hw=(SIZES[st.size].w+0.55)/2, hl=1.225;
-  var nx=x/hw, ny=yl/hl;
-  var d=0.028*Math.sin(x*2.2+0.8)*(0.6+0.4*Math.sin(yl*1.6))
-   +0.014*Math.sin((x+yl)*4.0)*Math.sin((x-yl)*4.0)
-   +0.004*Math.sin(x*9)*Math.sin(yl*7);
-  d-=0.47*Math.max(sstepJS(0.825,1.0,Math.abs(nx)),sstepJS(0.755,1.0,-ny));
-  d-=0.08*sstepJS(0.85,1.0,ny);
-  return d;
-}
-/* Puño de la sábana superior: banda doblada sobre el edredón junto a las
-   almohadas. Sigue la superficie del edredón (+0.025) donde el edredón
-   cubre (z >= -0.905) y baja suavemente hasta la capa plana (MAT_TOP+0.08)
-   junto a las almohadas. Malla en coords del mundo, normales hacia arriba. */
-function topSheetCuffGeometry(){
-  var w=SIZES[st.size].w, cw=w+0.30, z0=-1.20, z1=-0.70, NX=48, NZ=8;
-  var pos=[], uv=[], idx=[];
-  for(var j=0;j<=NZ;j++){
-    var z=z0+(z1-z0)*j/NZ;
-    for(var i=0;i<=NX;i++){
-      var x=-cw/2+cw*i/NX;
-      var t=sstepJS(-0.905,-1.085,z); /* 0 sobre el edredón, 1 junto a las almohadas */
-      var y=(1-t)*(MAT_TOP+0.16+duvetSurfaceDisp(x,z)+0.025)+t*(MAT_TOP+0.08);
-      pos.push(x,y,z); uv.push(i/NX,j/NZ);
-    }
-  }
-  for(var j=0;j<NZ;j++)for(var i=0;i<NX;i++){
-    var a=j*(NX+1)+i, b=a+1, c=a+NX+1, d=c+1;
-    idx.push(a,d,b, a,c,d);
-  }
-  var g=new THREE.BufferGeometry();
-  g.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));
-  g.setAttribute("uv",new THREE.Float32BufferAttribute(uv,2));
-  g.setIndex(idx); g.computeVertexNormals();
-  return g;
-}
-function duvetGeometry(w,len,isFlap){
-  var geo=new THREE.PlaneGeometry(w,len,64,40);
-  var pos=geo.attributes.position;
-  for(var i=0;i<pos.count;i++){
-    var x=pos.getX(i), y=pos.getY(i);
-    var nx=x/(w/2), ny=y/(len/2);
-    var z;
-    if(isFlap){
-      z=0.02*Math.sin(x*2.2+0.8)*(0.6+0.4*Math.sin(y*1.6))
-       +0.01*Math.sin((x+y)*5.0)*Math.sin((x-y)*5.0)
-       +0.003*Math.sin(x*9)*Math.sin(y*7);
-      var d=len/2-y; /* distancia al borde del doblez (local +y = cabecera) */
-      z+=0.06*Math.exp(-(d*d)/(2*0.06*0.06));
-      z-=0.04*Math.exp(-(d*d)/(2*0.02*0.02));
-      z-=0.45*Math.max(sstepJS(0.825,1.0,Math.abs(nx)),sstepJS(0.43,1.0,-ny));
-    }else{
-      z=duvetSurfaceDisp(x,0.30-y);
-    }
-    pos.setZ(i,z);
-  }
-  geo.computeVertexNormals();
-  geo.rotateX(-Math.PI/2);
-  return geo;
-}
-/* Almohada a escala real de la cama, con ancho/profundidad/alto explícitos.
-   Antes cada almohada medía w/2 de escala (2.6 m en una Queen: las dos se
-   solapaban por completo) y flotaba 9 cm sobre el colchón. Ahora apoya sobre
-   la sábana (base ligeramente hundida en el colchón) y se inclina contra la
-   cabecera. */
-function pillowMesh(x,y,z,pw,pd,ph,material,tilt){
-  var g=new THREE.SphereGeometry(1,24,16);
-  var m=new THREE.Mesh(g,material);
-  m.scale.set(pw/2,ph/2,pd/2);
-  m.position.set(x,y,z); m.rotation.x=tilt||-0.38; m.rotation.z=(Math.random()-0.5)*0.04;
-  m.castShadow=true; m.receiveShadow=true;
-  return m;
-}
-function buildBed(){
-  if(!bedGroup)return;
-  while(bedGroup.children.length){
-    var o=bedGroup.children[0]; bedGroup.remove(o);
-    o.traverse(function(n){
-      if(n.geometry)n.geometry.dispose();
-      /* Las texturas en caché (fotos del edredón/cortinas) NO se eliminan:
-         material.dispose() no toca las texturas, así que es seguro. */
-      if(n.material){(Array.isArray(n.material)?n.material:[n.material]).forEach(function(m){m.dispose();});}
-    });
-  }
-  var w=SIZES[st.size].w, d=BED_D;
-  /* Materiales INDEPENDIENTES por pieza (ZIP): cada pieza crea su propio
-     material; antes colchón y almohadas compartían la misma instancia
-     `white`, así que un cambio en una pieza afectaba a la otra. */
-  var wood=mat("#6b4a2f",0.65), darkWood=mat("#4d3a28",0.7);
-  var gold=mat("#c5a15b",0.35,{metalness:0.65});
-  var sheetCol=st.sheetColor.hex;
-  /* SÁBANA AJUSTADA (fitted sheet): color puro, sin foto, tela con sheen. */
-  var sheetMat=fabricMat(sheetCol,0.92);
-  /* COLCHÓN: superficie principal, material propio con su textura tenue. */
-  var mattressMat=fabricMat("#ffffff",0.9,{map:makeMattressTex(),sheen:0.12});
-  var dc=DUVET_COLORS[st.duvetColor];
-  /* DOBLE VISTA con fotos generadas iguales al edredón real: la cara lleva la
-     textura generada de su color y el reverso la de su color contrario.
-     El color ESTÁ en la imagen (por eso el material es blanco: no se duplica
-     el tinte), así Gris pinta TODO el edredón de gris medio y Azul Marino de
-     azul noche. La misma imagen se usa como bumpMap para que el acolchado en
-     rombos tenga relieve de cerca. Si el edredón está volteado (flip), cara
-     y reverso se intercambian. */
-  var flipped=st.duvetFace==="reverse";
-  var faceUrl=flipped?dc.revTex:dc.tex, revUrl=flipped?dc.tex:dc.revTex;
-  var faceHex=flipped?dc.rev:dc.hex;
-  var faceTex=fitTex(faceUrl,w+0.55,2.45);
-  var revTex=fitTex(revUrl,w+0.55,2.45);
-  /* Edredón SIN sheen (2026-11-21): el brillo blanco del sheen lavaba el
-     azul marino a gris plata. bumpScale 0.012: con 0.025 el relieve de la
-     foto se exageraba y sumaba arrugas caóticas a la geometría. */
-  var bumpScale=0.012;
-  var duvetMat=fabricMat("#ffffff",0.95,{map:faceTex,bumpMap:faceTex,bumpScale:bumpScale,side:THREE.FrontSide,sheen:0});
-  var duvetRevMat=fabricMat("#ffffff",0.95,{map:revTex,bumpMap:revTex,bumpScale:bumpScale,side:THREE.BackSide,sheen:0});
-  duvetMat.userData.faceHex=faceHex; duvetMat.userData.faceTexUrl=faceUrl; duvetMat.userData.faceTex=faceTex;
-  duvetRevMat.userData.faceHex=flipped?dc.hex:dc.rev; duvetRevMat.userData.faceTexUrl=revUrl; duvetRevMat.userData.faceTex=revTex;
-  [-w*0.43,w*0.43].forEach(function(x){[-1.34,1.34].forEach(function(z){box(bedGroup,0.13,0.46,0.13,x,0.23,z,wood);});});
-  box(bedGroup,w+0.22,0.34,d+0.18,0,0.55,0,wood);
-  box(bedGroup,w+0.3,1.5,0.16,0,1.35,-d/2-0.12,darkWood);
-  for(var hx=-1;hx<=1;hx++){for(var hy=0;hy<2;hy++){
-    box(bedGroup,w/3-0.06,0.62,0.07,hx*(w/3),1.05+hy*0.66,-d/2-0.02,mat("#1f3a5f",0.9));
-    var btn=new THREE.Mesh(new THREE.SphereGeometry(0.03,10,8),gold);
-    btn.position.set(hx*(w/3),1.05+hy*0.66,-d/2+0.03); bedGroup.add(btn);
-  }}
-  box(bedGroup,w,0.38,d,0,0.88,0,mattressMat);
-  /* SÁBANA AJUSTADA AL COLCHÓN: panel superior + 4 faldones que envuelven los
-     costados del colchón (como una sábana puesta de verdad). Antes era una
-     lámina fina apoyada encima, que se veía flotando. El panel superior queda
-     0.005 m sobre el colchón y los faldones bajan 0.30 m por los lados. */
-  if(st.fittedSheet){
-  box(bedGroup,w+0.06,0.05,d+0.02,0,MAT_TOP+0.005,0,sheetMat);
-  box(bedGroup,0.04,0.30,d, w/2+0.01,MAT_TOP-0.12,0,sheetMat);
-  box(bedGroup,0.04,0.30,d,-w/2-0.01,MAT_TOP-0.12,0,sheetMat);
-  box(bedGroup,w+0.06,0.30,0.04,0,MAT_TOP-0.12, d/2+0.01,sheetMat);
-  box(bedGroup,w+0.06,0.30,0.04,0,MAT_TOP-0.12,-d/2-0.01,sheetMat);
-  }
-  /* SÁBANA SUPERIOR (artifact 2026-11-21): capa plana sobre el colchón y
-     debajo del edredón + puño doblado sobre el edredón junto a las
-     almohadas. La capa plana queda entre la sábana ajustable (1.09) y los
-     valles del edredón (~1.17); el puño sigue la superficie del edredón
-     con duvetSurfaceDisp (+0.025) y baja hasta la capa plana junto a las
-     almohadas. Sin sábana superior no se ven ni la capa ni el puño. */
-  if(st.topSheet){
-    box(bedGroup,w+0.04,0.04,3.02,0,MAT_TOP+0.06,0,sheetMat);
-    var cuff=new THREE.Mesh(topSheetCuffGeometry(),sheetMat);
-    cuff.castShadow=true; cuff.receiveShadow=true; bedGroup.add(cuff);
-  }
-  /* EDREDÓN APOYADO SOBRE LA SÁBANA: y = MAT_TOP+0.16 (base 1.22). La sábana
-     llega hasta MAT_TOP+0.05 y los valles del drape bajan -0.075, así que
-     con +0.05 el edredón quedaba ENTERRADO bajo la sábana y solo asomaban
-     las crestas como un trapo arrugado en el centro (2026-11-21). Con +0.16
-     los valles quedan en ~1.145, justo sobre la sábana, y la caída lateral
-     (-0.38) lo baja hasta el marco. Más ancho/largo (w+0.55 x 2.45) para que
-     cuelgue por los costados. */
-  if(st.showDuvet){
-  var duvetGeo=duvetGeometry(w+0.55,2.45);
-  var duvet=new THREE.Mesh(duvetGeo,duvetMat);
-  duvet.position.set(0,MAT_TOP+0.16,0.30); duvet.castShadow=true; duvet.receiveShadow=true; bedGroup.add(duvet);
-  /* Reverso del edredón (misma geometría, cara trasera): al girar la cama o
-     ver los bordes caídos se ve el color contrario, como un edredón real. */
-  var duvetRev=new THREE.Mesh(duvetGeo,duvetRevMat);
-  /* El reverso asoma 2% por los bordes (ribete del color contrario) y queda 1 cm
-     por debajo: desde el lateral se ve el reverso aunque la cara tape el centro.
-     Antes estaba exactamente debajo de la cara, mismo tamaño, y era invisible. */
-  duvetRev.scale.set(1.02,1,1.02);
-  duvetRev.position.set(0,MAT_TOP+0.15,0.30); duvetRev.castShadow=false; duvetRev.receiveShadow=true; bedGroup.add(duvetRev);
-  var flapMat=fabricMat("#ffffff",0.95,{map:fitTex(revUrl,w+0.57,0.72),bumpMap:fitTex(revUrl,w+0.57,0.72),bumpScale:0.015,side:THREE.DoubleSide,sheen:0});
-  flapMat.userData.faceHex=flipped?dc.hex:dc.rev; flapMat.userData.faceTexUrl=revUrl; flapMat.userData.faceTex=fitTex(revUrl,w+0.57,0.72);
-  var flap=new THREE.Mesh(duvetGeometry(w+0.57,0.72,true),flapMat);
-  flap.position.set(0,MAT_TOP+0.21,1.09); flap.castShadow=true; flap.receiveShadow=true; bedGroup.add(flap);
-  }
-  /* Sin rollo de doblez: el cilindro rígido (foldRoll) se veía como una barra metálica cruzando el edredón. La solapa drapeada sola ya marca el doblez. */
-  box(bedGroup,w+0.08,0.05,0.46,0,MAT_TOP,1.25,mat("#9b806b",0.85)); /* Runner decorativo al pie, siempre visible. */
-  /* Banca al pie de la cama */
-  box(bedGroup,w*0.8,0.1,0.45,0,0.52,d/2+0.55,mat("#c5a15b",0.85));
-  [-w*0.36,w*0.36].forEach(function(bx){box(bedGroup,0.08,0.5,0.4,bx,0.26,d/2+0.55,wood);});
-  var pw=Math.min(w*0.40,1.05); /* ancho de almohada a escala de la cama */
-  var py=MAT_TOP+0.13, pz=-1.22; /* apoyada en la sábana, contra la cabecera */
-  var px=pw/2+0.06;
-  /* Almohadas de bambú con fundas (artifact 2026-11-21): las almohadas
-     para dormir SON de bambú (textura de la foto real
-     assets/almohada-par.jpg). Con las fundas puestas se ven blancas (la
-     funda es una esfera 6% más grande que tapa la almohada); al apagar
-     las fundas se ve el bambú. Cojines decorativos dorado y azul marino,
-     regordetes y erguidos, siempre visibles. */
-  var bambooTex=loadTex("assets/almohada-par.jpg");
-  var bambooMat=fabricMat("#ffffff",0.92,{map:bambooTex});
-  var caseMat=fabricMat("#fbfaf6",0.92);
-  bedGroup.add(pillowMesh(-px,py,pz,pw,0.55,0.34,bambooMat,-0.5));
-  bedGroup.add(pillowMesh(px,py,pz,pw,0.55,0.34,bambooMat,-0.5));
-  if(st.pillowcases){
-    bedGroup.add(pillowMesh(-px,py,pz,pw*1.06,0.55*1.06,0.34*1.06,caseMat,-0.5));
-    bedGroup.add(pillowMesh(px,py,pz,pw*1.06,0.55*1.06,0.34*1.06,caseMat,-0.5));
-  }
-  bedGroup.add(pillowMesh(-0.28,py+0.15,-0.80,0.44,0.38,0.36,fabricMat("#c5a15b",0.88),-0.95));
-  bedGroup.add(pillowMesh(0.28,py+0.15,-0.80,0.44,0.38,0.36,fabricMat("#1f3a5f",0.88),-0.95));
-  buildCurtains();
-}
-/* Cortinas Blackout Thermal a los lados de la ventana. Se construyen
-   aparte de la cama para que sigan funcionando también cuando la cama
-   es el modelo GLB (antes las cortinas solo se reconstruían dentro de
-   buildBed(), que ya no corre con el GLB activo). */
-function buildCurtains(){
-  if(!curtainGroup)return;
-  var gold=mat("#c5a15b",0.35,{metalness:0.65});
-  /* La ventana siempre lleva cortinas: el color elegido (17 colores) o,
-     si aún no se elige ninguno, un visillo blanco translúcido. */
-  while(curtainGroup.children.length){curtainGroup.remove(curtainGroup.children[0]);}
-  /* Cortinas: tela con sheen para que caigan como textil, no como plástico. */
-  /* Cortina elegida (17 colores reales); por defecto Piedra. Solo visual:
-     no se cobra en el total. */
-  var cc=CUR[st.curtain];
-  var cMat=fabricMat(cc.img?"#ffffff":cc.hex,0.95,{side:THREE.DoubleSide});
-  if(cc.img)cMat.map=fitTex(cc.img,1.35,3.45);
-  [-1,1].forEach(function(s){
-    var cg=new THREE.PlaneGeometry(1.5,3.45,24,1);
-    var p=cg.attributes.position;
-    for(var i=0;i<p.count;i++){p.setZ(i,0.17*Math.sin(p.getY(i)*2.2+s*1.2));}
-    cg.computeVertexNormals();
-    var panel=new THREE.Mesh(cg,cMat);
-    panel.position.set(s*2.45,1.75,-2.72); panel.castShadow=true; panel.receiveShadow=true;
-    curtainGroup.add(panel);
-  });
-  /* Barra de la cortina: antes medía 6.0 m y cruzaba TODA la pared; en la
-     vista 3/4 se proyectaba como una barra metálica en diagonal cruzando el
-     edredón. Ahora solo cubre la ventana (4.0 m, de -2.0 a 2.0), con las
-     borlas en sus extremos, y ya no cruza la cama. */
-  var rod=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,4.0,12),gold);
-  rod.rotation.z=Math.PI/2; rod.position.set(0,3.55,-2.72); rod.castShadow=true; curtainGroup.add(rod);
-  [-1,1].forEach(function(s){
-    var fin=new THREE.Mesh(new THREE.SphereGeometry(0.07,10,8),gold);
-    fin.position.set(s*2.0,3.55,-2.72); curtainGroup.add(fin);
-  });
-}
-/* Cortinas + ventana (artifact 2026-11-21): el interruptor "Ver cortinas
-   y ventana" muestra u oculta el grupo de la ventana (cielo, marco,
-   alféizar), el grupo de las cortinas (paneles + barra) y la tapa de
-   pared que cubre el hueco cuando están ocultas. */
-function applyWindowVisibility(){
-  if(windowGroup)windowGroup.visible=st.showCurtains;
-  if(curtainGroup)curtainGroup.visible=st.showCurtains;
-  if(windowCover)windowCover.visible=!st.showCurtains;
-}
-/* ---------- Modelo GLB real (Blender) ----------
-   assets/bed.glb: cama Queen construida en Blender con piezas nombradas
-   (bed_frame, headboard, mattress, fitted_sheet, duvet, duvet_reverse,
-   duvet_flap, pillow_left/right, pillow_left2/right2, cushion_left/right/
-   center, runner, bench) y materiales independientes por pieza. Cuando el
-   GLB carga, sustituye a la cama procedural (bedGroup se oculta) y TODOS
-   los cambios del configurador se aplican a sus materiales en vivo. Si el
-   GLB no carga (sin GLTFLoader, archivo ausente o error de red), la página
-   sigue con la cama procedural sin romperse. */
-var GLB_URL="assets/bed.glb";
-var GLB_BASE_W=2.6; /* ancho Queen del modelo, igual que SIZES Queen w */
-function glbMesh(name){return (glbParts&&glbParts[name])||null;}
-function setGlbVis(name,on){var m=glbMesh(name); if(m)m.visible=!!on;}
-function setDuvetMat(mesh,tex,bumpScale){
-  if(!mesh)return;
-  if(!mesh.userData)mesh.userData={}; /* THREE.Mesh siempre lo trae; por si acaso. */
-  if(!mesh.userData.stdMat){
-    /* Tela SIN sheen (2026-11-21): el brillo blanco del sheen lavaba el
-       azul marino a gris plata en los ángulos rasantes. */
-    mesh.userData.stdMat=new THREE.MeshPhysicalMaterial({color:"#ffffff",roughness:0.95,sheen:0,sheenRoughness:0.8,sheenColor:0xffffff});
-  }
-  if(mesh.material!==mesh.userData.stdMat)mesh.material=mesh.userData.stdMat;
-  var m=mesh.material;
-  m.map=tex; m.bumpMap=tex; m.bumpScale=bumpScale;
-  m.roughness=0.95;
-  m.side=mesh.name==="duvet_reverse"?THREE.BackSide:(mesh.name==="duvet_flap"?THREE.DoubleSide:THREE.FrontSide);
-  m.needsUpdate=true;
-}
-function applyStateToGLB(){
-  if(!glbReady||!glbGroup)return;
-  var w=SIZES[st.size].w;
-  /* El modelo es Queen (2.6 m); los demás tamaños escalan el ancho. */
-  glbGroup.scale.set(w/GLB_BASE_W,1,1);
-  /* Sábanas: color puro sobre la sábana ajustada y la sábana superior
-     del modelo (comparten material: un solo cambio de color las pinta a
-     las dos). Cada una se oculta con su interruptor. */
-  var sh=glbMesh("fitted_sheet");
-  if(sh&&sh.material){sh.material.color=new THREE.Color(st.sheetColor.hex); sh.material.needsUpdate=true;}
-  var ts=glbMesh("top_sheet");
-  if(ts&&ts.material){ts.material.color=new THREE.Color(st.sheetColor.hex); ts.material.side=THREE.DoubleSide; ts.material.needsUpdate=true;}
-  setGlbVis("fitted_sheet",st.fittedSheet);
-  setGlbVis("top_sheet",st.topSheet);
-  /* Edredón doble vista con las fotos generadas iguales al real. Si está
-     volteado (Cara visible: Reverso), cara y reverso se intercambian; si
-     está oculto, se ocultan las 3 piezas y se ven solo las sábanas. */
-  var dc=DUVET_COLORS[st.duvetColor];
-  var flipped=st.duvetFace==="reverse";
-  var faceUrl=flipped?dc.revTex:dc.tex, revUrl=flipped?dc.tex:dc.revTex;
-  /* bumpScale 0.012 (2026-11-21): con 0.025 el relieve de la foto se
-     exageraba y sumaba arrugas caóticas a la geometría del edredón. */
-  var bumpScale=0.012;
-  setDuvetMat(glbMesh("duvet"),fitTex(faceUrl,w+0.55,2.45),bumpScale);
-  setDuvetMat(glbMesh("duvet_reverse"),fitTex(revUrl,w+0.55,2.45),bumpScale);
-  setDuvetMat(glbMesh("duvet_flap"),fitTex(revUrl,w+0.57,0.72),0.015);
-  setGlbVis("duvet",st.showDuvet);
-  setGlbVis("duvet_reverse",st.showDuvet);
-  setGlbVis("duvet_flap",st.showDuvet);
-  /* Almohadas de bambú con fundas: las almohadas para dormir llevan la
-     textura de la foto real de bambú; las fundas (6% más grandes) las
-     tapan cuando están puestas. Sin fundas se ve el bambú. */
-  var btex=loadTex("assets/almohada-par.jpg");
-  ["pillow_left","pillow_right"].forEach(function(n){
-    var m=glbMesh(n);
-    if(m&&m.material){m.material.map=btex; m.material.color=new THREE.Color("#ffffff"); m.material.needsUpdate=true;}
-  });
-  setGlbVis("pillow_left",true);
-  setGlbVis("pillow_right",true);
-  setGlbVis("pillowcase_left",st.pillowcases);
-  setGlbVis("pillowcase_right",st.pillowcases);
-  /* Cojines decorativos dorado y azul marino, siempre visibles. */
-  setGlbVis("cushion_left",true);
-  setGlbVis("cushion_right",true);
-  setGlbVis("cushion_center",false);
-  /* Runner decorativo al pie, siempre visible. */
-  setGlbVis("runner",true);
-}
-function loadBedGLB(){
-  if(!window.THREE||!THREE.GLTFLoader){console.warn("Viste tu cama: sin GLTFLoader, se usa la cama procedural.");return;}
-  var loader=new THREE.GLTFLoader();
-  loader.load(GLB_URL,function(gltf){
-    try{
-      glbGroup=gltf.scene;
-      glbParts={};
-      glbGroup.traverse(function(n){
-        if(n.isMesh){n.castShadow=true; n.receiveShadow=true; if(n.name)glbParts[n.name]=n;}
-      });
-      var d=glbMesh("duvet"); if(d&&d.material)d.material.side=THREE.FrontSide;
-      var dr=glbMesh("duvet_reverse"); if(dr&&dr.material)dr.material.side=THREE.BackSide;
-      scene.add(glbGroup);
-      glbReady=true;
-      bedGroup.visible=false;
-      applyStateToGLB();
-      frameObject();
-      redraw3D();
-      console.log("Viste tu cama: modelo GLB cargado (bed.glb).");
-    }catch(e){console.warn("Viste tu cama: error al activar el GLB, se queda la cama procedural.",e);}
-  },undefined,function(e){
-    console.warn("Viste tu cama: no se pudo cargar bed.glb, se usa la cama procedural.",e&&e.message);
-  });
-}
-var lastAspect=0;
-var camAnim=null;
-/* ---------- Encuadre por Box3 REAL del conjunto cama (ZIP: frameObject) ------
-   Antes se encuadraba la HABITACIÓN (7.2 x 4.6 m): la cama quedaba al 20-35%
-   del visor. Ahora se encuadra el Box3 real de bedGroup (estructura, cabecera,
-   colchón, edredón, almohadas, banca): la cama ocupa ~80-90% de la dimensión
-   limitante del visor, centrada, sin recortes, en iPhone vertical/horizontal,
-   tablet y escritorio. FOV más cerrado (40-48° en vez de 55°) para que las
-   proporciones no se deformen al alejar/acercar la cámara. El encuadre es
-   siempre la cama: la ventana se ve detrás en la vista diagonal. */
-var BED_FIT_MARGIN=1.08; /* Punto de partida del encuadre: el ajuste fino lo
-   hace la iteración por ÁREA en frameObject() (la cama ocupa ~88% del área
-   del escenario, medida con su Box3 proyectado), así que el margen solo
-   fija la distancia inicial. */
-function bedBounds(){
-  /* El encuadre mide la cama ACTIVA: el modelo GLB cuando cargó, o la cama
-     procedural si el GLB no está (respaldo). */
-  var g=(glbReady&&glbGroup)?glbGroup:bedGroup;
-  if(!g)return null;
-  g.updateWorldMatrix(true,true);
-  var b=new THREE.Box3().setFromObject(g);
-  if(b.isEmpty())return null;
-  return b;
-}
-function frameFov(){
-  var a=stage.clientWidth/Math.max(1,stage.clientHeight);
-  return a<0.7?48:a<1.2?44:40;
-}
-/* Distancia de encuadre desde la PROYECCIÓN REAL del Box3 de la cama
-   (ZIP starter frameObject): se proyectan las 8 esquinas del Box3 sobre los
-   ejes derecha/arriba de la cámara para la dirección de vista (az, el) y se
-   toma la distancia que hace caber la mayor de las dos extensiones. El
-   término de profundidad analítico anterior ((size.z/2)/t*0.7) sobreestimaba
-   la distancia en escritorio y dejaba la cama al 61% de la altura del visor;
-   con la proyección real la cama llena ~87% de la dimensión limitante en
-   iPhone vertical y en escritorio, sin deformarse al hacer zoom (la cámara
-   solo se aleja/acercar, las proporciones del modelo son fijas). */
-function fitDistanceFor(size,az,el){
-  if(az===undefined)az=0.70; if(el===undefined)el=0.42; /* vista diagonal 40° / 24° por defecto */
-  var fov=THREE.MathUtils.degToRad(camera.fov);
-  var t=Math.tan(fov/2);
-  var aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
-  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
-  var rx=dz, rz=-dx, rl=Math.hypot(rx,rz)||1; rx/=rl; rz/=rl; /* eje derecha */
-  var ux=rz*dy, uy=rz*(-dx)-rx*(-dz), uz=rx*(-dy); /* eje arriba = right × forward */
-  var hx=size.x/2, hy=size.y/2, hz=size.z/2;
-  var maxH=hx*Math.abs(rx)+hz*Math.abs(rz);
-  var maxV=hx*Math.abs(ux)+hy*Math.abs(uy)+hz*Math.abs(uz);
-  var dV=maxV/t, dH=maxH/(t*aspect);
-  return Math.max(dV,dH)*BED_FIT_MARGIN;
-}
-/* Fracción del área del escenario que ocupa la caja 2D proyectada de la
-   cama (8 esquinas del Box3 proyectadas a pantalla). Es la medida que manda
-   el encuadre: la cama debe ocupar ~88% del área del escenario, en
-   escritorio y en móvil (0.70 dejaba la cama al ~50% de la altura en el
-   iPhone: el rectángulo del Box3 incluye mucho aire). */
-function projectedAreaFraction(center,size,az,el,dist){
-  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
-  var tmp=new THREE.PerspectiveCamera(camera.fov,camera.aspect,0.1,100);
-  tmp.position.set(center.x+dx*dist,center.y+dy*dist,center.z+dz*dist);
-  tmp.lookAt(center); tmp.updateMatrixWorld(true);
-  var hx=size.x/2, hy=size.y/2, hz=size.z/2;
-  var minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9;
-  for(var i=0;i<8;i++){
-    var v=new THREE.Vector3(center.x+((i&1)?hx:-hx),center.y+((i&2)?hy:-hy),center.z+((i&4)?hz:-hz));
-    v.project(tmp);
-    if(v.x<minX)minX=v.x; if(v.x>maxX)maxX=v.x;
-    if(v.y<minY)minY=v.y; if(v.y>maxY)maxY=v.y;
-  }
-  var w=(maxX-minX)/2*stage.clientWidth, h=(maxY-minY)/2*stage.clientHeight;
-  return (w*h)/Math.max(1,stage.clientWidth*stage.clientHeight);
-}
-/* Transición suave de cámara (450 ms, ease in-out). Se cancela al tocar. */
-function flyTo(pos,tgt,instant){
-  if(!camera||!controls)return;
-  if(instant){
-    camera.position.copy(pos); controls.target.copy(tgt);
-    camera.updateProjectionMatrix(); controls.update(); return;
-  }
-  camAnim={p0:camera.position.clone(),p1:pos.clone(),t0:controls.target.clone(),t1:tgt.clone(),start:performance.now(),dur:450,wasAuto:controls.autoRotate};
-  controls.autoRotate=false; controls.enabled=false;
-}
-function frameObject(instant,az,el){
-  if(!camera||!controls||!stage)return;
-  /* az/el opcionales: la vista inicial y 3/4 usan la diagonal 40°/24°
-     (0.70/0.42 rad); los presets frontal y superior pasan los suyos. TODAS
-     las vistas pasan por la misma iteración por ÁREA (objetivo 0.88): antes
-     frontal y superior usaban solo fitDistanceFor (analítico, sin iterar)
-     y la superior quedaba al 0.30 del área del escenario, y al volver a 3/4
-     la cámara quedaba varada arriba. */
-  if(az===undefined)az=0.70; if(el===undefined)el=0.42;
-  var b=bedBounds(); if(!b)return;
-  /* La banca NO entra en el encuadre (2026-11-21): su Box3 alargaba la
-     caja 0.8 m hacia el pie y alejaba la cámara, así la cama se veía al
-     ~50% de la altura del escenario en el iPhone aunque el área medida
-     fuera 70%. La banca sigue visible, cerca del borde inferior. */
-  b.max.z=Math.min(b.max.z,1.65);
-  var center=b.getCenter(new THREE.Vector3());
-  var size=b.getSize(new THREE.Vector3());
-  camera.aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
-  camera.fov=frameFov();
-  var dist=fitDistanceFor(size,az,el);
-  /* Ajuste por ÁREA: la cama debe ocupar ~88% del área del escenario
-     (medida real con la proyección de su Box3). 0.70 dejaba la cama al
-     ~50% de la altura en el iPhone de Alberto: el rectángulo del Box3
-     incluye mucho aire (la silueta real de la cama es ~60% de su propio
-     rectángulo), así que el área medida sobreestima lo que el ojo ve.
-     Con el escenario móvil a 66svh, 0.88 deja la caja de la cama al ~68%
-     de la altura del escenario. El área escala con 1/dist², así que se
-     corrige la distancia en 3 iteraciones; converge en cualquier aspecto
-     (escritorio, tablet, iPhone vertical). */
-  for(var k=0;k<3;k++){
-    var frac=projectedAreaFraction(center,size,az,el,dist);
-    if(!(frac>0))break;
-    var nd=dist*Math.sqrt(frac/0.88);
-    if(Math.abs(nd-dist)/dist<0.02){dist=nd;break;}
-    dist=nd;
-  }
-  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
-  flyTo(new THREE.Vector3(center.x+dx*dist,center.y+dy*dist,center.z+dz*dist),center,instant);
-  var maxDim=Math.max(size.x,size.y,size.z);
-  controls.minDistance=maxDim*0.5;
-  controls.maxDistance=maxDim*2.8;
-  camera.near=Math.max(0.01,maxDim/1000); camera.far=maxDim*100;
-  camera.updateProjectionMatrix();
-  lastAspect=camera.aspect;
-}
-
-function resize3D(){
-  if(!renderer||!camera||!stage)return;
-  var w=stage.clientWidth,h=stage.clientHeight;
-  if(!w||!h)return;
-  var aspect=w/h;
-  camera.aspect=aspect; camera.updateProjectionMatrix();
-  renderer.setSize(w,h,false);
-  if(Math.abs(aspect-lastAspect)>0.08) frameObject();
-}
-function redraw3D(){
-  /* Tras reconstruir la cama (cambio de color/tipo/tamaño) el buffer del
-     canvas puede quedar desfasado y verse solo una franja: se fuerza el
-     resize + un render inmediato. */
-  if(!renderer||!scene||!camera)return;
-  resize3D();
-  renderer.render(scene,camera);
-}
-function init3D(){
-  var isMobile=window.innerWidth<768;
-  scene=new THREE.Scene();
-  scene.background=new THREE.Color("#edf1f4");
-  camera=new THREE.PerspectiveCamera(45,stage.clientWidth/Math.max(1,stage.clientHeight),0.1,100);
-  renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,isMobile?1.5:2));
-  renderer.setSize(stage.clientWidth,stage.clientHeight,false);
-  renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  renderer.outputEncoding=THREE.sRGBEncoding;
-  renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.78; /* Luces rebajadas 2026-11-21 (antes 0.85 + hemi 1.05 + key 1.8): el azul marino de la textura (#232539, lineal ~0.016) se lavaba a gris plata en las crestas por la luz fuerte + sheen blanco. Con hemi 0.55 + key 1.05 + fill 0.35 + bounce 0.2 y exposición 0.78 el azul marino renderiza ~RGB 40-55 (igual que el archivo) y las paredes cálidas ~RGB 210-225 sin quemarse. */
-  stage.appendChild(renderer.domElement);
-  renderer.domElement.addEventListener("webglcontextlost",function(e){
-    e.preventDefault();
-    showFallback("El navegador perdió el contexto WebGL (memoria del teléfono). Recarga la página.");
-  });
-  controls=new THREE.OrbitControls(camera,renderer.domElement);
-  controls.enableDamping=true; controls.dampingFactor=0.07;
-  controls.maxPolarAngle=Math.PI/2.04; controls.minDistance=4.2; controls.maxDistance=24;
-  controls.autoRotateSpeed=0.8; controls.update();
-  /* Táctil (ZIP): un dedo gira, dos dedos zoom/desplazar, y el deslizamiento
-     VERTICAL desplaza la página (antes touch-action:none bloqueaba el scroll
-     fuera del visor en el celular). */
-  renderer.domElement.style.touchAction="pan-y";
-  controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
-  /* El encuadre inicial va DESPUÉS de construir la cama: frameObject mide el
-     Box3 real de bedGroup, y antes de buildBed() el grupo está vacío. */
-  /* Giro automatico de INTRO: la camara se mueve sola al cargar para que
-     se VEA que es 3D en vivo (una foto no se mueve). Se apaga con el
-     primer arrastre del usuario, con el boton, o a los 20 s. */
-  autoRot=true; introRot=true; controls.autoRotate=true; updateAutoBtn();
-  renderer.domElement.addEventListener("pointerdown",function(){
-    if(camAnim){camAnim=null;controls.enabled=true;controls.autoRotate=autoRot;}
-    if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
-  });
-  setTimeout(function(){
-    if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
-  },20000);
-  scene.add(new THREE.HemisphereLight(0xfff6e8,0x8a7a5f,0.55));
-  var key=new THREE.DirectionalLight(0xfff2df,1.05);
-  key.position.set(-4,8,5); key.castShadow=true;
-  key.shadow.mapSize.set(isMobile?1024:2048,isMobile?1024:2048);
-  key.shadow.camera.left=-6; key.shadow.camera.right=6; key.shadow.camera.top=6; key.shadow.camera.bottom=-6;
-  scene.add(key);
-  var fill=new THREE.DirectionalLight(0xdfe8ff,0.35); fill.position.set(5,4,-5); scene.add(fill);
-  /* Rebote cálido desde el frente (pie de la cama): levanta las sombras de
-     la cara del edredón sin lavar los colores. */
-  var bounce=new THREE.DirectionalLight(0xffe8c8,0.15); bounce.position.set(0,2.5,6); scene.add(bounce);
-  bedGroup=new THREE.Group(); scene.add(bedGroup);
-  curtainGroup=new THREE.Group(); scene.add(curtainGroup);
-  buildRoom(); buildBed(); applyWindowVisibility();
-  /* Sombra de contacto suave bajo la cama: ancla la cama al piso y le da
-     peso visual (además de las sombras PCFSoft de la luz clave). */
-  (function(){
-    var c=document.createElement("canvas"); c.width=c.height=256;
-    var x=c.getContext("2d");
-    var g=x.createRadialGradient(128,128,10,128,128,128);
-    g.addColorStop(0,"rgba(0,0,0,0.32)"); g.addColorStop(0.65,"rgba(0,0,0,0.16)"); g.addColorStop(1,"rgba(0,0,0,0)");
-    x.fillStyle=g; x.fillRect(0,0,256,256);
-    var t=new THREE.CanvasTexture(c);
-    var m=new THREE.Mesh(new THREE.PlaneGeometry(4.8,5.4),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));
-    m.rotation.x=-Math.PI/2; m.position.set(0,0.03,0.3); scene.add(m);
-  })();
-  loadBedGLB(); /* Modelo GLB real (Blender); si falla, queda la procedural. */
-  frameObject(true); /* encuadre inicial: Box3 real de la cama, sin animación */
-  if(window.ResizeObserver){
-    new ResizeObserver(function(){resize3D();}).observe(stage);
-  }
-  window.addEventListener("resize",resize3D);
-  document.addEventListener("fullscreenchange",function(){setTimeout(resize3D,120);});
-  window.addEventListener("orientationchange",function(){setTimeout(resize3D,350);});
-  setTimeout(resize3D,300);
-  (function animate(){
-    requestAnimationFrame(animate);
-    if(camAnim){
-      var k=Math.min(1,(performance.now()-camAnim.start)/camAnim.dur);
-      var e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
-      camera.position.lerpVectors(camAnim.p0,camAnim.p1,e);
-      controls.target.lerpVectors(camAnim.t0,camAnim.t1,e);
-      if(k>=1){var wA=camAnim.wasAuto; camAnim=null; controls.enabled=true; if(wA&&autoRot)controls.autoRotate=true;}
-    }
-    controls.update(); renderer.render(scene,camera);
-    if(!window.__vtcReady){
-      window.__vtcReady=true;
-      var l=document.getElementById("glLoading"); if(l)l.style.display="none";
-    }
-  })();
-}
-function start3D(){
-  if(!webglOK()){
-    showFallback("Este navegador no tiene WebGL activado. Activa WebGL en los ajustes del navegador y recarga.");
-    return;
-  }
-  ensureThree().then(function(ok){
-    if(!ok){showFallback("No se pudo cargar Three.js local (assets/three.min.js). Revisa tu conexión a internet y recarga.");return;}
-    try{
-      init3D();
-    }catch(e){
-      console.error("Viste tu cama 3D:",e);
-      showFallback("La escena 3D no se pudo iniciar en este dispositivo: "+(e&&e.message?e.message:"error desconocido"));
-    }
-  });
-  setTimeout(function(){
-    if(!window.__vtcReady){
-      showFallback("La escena 3D tardó demasiado en cargar (conexión lenta o CDN bloqueado). El configurador de abajo sigue funcionando.");
-    }
-  },8000);
-}
-
-/* ---------- Controles de vista ---------- */
-var autoRot=false, introRot=false;
-function updateAutoBtn(){
-  var b=document.getElementById("btnAuto"); if(!b)return;
-  b.textContent="Giro automático: "+(autoRot?"encendido":"apagado");
-}
-/* Pantalla completa robusta: la versión anterior solo llamaba a
-   el.requestFullscreen() sin promesa ni respaldo, y en el navegador en vivo
-   no activaba nada (2 intentos). Ahora: webkit fallback, manejo de la
-   promesa, actualización de la etiqueta, resize del 3D al entrar/salir, y
-   modo expandido por CSS (.fs-fallback) cuando el navegador no ofrece la
-   API de pantalla completa (p. ej. Safari en iPhone). */
-function fsElement(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
-function updateFsBtn(){
-  var el=document.getElementById("stage3d");
-  var b=document.getElementById("fsBtn"); if(!b)return;
-  if(fsElement()&&el)el.classList.remove("fs-fallback");
-  var on=!!fsElement()||(el&&el.classList.contains("fs-fallback"));
-  b.textContent=on?"✕ Salir de pantalla completa":"⛶ Pantalla completa";
-  b.setAttribute("aria-label",on?"Salir de pantalla completa":"Ver la habitación a pantalla completa");
-}
-function toggleFS(){
-  var el=document.getElementById("stage3d");
-  if(!el)return;
-  if(fsElement()){
-    if(document.exitFullscreen)document.exitFullscreen();
-    else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
-    el.classList.remove("fs-fallback");
-    updateFsBtn(); setTimeout(resize3D,120); return;
-  }
-  if(el.classList.contains("fs-fallback")){el.classList.remove("fs-fallback");updateFsBtn();setTimeout(resize3D,120);return;}
-  var req=el.requestFullscreen||el.webkitRequestFullscreen;
-  if(req){
-    var p=null;
-    try{p=req.call(el);}catch(e){p=null;}
-    if(p&&p.catch){p.catch(function(){el.classList.add("fs-fallback");updateFsBtn();setTimeout(resize3D,120);});}
-    /* Si a los 600 ms no entró en pantalla completa (p. ej. Safari iOS lo
-       ignora en silencio), usar el modo expandido por CSS. */
-    setTimeout(function(){
-      if(!fsElement()&&!el.classList.contains("fs-fallback")){el.classList.add("fs-fallback");updateFsBtn();setTimeout(resize3D,120);}
-    },600);
-  }else{
-    el.classList.add("fs-fallback"); updateFsBtn(); setTimeout(resize3D,120);
-  }
-}
-document.addEventListener("fullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
-document.addEventListener("webkitfullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
-function setView(v,btn){
-  if(!camera)return;
-  document.querySelectorAll(".stage-toolbar .view-btn").forEach(function(b){b.classList.remove("on");});
-  if(btn)btn.classList.add("on");
-  /* Cada preset re-encuadra con la MISMA lógica por área que la vista
-     inicial (frameObject con el az/el del preset): frontal desde el pie
-     (az 0, el 0.08), superior casi cenital con la misma orientación
-     diagonal (az 0.70, el 1.45 — no π/2 exacto, para que el vector up de
-     la cámara no degenere), 3/4 la diagonal 40°/24°. */
-  if(v==="front") frameObject(false,0,0.08);
-  else if(v==="top") frameObject(false,0.70,1.45);
-  else frameObject(false,0.70,0.42);
-}
-function toggleAuto(){
-  if(!controls)return;
-  introRot=false;
-  autoRot=!autoRot; controls.autoRotate=autoRot;
-  updateAutoBtn();
-}
-function zoomBed(f){
-  if(!camera)return;
-  var dir=camera.position.clone().sub(controls.target).multiplyScalar(1-f);
-  var len=THREE.MathUtils.clamp(dir.length(),controls.minDistance,controls.maxDistance);
-  dir.setLength(len); camera.position.copy(controls.target).add(dir); controls.update();
-}
-function rotateBed(dir){
-  if(!camera)return;
-  var off=camera.position.clone().sub(controls.target);
-  var ang=Math.atan2(off.x,off.z)+dir*0.45;
-  var r=Math.sqrt(off.x*off.x+off.z*off.z);
-  camera.position.set(controls.target.x+Math.sin(ang)*r,camera.position.y,controls.target.z+Math.cos(ang)*r);
-  controls.update();
-}
-/* ---------- Interfaz del configurador ---------- */
-var lastChange="";
-function showToast(){
-  var toast=document.getElementById("changeToast");
-  if(!toast||!lastChange)return;
-  toast.textContent=lastChange;
-  toast.classList.remove("show"); void toast.offsetWidth; toast.classList.add("show");
-  clearTimeout(toast._t); toast._t=setTimeout(function(){toast.classList.remove("show");},1800);
-}
-function pickSheet(el){setSheetColor(el.getAttribute("data-n"),el.getAttribute("data-h"),el.getAttribute("data-img")||null);}
-function pickCurtain(el){setCurtain(parseInt(el.getAttribute("data-i"),10));}
-function render(){
-  var dc=DUVET_COLORS[st.duvetColor];
-  var h="";
-  /* 1. Tamaño */
-  h+='<div class="cfg-section"><h3>Tamaño</h3>'+SIZES.map(function(s,i){
-    return '<button class="opt'+(st.size===i?" on":"")+'" onclick="setSize('+i+')">'+(st.size===i?"✓ ":"")+s.n+(s.d?' · '+s.d:'')+' · Edredón $'+DUVET_PRICES[i].toLocaleString("es-MX")+' · Sábanas $'+SHEET_SIZE_PRICES[i].toLocaleString("es-MX")+'</button>';
-  }).join("")+'</div>';
-  /* 2. Edredón */
-  h+='<div class="cfg-section"><h3>Edredón<span class="sec-price">'+(st.showDuvet?money(duvetPrice()):"Oculto")+'</span></h3>'
-    +'<label class="toggle"><input type="checkbox" '+(st.showDuvet?"checked":"")+' onchange="setShowDuvet(this.checked)"><b>Mostrar edredón</b></label>'
-    +'<p class="fabric-lbl">Tela: algodón egipcio</p>'
-    +'<div class="sec-body'+(st.showDuvet?"":" off")+'">'
-    +'<div class="type-grid">'+DUVET_COLORS.map(function(c,i){
-      return '<div class="type-card'+(st.duvetColor===i?" on":"")+'" onclick="setDuvetColor('+i+')">'+(st.duvetColor===i?'<span class="tick">✓</span>':"")+'<img src="'+c.img+'" alt="'+c.n+'" onerror="imgFallback(this)"><span>'+duvetLabel(c)+' · $'+duvetPrice().toLocaleString("es-MX")+'</span></div>';
-    }).join("")+'</div>'
-    +'<p class="sec-note">Edredón hipoalergénico reversible. Elegido: '+duvetLabel(dc)+' · $'+duvetPrice().toLocaleString("es-MX")+'.</p>'
-    +'</div></div>';
-  /* 3. Sábanas */
-  h+='<div class="cfg-section"><h3>Sábanas<span class="sec-price">'+(sheetIncluded()?money(sheetPrice()):"No incluidas")+'</span></h3>'
-    +'<label class="toggle"><input type="checkbox" '+(st.fittedSheet?"checked":"")+' onchange="setFittedSheet(this.checked)"><b>Sábana ajustable</b></label>'
-    +'<label class="toggle"><input type="checkbox" '+(st.topSheet?"checked":"")+' onchange="setTopSheet(this.checked)"><b>Sábana superior</b></label>'
-    +'<label class="toggle"><input type="checkbox" '+(st.pillowcases?"checked":"")+' onchange="setPillowcases(this.checked)"><b>Fundas de almohada</b></label>'
-    +'<p class="fabric-lbl">Tela: algodón egipcio</p>'
-    +'<div class="swatches">'+EG.map(function(c){
-      return '<img class="sw'+(st.sheetColor.name===c.name?" on":"")+'" title="'+c.name+'" src="'+c.img+'" data-n="'+c.name+'" data-h="'+c.hex+'" data-img="'+c.img+'" onclick="pickSheet(this)" onerror="imgFallback(this)" style="object-fit:cover">';
-    }).join("")+'</div>'
-    +'<p class="sec-note">Color: '+st.sheetColor.name+' · $'+sheetPrice().toLocaleString("es-MX")+' ('+SIZES[st.size].n+').</p></div>';
-  /* 4. Almohadas de bambú */
-  h+='<div class="cfg-section"><h3>Almohadas de bambú</h3>'
-    +'<label class="toggle"><input type="checkbox" '+(st.bamboo?"checked":"")+' onchange="setBamboo(this.checked)"><b>Agregar almohadas de bambú</b><span class="tgl-price">+$'+bambooPrice().toLocaleString("es-MX")+'</span></label>'
-    +'<p class="sec-note">Memory foam, tacto suave. Apaga las fundas para ver el bambú.</p></div>';
-  /* 5. Cortinas blackout */
-  h+='<div class="cfg-section"><h3>Cortinas blackout</h3>'
-    +'<label class="toggle"><input type="checkbox" '+(st.showCurtains?"checked":"")+' onchange="setShowCurtains(this.checked)"><b>Ver cortinas y ventana</b></label>'
-    +'<div class="sec-body'+(st.showCurtains?"":" off")+'">'
-    +'<div class="swatches">'+CUR.map(function(c,i){
-      if(c.img)return '<img class="sw'+(st.curtain===i?" on":"")+'" title="'+c.name+'" src="'+c.img+'" onclick="pickCurtain(this)" data-i="'+i+'" onerror="imgFallback(this)" style="object-fit:cover">';
-      return '<div class="sw'+(st.curtain===i?" on":"")+'" title="'+c.name+'" style="background:'+c.hex+'" onclick="pickCurtain(this)" data-i="'+i+'"></div>';
-    }).join("")+'</div>'
-    +'<p class="sec-note">Color: '+CUR[st.curtain].name+'. Solo se muestran en la habitación, no se cobran.</p>'
-    +'</div></div>';
-  document.getElementById("cfgSections").innerHTML=h;
-  /* Resumen y total */
-  var sheetImg=st.sheetColor.img||"assets/sabana-crema.jpg";
-  var curImg=CUR[st.curtain].img||"assets/cortina-piedra.jpg";
-  var parts=[];
-  if(st.fittedSheet)parts.push("Ajustable");
-  if(st.topSheet)parts.push("Superior");
-  if(st.pillowcases)parts.push("Fundas");
-  var rows=[
-    ["Cama",SIZES[st.size].n+(SIZES[st.size].d?" Size · "+SIZES[st.size].d:""),"assets/edredon-apilados.jpg","Incluido"],
-    ["Sábanas",sheetIncluded()?("Algodón Egipcio · "+st.sheetColor.name+(parts.length?" · "+parts.join(" + "):"")):"No incluidas",sheetImg,sheetIncluded()?money(sheetPrice()):"—"],
-    ["Edredón",st.showDuvet?("Reversible · "+duvetLabel(dc)+" · "+SIZES[st.size].n+" · "+(st.duvetFace==="reverse"?"reverso visible":"cara visible")):"Oculto",dc.img,st.showDuvet?money(duvetPrice()):"—"],
-    ["Almohadas de bambú",st.bamboo?(bambooLabel()+" · Memory foam"):"No agregadas","assets/almohada-par.jpg",st.bamboo?money(bambooPrice()):"—"],
-    ["Cortinas",st.showCurtains?("Blackout · "+CUR[st.curtain].name+" · solo visual"):"Ocultas",curImg,"Solo visual"]
-  ];
-  document.getElementById("selList").innerHTML=rows.map(function(r){
-    return '<div class="sel-row"><img src="'+r[2]+'" alt="" onerror="imgFallback(this)"><span>'+r[0]+': <b>'+r[1]+'</b></span><span class="price">'+r[3]+'</span></div>';
-  }).join("");
-  document.getElementById("cfgTotal").textContent=money(calcTotal());
-  /* Botón de voltear de la barra: refleja la cara visible. */
-  var fb=document.getElementById("btnFlip");
-  if(fb)fb.textContent=st.duvetFace==="reverse"?"⟲ Ver cara del edredón":"⟲ Dar la vuelta al edredón";
-  showToast();
-  if(scene){
-    if(glbReady){applyStateToGLB(); buildCurtains();}
-    else{buildBed();}
-    applyWindowVisibility();
-  }
-  /* Redibujo forzado tras reconstruir la cama: sin esto el canvas podía
-     quedarse en una franja superior hasta tocar pantalla completa. */
-  if(window.requestAnimationFrame){requestAnimationFrame(function(){redraw3D();});}
-}
-function setSize(i){st.size=i;lastChange="Tamaño: "+SIZES[i].n;render();frameObject();}
-function setSheetColor(n,h,img){st.sheetColor={name:n,hex:h,img:img||null};lastChange="Sábanas: "+n;render();}
-function setShowDuvet(on){st.showDuvet=!!on;if(!st.showDuvet)st.duvetFace="front";lastChange=st.showDuvet?"Edredón puesto de nuevo":"Edredón quitado: se ven solo las sábanas";render();}
-function setDuvetFace(face){
-  if(!st.showDuvet){lastChange="Primero muestra el edredón para darle la vuelta.";showToast();return;}
-  st.duvetFace=face;
-  var dc=DUVET_COLORS[st.duvetColor];
-  lastChange=face==="reverse"?("Edredón: reverso ("+(dc.revName||"reverso")+")"):("Edredón: cara ("+dc.n+")");
-  render();
-}
-function flipDuvet(){setDuvetFace(st.duvetFace==="reverse"?"front":"reverse");}
-function setDuvetColor(i){st.duvetColor=i;st.showDuvet=true;lastChange="Edredón: "+duvetLabel(DUVET_COLORS[i])+" (reversible)";render();}
-function setFittedSheet(on){st.fittedSheet=!!on;lastChange=st.fittedSheet?"Sábana ajustable puesta":"Sábana ajustable quitada";render();}
-function setTopSheet(on){st.topSheet=!!on;lastChange=st.topSheet?"Sábana superior puesta":"Sábana superior quitada";render();}
-function setPillowcases(on){st.pillowcases=!!on;lastChange=st.pillowcases?"Fundas de almohada puestas":"Fundas quitadas: se ve el bambú";render();}
-function setBamboo(on){st.bamboo=!!on;lastChange=st.bamboo?("Almohadas de bambú agregadas: "+bambooLabel()):"Almohadas de bambú quitadas";render();}
-function setShowCurtains(on){st.showCurtains=!!on;lastChange=st.showCurtains?("Cortinas: "+CUR[st.curtain].name):"Cortinas y ventana ocultas";render();}
-function setCurtain(i){st.curtain=i;lastChange="Cortinas: "+CUR[i].name;render();}
-function quoteWhatsApp(){
-  var lines=["Hola Inovation Store, quiero cotizar mi set Viste tu Cama:"];
-  lines.push("• Tamaño: "+SIZES[st.size].n);
-  if(sheetIncluded())lines.push("• Sábanas: Algodón Egipcio · "+st.sheetColor.name+" — "+money(sheetPrice()));
-  if(st.showDuvet)lines.push("• Edredón: "+duvetLabel(DUVET_COLORS[st.duvetColor])+" ("+(st.duvetFace==="reverse"?"reverso visible":"cara visible")+") — "+money(duvetPrice()));
-  if(st.bamboo)lines.push("• Almohadas de bambú: "+bambooLabel()+" — "+money(bambooPrice()));
-  if(st.showCurtains)lines.push("• Cortinas blackout: "+CUR[st.curtain].name+" (solo visual)");
-  lines.push("Total estimado: "+money(calcTotal()));
-  window.open("https://wa.me/525636858623?text="+encodeURIComponent(lines.join("\n")),"_blank","noopener");
-}
-function addCfgToCart(){
-  var t=calcTotal();
-  var msg=document.getElementById("cfgMessage"); if(msg)msg.textContent="Set agregado al carrito · Total "+money(t);
-  var name="Set Viste tu Cama 3D — "+SIZES[st.size].n+", Sábanas Algodón Egipcio "+st.sheetColor.name+(st.showDuvet?", Edredón Reversible "+duvetLabel(DUVET_COLORS[st.duvetColor]):", sin edredón")+(st.bamboo?", Almohadas "+bambooLabel():"")+(st.showCurtains?", Cortinas "+CUR[st.curtain].name:"");
-  addToCart(name,t);
-}
-window.setSize=setSize; window.setSheetColor=setSheetColor;
-window.setShowDuvet=setShowDuvet; window.setDuvetColor=setDuvetColor; window.setDuvetFace=setDuvetFace; window.flipDuvet=flipDuvet;
-window.setFittedSheet=setFittedSheet; window.setTopSheet=setTopSheet; window.setPillowcases=setPillowcases;
-window.setBamboo=setBamboo; window.setShowCurtains=setShowCurtains; window.setCurtain=setCurtain;
-window.pickSheet=pickSheet; window.pickCurtain=pickCurtain;
-window.setView=setView; window.toggleAuto=toggleAuto; window.zoomBed=zoomBed; window.rotateBed=rotateBed;
-window.addCfgToCart=addCfgToCart; window.quoteWhatsApp=quoteWhatsApp;
-/* Abrir el panel del asistente desde la barra de contacto (los botones
-   flotantes de chat.js están ocultos solo en esta página). El panel se
-   cierra con su propio botón ✕, que quita la clase 'open'. */
-function openChatPanel(){
-  var p=document.getElementById("chatPanel");
-  if(p){p.classList.add("open"); var inp=document.getElementById("chatText"); if(inp)inp.focus();}
-}
-window.openChatPanel=openChatPanel;
-/* La interfaz corre SIEMPRE y PRIMERO, sin esperar a Three.js: las secciones
-   con interruptores, colores, medidas y total funcionan aunque el 3D falle. El 3D arranca aparte
-   y de forma asíncrona; si tarda más de 8 s aparece solo un mensaje de error
-   honesto (nunca una foto en lugar de la cama). */
-render();
-try{ start3D(); }catch(e){ showFallback("La escena 3D no se pudo iniciar: "+(e&&e.message?e.message:"error desconocido")); }
+(()=>{
+const $=q=>document.querySelector(q);
+/* PRECIOS REALES de Inovation Store (MXN). Alberto: los precios del video
+   eran solo una simulación, no se usan. Tamaños reales: Individual 100×200,
+   Matrimonial 135×200, Queen 160×200, King 200×200, King Jumbo (sin medida
+   publicada: para sábanas se usa el precio de King, como en la página
+   anterior). Anchos 3D en metros. */
+const SIZES={ind:{n:'Individual',d:'100 × 200',w:1,l:2,duv:999,sh:500},mat:{n:'Matrimonial',d:'135 × 200',w:1.35,l:2,duv:1099,sh:600},qn:{n:'Queen',d:'160 × 200',w:1.6,l:2,duv:1199,sh:700},kg:{n:'King',d:'200 × 200',w:2,l:2,duv:1299,sh:800},kj:{n:'King Jumbo',d:'',w:2.2,l:2,duv:1499,sh:800}};
+const FEEL={alg:{n:'Algodón egipcio',r:.85,k:0}};
+/* Sábanas reales (20 colores de Alberto). */
+const SHC=[['Violet','#6a4a8a'],['Rose','#d97a8a'],['Baby Blue','#a8c8e0'],['Black','#222222'],['Beage','#d8c9a8'],['Burgundy','#7a1f2b'],['Chocolate','#5a3a28'],['Gold','#c9a227'],['Orange','#e07b2a'],['Champagne','#e8d9b0'],['Military Green','#5a6b4a'],['Marine','#1f3a5f'],['Grape','#6b3a7a'],['Olive','#7a7a4a'],['Royal Blue','#2a4a9a'],['Baby Rose','#f2c8d0'],['Rojo Vino','#8a2a3a'],['Camel','#c19a6b'],['Red','#c02020'],['Crema','#f2ead8']];SHC.fixed=true;
+/* Modelos de edredón: ver DUV abajo. */
+/* Edredones REALES de Alberto (5, con sus fotos). La textura es la foto
+   real del acolchado (assets/duvet-tex-*.jpg); Blanco con Rayas usa su
+   foto real. Reversos solo donde el producto lo respalda: Azul Marino ↔
+   Gris; los demás son de un solo color (reverso = cara). */
+const DUV=[
+{id:'azul',n:'Azul Marino',d:'Reverso Gris',a:{tex:'assets/duvet-tex-azul-marino.jpg',c:'#232a45'},b:{tex:'assets/duvet-tex-gris.jpg',c:'#9aa0a8'}},
+{id:'gris',n:'Gris',d:'Reverso Azul Marino',a:{tex:'assets/duvet-tex-gris.jpg',c:'#9aa0a8'},b:{tex:'assets/duvet-tex-azul-marino.jpg',c:'#46536f'}},
+{id:'beige',n:'Beige',d:'Liso, reverso beige',a:{tex:'assets/duvet-tex-beige.jpg',c:'#e0d2b8'},b:{tex:'assets/duvet-tex-beige.jpg',c:'#e0d2b8'}},
+{id:'blanco',n:'Blanco',d:'Liso, reverso blanco',a:{tex:'assets/duvet-tex-blanco.jpg',c:'#f4f3f1'},b:{tex:'assets/duvet-tex-blanco.jpg',c:'#f4f3f1'}},
+{id:'rayas',n:'Blanco con Rayas',d:'Reverso blanco con rayas',a:{tex:'assets/edredon-blanco-rayas.jpg',c:'#f4f3f1'},b:{tex:'assets/edredon-blanco-rayas.jpg',c:'#f4f3f1'}}];
+/* Bambú real: Standard $800 c/u, par $1,500; King $900 c/u, par $1,700.
+   Cortinas blackout reales (17 colores): SOLO visuales, no se cobran. */
+const BAM={qn:{one:800,pair:1500},kg:{one:900,pair:1700}};
+const CUR=[
+{id:'c1',n:'Chocolate',c:'#5a3a28',t:'p',img:'assets/cortina-chocolate.jpg'},
+{id:'c2',n:'Turquesa',c:'#2ab8d8',t:'p',img:'assets/cortina-turquesa.jpg'},
+{id:'c3',n:'Verde salvia',c:'#a8c8a0',t:'p',img:'assets/cortina-verde-salvia.jpg'},
+{id:'c4',n:'Turquesa marino',c:'#146a7a',t:'p',img:'assets/cortina-turquesa-marino.jpg'},
+{id:'c5',n:'Rojo',c:'#c02030',t:'p',img:'assets/cortina-tinto.jpg'},
+{id:'c6',n:'Piedra',c:'#b8b0a0',t:'p',img:'assets/cortina-piedra.jpg'},
+{id:'c7',n:'Negro',c:'#1a1a1a',t:'p',img:'assets/cortina-negro.jpg'},
+{id:'c8',n:'Morado',c:'#6b3a8a',t:'p',img:'assets/cortina-morado.jpg'},
+{id:'c9',n:'Marrón',c:'#6a4a2a',t:'p',img:'assets/cortina-marron.jpg'},
+{id:'c10',n:'Marrón cebada',c:'#a8824a',t:'p',img:'assets/cortina-marron-cebada.jpg'},
+{id:'c11',n:'Marino',c:'#1f3a5f',t:'p',img:'assets/cortina-marino.jpg'},
+{id:'c12',n:'Gris carbón',c:'#3a3a40',t:'p',img:'assets/cortina-gris-carbon.jpg'},
+{id:'c13',n:'Ciruela',c:'#6a2a4a',t:'p',img:'assets/cortina-ciruela.jpg'},
+{id:'c14',n:'Gris',c:'#8a8a90',t:'p',img:'assets/cortina-gris.jpg'},
+{id:'c15',n:'Mineral',c:'#7a9a8a',t:'p',img:'assets/cortina-mineral.jpg'},
+{id:'c16',n:'Pink',c:'#f2a0c0',t:'p',img:'assets/cortina-pink.jpg'},
+{id:'c17',n:'Perla',c:'#f0ede8',t:'p',img:'assets/cortina-perla.jpg'}];
+const s={size:'qn',duv:true,model:'azul',duvC:'#1f2f55',duvF:'alg',flip:false,fit:true,top:true,cs:true,shC:'#ffffff',shF:'alg',bam:false,bsz:'qn',bqt:2,cur:false,cm:'c6',cpn:2};
+const curModel=()=>DUV.find(d=>d.id===s.model);
+const msg=$('#msg');
+if(!window.THREE){msg.textContent='No se pudo cargar el visor 3D. Revisa tu conexión y recarga la página.';return}
+let R;try{R=new THREE.WebGLRenderer({canvas:$('#cv'),antialias:true,alpha:true})}catch(e){msg.textContent='Tu navegador no permite gráficos 3D (WebGL). Prueba con Chrome o Safari actualizado.';return}
+R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.outputEncoding=THREE.sRGBEncoding;R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(38,1,.1,50);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8890a0,.85));
+const sun=new THREE.DirectionalLight(0xfff2de,.9);sun.position.set(3,5,3.5);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-3.5,right:3.5,top:3.5,bottom:-3.5,near:1,far:14});sun.shadow.bias=-.0005;scene.add(sun);
+const fill=new THREE.DirectionalLight(0xdfe8ff,.3);fill.position.set(-4,2,-2);scene.add(fill);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(14,14),new THREE.ShadowMaterial({opacity:.25}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+const G=new THREE.Group();scene.add(G);
+const col=h=>new THREE.Color(h).convertSRGBToLinear();
+function tex(k){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');
+ if(k==='q'){const g=x.createRadialGradient(64,64,8,64,64,92);g.addColorStop(0,'#fff');g.addColorStop(1,'#c9c9c9');x.fillStyle=g;x.fillRect(0,0,128,128);x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=2;x.setLineDash([7,4]);x.strokeRect(1,1,126,126)}
+ else{for(let i=0;i<128;i+=2)for(let j=0;j<128;j+=2){const v=222+Math.random()*33|0;x.fillStyle='rgb('+v+','+v+','+v+')';x.fillRect(i,j,2,2)}}
+ const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return t}
+const TQ=tex('q'),TW=tex('w');let DT=[];
+function faceTex(f){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');
+ if(f.t==='s'){x.fillStyle=f.c;x.fillRect(0,0,256,256)}
+ else{const n=f.k||2,h=256/n;for(let i=0;i<n;i++){x.fillStyle=f.c;x.fillRect(0,i*h,256,h);x.fillStyle=f.c2;x.fillRect(0,i*h+h*.45,256,h*.55)}}
+ x.globalCompositeOperation='multiply';const g=x.createRadialGradient(128,128,20,128,128,185);g.addColorStop(0,'#fff');g.addColorStop(1,'#bdbdbd');x.fillStyle=g;x.fillRect(0,0,256,256);
+ x.strokeStyle='rgba(0,0,0,.28)';x.lineWidth=3;x.strokeRect(0,0,256,256);
+ const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return t}
+const mat=(h,r,m)=>new THREE.MeshStandardMaterial({color:col(h),roughness:r,map:m||null,side:THREE.DoubleSide});
+/* Texturas reales del edredón (fotos del producto). Se cargan una vez y se
+   reutilizan; NO se destruyen al reconstruir la escena (las de lienzo sí). */
+const TEXC={};
+function imgTex(url){if(!TEXC[url]){const t=new THREE.TextureLoader().load(url);t.encoding=THREE.sRGBEncoding;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=4;TEXC[url]=t}return TEXC[url]}
+function duvetFaceTex(f){if(f.tex)return imgTex(f.tex);const t=faceTex(f);DT.push(t);return t}
+function sh(m){m.castShadow=m.receiveShadow=true;return m}
+function box(w,h,d,m,x,y,z,sx,sy,sz){const b=sh(new THREE.Mesh(new THREE.BoxGeometry(w,h,d,sx||1,sy||1,sz||1),m));b.position.set(x,y,z);G.add(b);return b}
+/* tela que cubre el colchón y cae por los lados y los pies */
+function cover(hw,zs,ze,ex,drop,bulge,y0,puff,cell,m,uvk,nf,bump){
+ const L=ze+(nf?0:ex)-zs,W=2*hw+2*ex,g=new THREE.PlaneGeometry(W,L,100,100);g.rotateX(-Math.PI/2);
+ const p=g.attributes.position,uv=g.attributes.uv;
+ for(let i=0;i<p.count;i++){const ox=p.getX(i),oz=p.getZ(i);let x=ox,z=oz+L/2+zs,y=y0,tx=0,tz=0;const ax=Math.abs(ox),sx=Math.sign(ox)||1;
+  if(puff){const f=Math.abs(Math.sin(Math.PI*ox/cell))*Math.abs(Math.sin(Math.PI*oz/cell));y+=puff*Math.sqrt(f)}
+  if(ax>hw){tx=Math.min(1,(ax-hw)/ex);x=sx*(hw+bulge*Math.sin(tx*Math.PI/2))}
+  if(!nf&&z>ze){tz=Math.min(1,(z-ze)/ex);z=ze+bulge*Math.sin(tz*Math.PI/2)}
+  const t=Math.max(tx,tz);y-=drop*(1-Math.cos(t*Math.PI/2));
+  if(puff){y-=puff*Math.sqrt(Math.abs(Math.sin(Math.PI*ox/cell))*Math.abs(Math.sin(Math.PI*oz/cell)))*t}
+  y+=(bump===undefined?.03:bump)*Math.exp(-Math.pow((z-zs-.05)/.09,2))*(puff?1:.3);
+  p.setXYZ(i,x,y,z);uv.setXY(i,ox*uvk+.5,oz*uvk+.5)}
+ g.computeVertexNormals();const me=sh(new THREE.Mesh(g,m));G.add(me)}
+function pillow(w,l,h){const g=new THREE.SphereGeometry(1,32,22),p=g.attributes.position,f=(v,e)=>Math.sign(v)*Math.pow(Math.abs(v),e);
+ for(let i=0;i<p.count;i++)p.setXYZ(i,f(p.getX(i),.5)*w/2,f(p.getY(i),.7)*h/2,f(p.getZ(i),.5)*l/2);g.computeVertexNormals();return g}
+function bamTex(){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.fillStyle='#f3f2eb';x.fillRect(0,0,256,256);
+ x.strokeStyle='rgba(120,140,110,.22)';x.lineWidth=2;for(let i=0;i<6;i++)for(let j=0;j<6;j++){x.beginPath();x.arc(21+i*43,21+j*43,17,0,7);x.stroke()}
+ x.fillStyle='rgba(125,150,110,.6)';x.font='italic 22px Georgia';[[30,60,-.5],[150,120,1.1],[80,210,.2]].forEach(a=>{x.save();x.translate(a[0],a[1]);x.rotate(a[2]);x.fillText('bamboo',0,0);x.restore()});
+ x.strokeStyle='rgba(125,150,110,.65)';x.lineWidth=5;x.lineCap='round';[[180,40,.6],[60,150,-.8],[200,200,.3]].forEach(a=>{x.save();x.translate(a[0],a[1]);x.rotate(a[2]);x.beginPath();x.moveTo(0,0);x.quadraticCurveTo(14,-8,34,-4);x.stroke();x.restore()});
+ const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(3,2);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;return t}
+function room(l){const zw=-l/2-.75,M=CUR.find(c=>c.id===s.cm)||CUR[0],silk=M.t==='p',cnt=silk?s.cpn:2;
+ const W=new THREE.Shape();W.moveTo(-3.2,0);W.lineTo(3.2,0);W.lineTo(3.2,2.8);W.lineTo(-3.2,2.8);W.lineTo(-3.2,0);
+ const H=new THREE.Path();H.moveTo(-.65,1.15);H.lineTo(-.65,2.15);H.lineTo(.65,2.15);H.lineTo(.65,1.15);H.lineTo(-.65,1.15);W.holes.push(H);
+ const wl=new THREE.Mesh(new THREE.ShapeGeometry(W),new THREE.MeshStandardMaterial({color:col('#e4e2dd'),roughness:1}));wl.position.z=zw;wl.receiveShadow=true;G.add(wl);
+ const fl=new THREE.Mesh(new THREE.PlaneGeometry(7,7),new THREE.MeshStandardMaterial({color:col('#c3c7cf'),roughness:1}));fl.rotation.x=-Math.PI/2;fl.position.set(0,.002,zw+3.4);fl.receiveShadow=true;G.add(fl);
+ const gl=new THREE.Mesh(new THREE.PlaneGeometry(1.3,1),new THREE.MeshBasicMaterial({color:0xe6f1ff}));gl.position.set(0,1.65,zw-.03);G.add(gl);
+ const fm=mat('#f5f5f5',.6);[[0,2.15,1.34,.05],[0,1.15,1.34,.05],[-.65,1.65,.05,1.05],[.65,1.65,.05,1.05],[0,1.65,.025,1]].forEach(a=>box(a[2],a[3],.06,fm,a[0],a[1],zw+.01));
+ const gd=mat('#c9a24c',.35),rod=sh(new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,3,16),gd));rod.rotation.z=Math.PI/2;rod.position.set(0,2.27,zw+.14);G.add(rod);
+ [-1.5,1.5].forEach(x=>{const f=sh(new THREE.Mesh(new THREE.SphereGeometry(.03,16,12),gd));f.position.set(x,2.27,zw+.14);G.add(f)});
+ const pm=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.92,metalness:0,side:THREE.DoubleSide});
+ if(M.img)pm.map=imgTex(M.img);else pm.color=col(M.c);
+ const rm=mat('#c9a24c',.3);
+ (cnt===2?[-.95,.95]:[-.95]).forEach(cx=>{const pw=.95,ph=2.28,n=4,g=new THREE.PlaneGeometry(pw,ph,64,8),p=g.attributes.position;
+  for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i);p.setXYZ(i,cx+x,2.34-ph/2+y,zw+.1-.04*Math.cos(2*Math.PI*n*(x+pw/2)/pw))}
+  g.computeVertexNormals();G.add(sh(new THREE.Mesh(g,pm)));
+  for(let k=0;k<n;k++){const r=sh(new THREE.Mesh(new THREE.TorusGeometry(.03,.009,8,20),rm));r.position.set(cx+pw*((k+.5)/n-.5),2.27,zw+.152);G.add(r)}})}
+function faces(){const M=curModel(),el=$('#face');el.innerHTML='';[[false,M.a,'Cara principal'],[true,M.b,'Reverso']].forEach(o=>{const b=document.createElement('button');b.className=s.flip===o[0]?'on':'';b.innerHTML='<span class="pv" style="height:22px;margin-bottom:4px;background:'+css(o[1])+'"></span>'+o[2];b.onclick=()=>{s.flip=o[0];sync(true)};el.appendChild(b)})}
+function seg(el,opts,key){el.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.innerHTML=o[1];b.className=s[key]===o[0]?'on':'';b.onclick=()=>{s[key]=o[0];sync()};el.appendChild(b)})}
+function extras(){seg($('#bsz'),[['qn','Standard<small>71 × 48 cm</small>'],['kg','King<small>91 × 51 cm</small>']],'bsz');seg($('#bqt'),[[1,'1 almohada'],[2,'2 almohadas']],'bqt');
+ const el=$('#curm');el.innerHTML='';CUR.forEach(m=>{const b=document.createElement('button');b.className='mdl'+(s.cm===m.id?' on':'');b.innerHTML='<span class="pv" style="background:'+m.c+'"></span>'+m.n+'<small>'+(m.t==='p'?'Panel faux silk':'Juego térmico 2 pzas')+'</small>';b.onclick=()=>{s.cm=m.id;sync()};el.appendChild(b)});
+ const cm=CUR.find(c=>c.id===s.cm);seg($('#cpn'),[[1,'1 panel'],[2,'2 paneles']],'cpn');$('#cpn').style.display=cm.t==='p'?'grid':'none'}
+function build(){
+ G.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()});G.clear();DT.forEach(t=>t.dispose());DT=[];
+ const S=SIZES[s.size],w=S.w,l=S.l,hw=w/2;
+ const wood=mat('#7a5a3c',.7),fab=mat('#5d6577',.95),dk=mat('#4a5163',.95);
+ box(w+.16,.3,l+.1,wood,0,.15,0);
+ box(w+.16,1.05,.08,dk,0,.525,-l/2-.12);
+ const n=Math.round((w+.16)/.2),bw=(w+.16)/n;for(let i=0;i<n;i++)box(bw-.014,.8,.1,fab,-(w+.16)/2+bw*(i+.5),.62,-l/2-.09,1,6,1);
+ const rug=mat('#aeb4c2',1);box(w+1.5,.01,l+1.2,rug,0,.005,.1);
+ [-1,1].forEach(k=>{const x=k*(hw+.38);box(.42,.5,.4,wood,x,.25,-l/2+.12);
+  const lm=new THREE.Mesh(new THREE.CylinderGeometry(.09,.14,.2,28,1,true),new THREE.MeshStandardMaterial({color:col('#f3ead6'),emissive:col('#ffe2a8'),emissiveIntensity:.35,side:THREE.DoubleSide}));lm.position.set(x,.72,-l/2+.12);sh(lm);G.add(lm);
+  box(.02,.18,.02,mat('#c6a04a',.4),x,.59,-l/2+.12)});
+ box(w,.28,l,mat('#f1efe9',.9,TQ),0,.44,0);
+ const shM=mat(s.shC,FEEL[s.shF].r,TW);
+ if(s.fit)box(w+.03,.325,l+.03,shM,0,.4325,0);
+ if(s.top||!s.duv&&false)cover(hw,-l/2+.4,l/2,.24,.22,.035,.603,0,.3,shM,9);
+ if(s.duv){const M=curModel(),fa=s.flip?M.b:M.a,fb=s.flip?M.a:M.b,ta=duvetFaceTex(fa),tb=duvetFaceTex(fb),r=FEEL[s.duvF].r;
+  const ma=new THREE.MeshStandardMaterial({color:0xffffff,roughness:r,map:ta,side:THREE.DoubleSide}),mb=new THREE.MeshStandardMaterial({color:0xffffff,roughness:r,map:tb,side:THREE.DoubleSide}),zb=-l/2+.6;
+  cover(hw,zb,zb+.36,.28,.31,.075,.617,.02,.3,mb,.45,true,0);
+  cover(hw,zb+.35,l/2,.28,.31,.075,.612,.032,.3,ma,.45,false,.06)}
+ let bm=null;if(s.bam&&!s.cs){bm=bamTex();DT.push(bm)}
+ const bz=s.bam?(s.bsz==='kg'?[.91,.51]:[.71,.48]):[.62,.46],pn=s.size==='ind'?1:(s.bam?s.bqt:2),pw=Math.min(bz[0],(w-.1)/pn*.95),pc=s.cs?mat(s.shC,FEEL[s.shF].r,TW):(bm?mat('#ffffff',.9,bm):mat('#f2efe8',FEEL[s.shF].r,TW));
+ for(let i=0;i<pn;i++){const x=(i-(pn-1)/2)*(w/pn);const pm=sh(new THREE.Mesh(pillow(pw,bz[1],s.bam?.17:.15),pc));pm.position.set(x,.68,-l/2+.3);pm.rotation.x=.2;G.add(pm)}
+ if(s.cur)room(l);sun.target.position.set(0,.4,0);scene.add(sun.target)}
+/* cámara */
+const T=new THREE.Vector3(0,.55,0);let cur={th:.7,ph:1.15,r:5.6},tg={...cur},auto=false;
+const views={front:[0,1.3],tq:[.8,1.1],top:[0,.1]};
+function baseR(){const S=SIZES[s.size];return 4.6+S.w*1.1}
+function setView(k){const v=views[k];let d=v[0]-cur.th;d=Math.atan2(Math.sin(d),Math.cos(d));tg.th=cur.th+d;tg.ph=v[1];tg.r=k==='top'?baseR()+1.2:baseR();document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===k))}
+function place(){const sp=Math.sin(cur.ph);cam.position.set(T.x+cur.r*sp*Math.sin(cur.th),T.y+cur.r*Math.cos(cur.ph),T.z+cur.r*sp*Math.cos(cur.th));cam.lookAt(T)}
+const cv=$('#cv'),pts=new Map();let pd=0;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY]);if(pts.size===2){const a=[...pts.values()];pd=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])}});
+cv.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const o=pts.get(e.pointerId);
+ if(pts.size===1){tg.th-=(e.clientX-o[0])*.008;tg.ph=Math.min(1.5,Math.max(.08,tg.ph-(e.clientY-o[1])*.006))}
+ pts.set(e.pointerId,[e.clientX,e.clientY]);
+ if(pts.size===2){const a=[...pts.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);tg.r=clampR(tg.r*pd/d);pd=d}});
+['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,e=>pts.delete(e.pointerId)));
+const clampR=r=>Math.min(9,Math.max(2.4,r));
+cv.addEventListener('wheel',e=>{e.preventDefault();tg.r=clampR(tg.r*(1+e.deltaY*.001))},{passive:false});
+document.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+$('#zp').onclick=()=>tg.r=clampR(tg.r*.85);$('#zm').onclick=()=>tg.r=clampR(tg.r*1.18);
+$('#auto').onclick=e=>{auto=!auto;e.target.classList.toggle('on',auto)};
+$('#fs').onclick=()=>{const st=$('#stage');try{document.fullscreenElement?document.exitFullscreen():st.requestFullscreen()}catch(e){}};
+function size(){const st=$('#stage');R.setSize(st.clientWidth,st.clientHeight,false);cam.aspect=st.clientWidth/st.clientHeight;cam.updateProjectionMatrix()}
+new ResizeObserver(size).observe($('#stage'));
+let first=true;
+(function loop(){requestAnimationFrame(loop);if(auto&&!pts.size)tg.th+=.006;
+ for(const k in cur)cur[k]+=(tg[k]-cur[k])*.12;place();R.render(scene,cam);if(first){first=false;msg.style.display='none'}})();
+/* interfaz */
+const fmt=n=>'$'+Math.round(n).toLocaleString('es-MX')+' MXN';
+function swatches(el,key,nameEl,L){L=L||[];el.innerHTML='';L.forEach(([n,h])=>{const b=document.createElement('button');b.style.background=h;b.title=n;b.setAttribute('aria-label',n);
+  b.className=s[key].toLowerCase()===h?'on':'';b.onclick=()=>{s[key]=h;if(key==='duvC')s.flip=false;sync()};el.appendChild(b)});
+ if(!L.fixed){const i=document.createElement('input');i.type='color';i.value=s[key];i.title='Otro color';i.oninput=()=>{s[key]=i.value;sync(true)};el.appendChild(i)}
+ const f=L.find(c=>c[1]===s[key].toLowerCase());nameEl.textContent=f?f[0]:(String(s[key]).toLowerCase()==='#ffffff'?'Blanco':'Color personalizado')}
+function feel(el,key){el.innerHTML='';for(const k in FEEL){const b=document.createElement('button');b.textContent=FEEL[k].n;b.className=s[key]===k?'on':'';b.onclick=()=>{s[key]=k;sync()};el.appendChild(b)}}
+function sizes(){const el=$('#sizes');el.innerHTML='';for(const k in SIZES){const b=document.createElement('button');b.innerHTML=SIZES[k].n+(SIZES[k].d?'<small>'+SIZES[k].d+' cm</small>':'');b.className=s.size===k?'on':'';b.onclick=()=>{s.size=k;setView(document.querySelector('[data-v].on').dataset.v);sync()};el.appendChild(b)}}
+const css=f=>f.tex?f.c:(f.t==='s'?f.c:'repeating-linear-gradient(0deg,'+f.c+' 0 8px,'+f.c2+' 8px 18px)');
+function mods(){const el=$('#mods');el.innerHTML='';DUV.forEach(m=>{const b=document.createElement('button');b.className='mdl'+(s.model===m.id?' on':'');
+ b.innerHTML='<span class="pv" style="background:'+css(m.a)+'"><i style="background:'+css(m.b)+'"></i></span>'+m.n+'<small>'+m.d+'</small>';b.onclick=()=>{s.model=m.id;s.flip=false;sync()};el.appendChild(b)});
+ const m=DUV.find(d=>d.id===s.model);$('#duvS').style.display='none';$('#duvN').textContent=m.n+' · '+m.d}
+/* Totales REALES: edredón y sábanas a precio plano por tamaño (las piezas de
+   sábanas no se cobran por separado); bambú por par/unidad; cortinas solo
+   visuales ($0). Queen por defecto: 1199 + 700 = $1,899 MXN. */
+function totals(){const S=SIZES[s.size],d=s.duv?S.duv:0,h=(s.fit||s.top||s.cs)?S.sh:0;
+ const bq=s.size==='ind'?1:s.bqt,bp=BAM[s.bsz];const b=s.bam?(bq===2?bp.pair:bp.one):0;
+ return{d,h,b,c:0,t:d+h+b,S}}
+function sync(light){const T2=totals(),S=T2.S;
+ if(!light){sizes();swatches($('#shS'),'shC',$('#shN'),SHC);mods();extras()}
+ ['duv','fit','top','cs','bam','cur'].forEach(k=>$('#'+k).checked=s[k]);
+ faces();$('#flipT').textContent=s.flip?'Ver cara principal':'Dar la vuelta';$('#flipT').disabled=!s.duv;
+ $('#tot').textContent=fmt(T2.t);
+ const L=[S.n+(S.d?' '+S.d+' cm':'')];if(s.duv)L.push('Edredón '+curModel().n+', '+FEEL[s.duvF].n+' · '+fmt(T2.d));
+ const sp=[s.fit&&'ajustable',s.top&&'superior',s.cs&&'fundas'].filter(Boolean);if(sp.length)L.push('Sábanas '+FEEL[s.shF].n+' ('+sp.join(', ')+') · '+fmt(T2.h));
+ if(s.bam)L.push('Almohadas de bambú '+(s.bsz==='kg'?'King':'Standard')+' x'+(s.size==='ind'?1:s.bqt)+' · '+fmt(T2.b));if(s.cur){const m=CUR.find(c=>c.id===s.cm);L.push('Cortinas blackout '+m.n+' ('+s.cpn+(s.cpn>1?' paneles':' panel')+') · Solo visual')}
+ $('#lines').innerHTML=L.join('<br>');
+ $('#wa').href='https://wa.me/525636858623?text='+encodeURIComponent('Hola Inovation Store, quiero cotizar este set: '+L.join('; ').replace(/<br>/g,'')+'. Total estimado '+fmt(T2.t));
+ build()}
+['duv','fit','top','cs','bam','cur'].forEach(k=>$('#'+k).onchange=e=>{s[k]=e.target.checked;sync()});
+$('#flipT').onclick=()=>{if(s.duv){s.flip=!s.flip;sync(true)}};
+$('#add').onclick=()=>{window.dispatchEvent(new CustomEvent('inovation:add-to-cart',{detail:{...s,total:Math.round(totals().t)}}));const t=$('#toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)};
+size();sync();setView('front');cur={...tg};cur.th=.7;
+window.__vtc={state:()=>s,totals:totals,SIZES:SIZES,DUV:DUV,SHC:SHC,CUR:CUR,curModel:curModel};
+})();
 </script>
-</body></html>
+<script>
+/* Integración con la tienda: carrito + Mercado Pago. Los datos del
+   configurador se exponen en window.__vtc al final del script anterior. */
+(function(){
+  function setName(d){
+    var V=window.__vtc,S=V.SIZES[d.size],m=V.DUV.find(function(x){return x.id===d.model});
+    var sh=(V.SHC.find(function(c){return c[1].toLowerCase()===String(d.shC).toLowerCase()})||[])[0]||(String(d.shC).toLowerCase()==='#ffffff'?'Blanco':'Color personalizado');
+    var n='Set Viste tu Cama 3D — '+S.n+', Sábanas Algodón Egipcio '+sh;
+    if(d.duv)n+=', Edredón Reversible '+m.n;
+    if(d.bam)n+=', Almohadas de bambú '+(d.bsz==='kg'?'King':'Standard')+' x'+(d.size==='ind'?1:d.bqt);
+    if(d.cur)n+=', Cortinas blackout';
+    return n;
+  }
+  window.addEventListener('inovation:add-to-cart',function(e){
+    var d=e.detail,name=setName(d),c=getCart();
+    var f=c.find(function(i){return i.name===name&&i.price===d.total});
+    if(f)f.qty++;else c.push({name:name,price:d.total,qty:1});
+    saveCart(c);renderCart();
+  });
+  var mp=document.getElementById('mpBtn');
+  if(mp)mp.addEventListener('click',function(){
+    document.getElementById('add').click();
+    alert('Compra con Mercado Pago: se guardó tu set en el carrito. El cobro con Mercado Pago se integra en el checkout.');
+  });
+})();
+</script>
+</body>
+</html>
