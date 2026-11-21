@@ -1,12 +1,17 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Viste tu Cama 3D | Inovation Store</title><link rel="stylesheet" href="styles.css">
-<!-- Spline Viewer (web component). Versión fijada 2.0.204, CDN oficial de Spline:
-     es la misma versión del runtime con la que se publicó la escena
-     (la página publicada de Spline carga @splinetool/runtime@2.0.204).
+<!-- Spline Viewer (web component). Versión fijada 2.0.211, CDN oficial de Spline:
+     es la versión del runtime con la que se publicó la escena (la página
+     publicada de Spline carga @splinetool/runtime@2.0.211). La versión
+     anterior (2.0.204) avisaba en consola que el archivo .splinecode es
+     más reciente que la librería ("Please upgrade @splinetool/runtime").
      Se usa la variante SOLO WebGL (spline-viewer.webgl.js, HTTP 200
      verificado): el build dual (spline-viewer.js) intenta WebGPU primero
      y en iOS/WebKit ese intento puede quedarse colgado sin caer a WebGL.
-     Carga el elemento <spline-viewer> que muestra la escena .splinecode. -->
-<script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.204/build/spline-viewer.webgl.js"></script>
+     Carga el elemento <spline-viewer> que muestra la escena .splinecode.
+     El preload del .splinecode hace que la descarga de la escena (4.65 MB)
+     empiece con la página y no hasta que el visor termina de cargar. -->
+<link rel="preload" href="https://my.spline.design/spline3dstarterfile-Vd6txbVaaIpOHrio6Iwb5lF0/scene.splinecode" as="fetch" crossorigin>
+<script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.211/build/spline-viewer.webgl.js"></script>
 <style>
 /* Viste tu Cama — diseño exacto de la referencia: azul marino + dorado */
 .ref-header{background:linear-gradient(180deg,#081a38,#0d2a52);border-bottom:3px solid #E8A90C}
@@ -52,7 +57,12 @@
 .cfg3d .swatches .sw.on{box-shadow:0 0 0 3px #F2B705}
 .stage-col{background:#e8edf1;display:flex;flex-direction:column;min-width:0}
 .stage3d{position:relative;background:#e8edf1;height:calc(100vh - 210px);min-height:560px;flex:1}
-.stage3d spline-viewer{width:100%;height:100%;display:block}
+/* El visor llena el escenario con position:absolute + inset:0. ERROR REAL
+   (medido en móvil 390×844): con height:100% (CSS o inline) el visor se
+   quedaba en 176 px de alto — una tirita — dentro de un escenario de
+   844 px, porque el porcentaje no resolvía contra el escenario. Con
+   inset:0 el visor ocupa todo el escenario desde el inicio. */
+.stage3d spline-viewer{width:100%;height:100%;display:block;position:absolute;inset:0}
 .stage3d:fullscreen{height:100vh;min-height:100vh}
 .stage3d:fullscreen spline-viewer{height:100%}
 .fs-btn{position:absolute;right:14px;top:12px;background:rgba(255,255,255,.92);border:1px solid #dfe5ea;border-radius:20px;padding:7px 12px;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:700;color:#123a6b;cursor:pointer;z-index:5}
@@ -394,7 +404,7 @@ function showSplineFallback(reason){
   splineFallbackPhoto();
 }
 /* La instancia Application del runtime de Spline. El web component
-   <spline-viewer> 2.0.204 NO expone .app (no existe ese getter en el
+   <spline-viewer> 2.0.211 NO expone .app (no existe ese getter en el
    código del visor: el.app es siempre undefined). La instancia vive en el
    campo interno el._spline, creado por _createApplication(). Se resuelve
    en cada llamada (no se cachea solo) porque el visor puede recrear la
@@ -423,16 +433,24 @@ function splineFind(name){
   try{return app.findObjectByName(name)||null;}
   catch(e){return null;}
 }
-/* Cambio directo de color sobre el material del objeto (si la escena no usa
-   variables para ese color). Admite un material o un array de materiales.
-   Si el objeto o su material no existen, no pasa nada: el configurador
-   sigue funcionando. */
+/* Cambio directo de color sobre el objeto. La API real del runtime es la
+   PROPIEDAD color del objeto (set color(h) en @splinetool/runtime 2.0.211):
+   actualiza la capa "color" del material (o la inserta) y pide un
+   re-render. El material en sí NO tiene .color (solo {layers, alpha}):
+   el código anterior hacía obj.material.color.set(hex), que no existe en
+   la escena real y no hacía nada en silencio — por eso el edredón, las
+   sábanas y las cortinas nunca cambiaban de color en el 3D aunque las
+   variables sí llegaban. Se conserva la ruta vieja como respaldo por si
+   un objeto sí expone material.color. */
 function splineSetColor(objName,hex){
   var o=splineFind(objName);
-  if(!o||!o.material)return false;
+  if(!o)return false;
+  try{ o.color=hex; return true; }
+  catch(e){}
+  if(!o.material)return false;
   var mats=[].concat(o.material), ok=false;
   mats.forEach(function(m){
-    if(m&&m.color){ try{m.color.set(hex);ok=true;}catch(e){} }
+    if(m&&m.color){ try{m.color.set(hex);ok=true;}catch(e2){} }
   });
   return ok;
 }
@@ -559,6 +577,52 @@ function clearSplineTimers(){
   if(splineLoadTimer){clearTimeout(splineLoadTimer);splineLoadTimer=null;}
   if(splineStartTimer){clearTimeout(splineStartTimer);splineStartTimer=null;}
 }
+/* Ajusta el visor al tamaño real del escenario en píxeles (la API propia
+   del visor: width/height numéricos). Al fijarlos, el visor pone el
+   contenedor en px exactos, borra sus estilos :host 100% y el canvas
+   llena el escenario con el buffer redimensionado (verificado en móvil:
+   352×844, buffer 1056×2532, sin la tirita de 176 px). El
+   ResizeObserver lo mantiene al girar el teléfono o al entrar a
+   pantalla completa. Se llama al crear el visor y en cada cambio. */
+var splineFitRO=null;
+function fitSplineViewer(){
+  if(!splineViewer||!stage)return;
+  try{
+    var r=stage.getBoundingClientRect();
+    var w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
+    if(splineViewer.width!==w)splineViewer.width=w;
+    if(splineViewer.height!==h)splineViewer.height=h;
+  }catch(e){}
+}
+/* Red de seguridad para fallos que el visor NO reporta: su load() es
+   `this._spline.load(url).then(onLoaded)` SIN .catch, así que si la carga
+   de la escena rechaza (red, parseo, WASM) o si crear el contexto WebGL
+   lanza una excepción, nada dispara load-complete ni el evento "error":
+   la página se quedaría en "Cargando…" hasta el temporizador de 60 s.
+   Estos dos escuchas muestran el respaldo de inmediato con el motivo
+   real. Solo reaccionan a errores de Spline/WebGL, no a otros errores
+   de la página. */
+function installSplineErrorTraps(){
+  if(window.__splineErrTraps)return;
+  window.__splineErrTraps=true;
+  window.addEventListener("unhandledrejection",function(ev){
+    if(splineLoaded||splineFailed)return;
+    var r=ev&&ev.reason?ev.reason:null;
+    var txt=r?((r.message||"")+" "+(r.stack||"")):"";
+    if(/spline|webgl/i.test(txt)){
+      splineFailed=true; clearSplineTimers();
+      showSplineFallback("La escena 3D no cargó: hubo un error al cargar la escena (red o archivo). Revisa tu conexión y recarga la página.");
+    }
+  });
+  window.addEventListener("error",function(ev){
+    if(splineLoaded||splineFailed)return;
+    var txt=((ev&&(ev.message||""))+" "+((ev&&ev.filename)||""));
+    if(/spline|webgl/i.test(txt)){
+      splineFailed=true; clearSplineTimers();
+      showSplineFallback("La escena 3D no cargó: el navegador no pudo iniciar el 3D (WebGL). Recarga la página.");
+    }
+  },true);
+}
 /* El temporizador de 60 s arranca SOLO cuando la carga de la escena ya
    empezó de verdad (evento load-start del visor), nunca durante el parse
    del body antes de que corra el script del módulo del visor. */
@@ -577,7 +641,50 @@ function initSpline(){
     showSplineFallback("La escena 3D de Spline aún no está conectada: falta pegar la URL .splinecode de la habitación en la constante SPLINE_SCENE_URL de esta página. Mientras tanto ves la foto real de la habitación con tu edredón. El configurador de abajo funciona igual.");
     return;
   }
-  var el=document.createElement("spline-viewer");
+  /* Pre-flight WebGL: si el navegador bloquea WebGL (p. ej. Brave con
+     Shields estricto en iPhone), el visor esperaría 60 s en vano. Un
+     canvas de prueba lo detecta al instante y muestra el mensaje honesto
+     con la foto real, sin esperar. Si WebGL sí funciona, esto no cambia
+     nada: la carga sigue su curso normal. */
+  var _webglOK=false;
+  try{
+    var _tc=document.createElement("canvas");
+    var _gl=_tc.getContext("webgl2")||_tc.getContext("webgl");
+    _webglOK=!!_gl;
+    /* Suelta el contexto de prueba de inmediato: en iPhone los contextos
+       WebGL son escasos y este canvas no se vuelve a usar. Sin esto, el
+       visor crearía su contexto con uno ya ocupado. */
+    if(_gl){ try{var _ext=_gl.getExtension("WEBGL_lose_context"); if(_ext)_ext.loseContext();}catch(e){} }
+  }catch(e){_webglOK=false;}
+  if(!_webglOK){
+    splineFailed=true;
+    showSplineFallback("Tu navegador bloquea el 3D (WebGL) en esta página — por ejemplo, Brave con los escudos activados. Apaga los escudos para esta página y recarga. Mientras tanto ves la foto real de la habitación; el configurador de abajo funciona igual.");
+    return;
+  }
+  installSplineErrorTraps();
+  /* Si el módulo del visor nunca se ejecuta (CDN bloqueado), load-start
+     no se dispara jamás: a los 30 s se muestra la foto con un mensaje de
+     error real ("no cargó"), no de lentitud. Si load-start sí se dispara,
+     este temporizador se cancela y manda el de 60 s. Arranca aquí, antes
+     de esperar a que el visor se defina, para que también cubra un
+     módulo que nunca llega. */
+  splineStartTimer=setTimeout(function(){
+    splineStartTimer=null;
+    if(!splineLoaded&&!splineFailed&&!splineLoadTimer){
+      splineFailed=true;
+      showSplineFallback("La escena 3D no cargó: no se pudo iniciar el visor de Spline (revisa tu conexión). El configurador de abajo sigue funcionando.");
+    }
+  },SPLINE_START_TIMEOUT_MS);
+  /* El script del visor es type="module" (diferido): cuando este script
+     clásico corre al final del body, el custom element todavía puede no
+     estar definido. Antes se creaba el elemento sin definir y se
+     dependía de que el navegador lo "actualizara" al cargar el módulo;
+     ahora se espera a customElements.whenDefined para crear el elemento
+     ya con su clase, sus atributos y sus eventos en orden. Si el
+     navegador no tiene whenDefined, se crea directo como antes. */
+  function createViewer(){
+    try{
+      var el=document.createElement("spline-viewer");
   el.id="splineViewer";
   el.setAttribute("url",SPLINE_SCENE_URL);
   el.setAttribute("events-target","global");
@@ -596,9 +703,11 @@ function initSpline(){
   el.addEventListener("load-complete",function(){
     splineLoaded=true; splineFailed=false;
     clearSplineTimers();
+    fitSplineViewer();
     /* Accesor real: el._spline (la Application del runtime). el.app NO
-       existe en el visor 2.0.204 y siempre era undefined, así que antes
-       splineApp quedaba en null y los setVariable no llegaban a la escena. */
+       existe en el visor 2.0.211 (verificado también en 2.0.204) y siempre
+       era undefined, así que antes splineApp quedaba en null y los
+       setVariable no llegaban a la escena. */
     try{splineApp=(el._spline&&typeof el._spline.setVariable==="function")?el._spline:null;}catch(e){splineApp=null;}
     var l=document.getElementById("splineLoading"); if(l)l.style.display="none";
     var f=document.getElementById("splineFallback"); if(f)f.style.display="none";
@@ -615,19 +724,26 @@ function initSpline(){
     clearSplineTimers();
     showSplineFallback("La escena 3D no cargó: hubo un error al cargar el archivo de la escena. Revisa tu conexión y recarga la página.");
   });
-  splineViewer=el;
-  stage.appendChild(el);
-  /* Si el módulo del visor nunca se ejecuta (CDN bloqueado), load-start
-     no se dispara jamás: a los 30 s se muestra la foto con un mensaje de
-     error real ("no cargó"), no de lentitud. Si load-start sí se dispara,
-     este temporizador se cancela y manda el de 60 s. */
-  splineStartTimer=setTimeout(function(){
-    splineStartTimer=null;
-    if(!splineLoaded&&!splineFailed&&!splineLoadTimer){
-      splineFailed=true;
-      showSplineFallback("La escena 3D no cargó: no se pudo iniciar el visor de Spline (revisa tu conexión). El configurador de abajo sigue funcionando.");
+    splineViewer=el;
+    stage.appendChild(el);
+    /* El visor ya está definido y en el escenario: se ajusta a su tamaño
+       en píxeles y se vigila cada cambio de tamaño del escenario (giro
+       del teléfono, pantalla completa). */
+    fitSplineViewer();
+    try{
+      if(splineFitRO)splineFitRO.disconnect();
+      splineFitRO=new ResizeObserver(function(){fitSplineViewer();});
+      splineFitRO.observe(stage);
+    }catch(e){}
+    }catch(e){
+      splineFailed=true; clearSplineTimers();
+      showSplineFallback("La escena 3D no cargó: no se pudo iniciar el visor de Spline. Revisa tu conexión y recarga la página.");
     }
-  },SPLINE_START_TIMEOUT_MS);
+  }
+  if(window.customElements&&customElements.whenDefined){
+    try{ customElements.whenDefined("spline-viewer").then(createViewer); }
+    catch(e){ createViewer(); }
+  }else{ createViewer(); }
 }
 
 /* ---------- Controles de vista (Spline) ----------
