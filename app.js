@@ -2,9 +2,58 @@
 function money(n){return '$'+Number(n).toLocaleString('es-MX')+' MXN'}
 function getCart(){try{return JSON.parse(localStorage.getItem('inovation_cart')||'[]')}catch(e){return[]}}
 function saveCart(c){localStorage.setItem('inovation_cart',JSON.stringify(c));updateCartCount()}
+
+/* ---------- Envío en el carrito ---------- */
+/* Cargos reales: $150 a domicilio en área metropolitana, $50 en estación
+   (Metro, Metrobús, Mexibús, Tren Ligero, Suburbano), $250 al interior.
+   En compras de más de $1,000 MXN el envío es gratis: el cargo desaparece. */
+var SHIP_OPTIONS=[
+  {id:'domicilio',label:'A domicilio — área metropolitana',fee:150},
+  {id:'estacion',label:'Entrega en estación (Metro, Metrobús, Mexibús, Tren Ligero, Suburbano)',fee:50},
+  {id:'interior',label:'Interior de la República',fee:250}
+];
+var FREE_SHIP_MIN=1000;
+function getShip(){try{return localStorage.getItem('inovation_ship')||''}catch(e){return''}}
+function saveShip(id){try{localStorage.setItem('inovation_ship',id)}catch(e){}}
+function shipFee(subtotal,id){
+  if(!subtotal||subtotal>FREE_SHIP_MIN)return 0;
+  for(var i=0;i<SHIP_OPTIONS.length;i++){if(SHIP_OPTIONS[i].id===id)return SHIP_OPTIONS[i].fee}
+  return 0;
+}
 function updateCartCount(){var c=getCart(),n=0;c.forEach(function(i){n+=i.qty});document.querySelectorAll('.cart-count').forEach(function(e){e.textContent=n})}
 function addToCart(name,price,qty){qty=qty||1;var c=getCart();var f=c.find(function(i){return i.name===name&&i.price===price});if(f)f.qty+=qty;else c.push({name:name,price:price,qty:qty});saveCart(c);renderCart();alert(name+' agregado al carrito')}
-function renderCart(){var c=getCart(),el=document.getElementById('cartItems');if(!el)return;var t=0;if(!c.length){el.innerHTML='<p>Tu carrito está vacío.</p>'}else{el.innerHTML=c.map(function(i){t+=i.price*i.qty;return '<div class="item"><span>'+i.name+' x '+i.qty+'</span><b>'+money(i.price*i.qty)+'</b></div>'}).join('')}var tot=document.getElementById('cartTotal');if(tot)tot.textContent=money(t);var pts=document.getElementById('cartPoints');if(pts)pts.textContent=Math.round(t*0.15)+' puntos Pass'}
+function renderCart(){var c=getCart(),el=document.getElementById('cartItems');if(!el)return;var t=0;if(!c.length){el.innerHTML='<p>Tu carrito está vacío.</p>'}else{el.innerHTML=c.map(function(i){t+=i.price*i.qty;return '<div class="item"><span>'+i.name+' x '+i.qty+'</span><b>'+money(i.price*i.qty)+'</b></div>'}).join('')}
+  /* Desglose con envío: subtotal, selector de entrega y cargo. El cargo
+     aparece al seleccionar cómo será la entrega, y desaparece (Gratis)
+     cuando la compra es de más de $1,000 MXN. */
+  var tot=document.getElementById('cartTotal'),drawer=document.getElementById('cartDrawer');
+  var subLine=document.getElementById('cartSubtotalLine'),shipLine=document.getElementById('cartShipLine'),box=document.getElementById('shipBox');
+  if(tot&&drawer){
+    if(!subLine){subLine=document.createElement('p');subLine.className='cart-line';subLine.id='cartSubtotalLine';subLine.innerHTML='Subtotal: <b id="cartSubtotal"></b>';drawer.insertBefore(subLine,tot.parentElement)}
+    if(!shipLine){shipLine=document.createElement('p');shipLine.className='cart-line';shipLine.id='cartShipLine';shipLine.innerHTML='Envío: <b id="cartShip"></b>';drawer.insertBefore(shipLine,tot.parentElement)}
+    if(!box){
+      box=document.createElement('div');box.id='shipBox';
+      box.innerHTML='<h3>¿Cómo será la entrega?</h3>'+SHIP_OPTIONS.map(function(o){return '<label><input type="radio" name="shipOpt" value="'+o.id+'"><span>'+o.label+'</span><b>'+money(o.fee)+'</b></label>'}).join('')+'<p class="ship-note">En compras de más de $1,000 MXN el envío es gratis.</p>';
+      drawer.insertBefore(box,shipLine);
+      box.addEventListener('change',function(e){if(e.target&&e.target.name==='shipOpt'){saveShip(e.target.value);renderCart()}});
+    }
+  }
+  var show=c.length>0;
+  if(subLine)subLine.style.display=show?'':'none';
+  if(shipLine)shipLine.style.display=show?'':'none';
+  if(box)box.style.display=show?'':'none';
+  var subEl=document.getElementById('cartSubtotal');if(subEl)subEl.textContent=money(t);
+  var sel=getShip();
+  if(box)box.querySelectorAll('input[name="shipOpt"]').forEach(function(r){r.checked=(r.value===sel)});
+  var free=t>FREE_SHIP_MIN,fee=shipFee(t,sel);
+  var shipEl=document.getElementById('cartShip');
+  if(shipEl){
+    if(free){shipEl.textContent='Gratis';shipEl.className='ship-free'}
+    else if(sel){shipEl.textContent=money(fee);shipEl.className=''}
+    else{shipEl.textContent='Selecciona cómo será la entrega';shipEl.className=''}
+  }
+  if(tot)tot.textContent=money(t+fee);
+  var pts=document.getElementById('cartPoints');if(pts)pts.textContent=Math.round(t*0.15)+' puntos Pass'}
 function openCart(){renderCart();document.getElementById('cartDrawer').classList.add('open')}
 function closeCart(){document.getElementById('cartDrawer').classList.remove('open')}
 function clearCart(){saveCart([]);renderCart()}

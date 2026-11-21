@@ -49,6 +49,14 @@ footer a{color:var(--gold2)}
 #cartDrawer{position:fixed;top:0;right:0;width:min(420px,94vw);height:100%;background:#fff;z-index:200;box-shadow:-8px 0 30px rgba(0,0,0,.3);padding:20px;overflow:auto;display:none}
 #cartDrawer.open{display:block}
 #cartDrawer .item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+#shipBox{margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:10px;background:#f8f6ef}
+#shipBox h3{margin:0 0 6px;font-size:15px}
+#shipBox label{display:flex;gap:8px;align-items:flex-start;padding:7px 0;cursor:pointer;font-size:14px;line-height:1.35}
+#shipBox label input{margin-top:3px;flex:0 0 auto}
+#shipBox label b{margin-left:auto;white-space:nowrap}
+#shipBox .ship-note{margin:8px 0 0;font-size:12px;opacity:.75}
+.cart-line{display:flex;justify-content:space-between;gap:10px;padding:4px 0}
+.ship-free{color:#1a7a3a}
 .wideimg{width:100%;border-radius:14px;display:block}
 .notice{background:#fff8dd;border:1px solid var(--gold);border-radius:10px;padding:14px;margin:16px 0}
 h1.page{font-size:34px;color:var(--blue);margin:6px 0}
