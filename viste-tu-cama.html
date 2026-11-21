@@ -46,16 +46,18 @@
 .stage3d canvas{width:100%;height:100%;display:block;touch-action:pan-y}
 .stage3d:fullscreen{height:100vh;min-height:100vh}
 .stage3d:fullscreen canvas{height:100%}
-.fs-btn{position:absolute;right:14px;top:12px;background:rgba(255,255,255,.92);border:1px solid #dfe5ea;border-radius:20px;padding:7px 12px;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:700;color:#123a6b;cursor:pointer;z-index:5}
-.stage3d .hint3d{position:absolute;left:14px;bottom:70px;background:rgba(255,255,255,.88);color:#53616f;font-size:12px;padding:9px 12px;border-radius:8px;pointer-events:none;z-index:3;max-width:46%}
-.stage3d .live3d{position:absolute;left:14px;top:12px;background:#0B3D91;color:#fff;font-size:11px;letter-spacing:2px;padding:7px 12px;border-radius:20px;z-index:3}
-.stage3d .live3d b{color:#F2B705}
-/* Controles de cámara en un solo grupo compacto abajo a la derecha del visor
-   (antes: flechas laterales sobre la cama + columna de zoom separada, que
-   tapaban el producto). 44x44 px mínimo táctil. */
-.stage-controls{position:absolute;right:12px;bottom:70px;display:flex;gap:8px;z-index:5}
-.stage-controls button{width:44px;height:44px;border-radius:50%;border:1px solid #dfe5ea;background:rgba(255,255,255,.95);font-size:24px;cursor:pointer;color:#123a6b;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18)}
-.deg360{position:absolute;left:50%;top:12px;bottom:auto;height:auto;white-space:nowrap;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:20px;font-weight:700;z-index:3;pointer-events:none}
+/* Barra de controles INDEPENDIENTE, debajo del escenario (no encima): gira,
+   zoom, pantalla completa, giro automático, vistas, voltear y quitar el
+   edredón. Nada tapa la cama ni las instrucciones. 44 px mínimo táctil. */
+.stage-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;padding:10px 12px;background:#fff;border-top:1px solid #e3e8ee}
+.stage-toolbar .tb-label{font-weight:800;color:#123a6b;font-size:14px;letter-spacing:1px;white-space:nowrap}
+.stage-toolbar button{min-height:44px;border:1px solid #e3e8ee;border-radius:20px;background:#fff;padding:9px 13px;cursor:pointer;font-size:14px;font-weight:600;color:#123a6b}
+.stage-toolbar button:hover,.stage-toolbar button.on{border-color:#E8A90C;background:#fff8dd}
+.stage-toolbar button.tb-round{width:44px;border-radius:50%;padding:0;font-size:22px;display:grid;place-items:center}
+.stage-toolbar .tb-sep{width:1px;height:28px;background:#e3e8ee;flex:0 0 auto}
+/* Instrucciones FUERA del escenario, en su propia línea debajo de la barra:
+   nunca se superponen con los controles. */
+.stage-hint{background:#f7f6f2;color:#53616f;font-size:12px;text-align:center;padding:8px 12px;border-top:1px solid #e3e8ee}
 .gl-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#53616f;background:#e8edf1;text-align:center;padding:20px;z-index:2}
 .gl-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f7f6f2;text-align:center;padding:20px;z-index:4}
 .gl-fallback .gl-err-icon{font-size:44px;line-height:1}
@@ -69,9 +71,6 @@
 .csw.on img{border-color:#E8A90C}
 .csw .tick{position:absolute;top:-4px;right:2px;width:22px;height:22px;border-radius:50%;background:#123a6b;color:#fff;display:grid;place-items:center;font-size:12px;border:2px solid #fff}
 .csw span{font-size:12px;color:#123a6b;display:block;padding-top:4px}
-.viewbar{display:flex;gap:8px;flex-wrap:wrap;margin:0;padding:12px 14px;background:#fff;border-top:1px solid #e3e8ee}
-.viewbar button{border:1px solid #e3e8ee;border-radius:20px;background:#fff;padding:9px 14px;min-height:44px;cursor:pointer;font-size:14px;font-weight:600;color:#123a6b}
-.viewbar button:hover,.viewbar button.on{border-color:#E8A90C;background:#fff8dd}
 .sheet-chip{text-align:center;margin:10px 0 2px;font-weight:700;color:#123a6b;background:#fff;padding:8px}
 .bed-size-line{text-align:center;color:#5a6a7a;background:#fff;padding:0 8px 12px;margin:0}
 .panel-sel .sel-head{display:flex;gap:12px;align-items:center;border-bottom:2px solid #F2B705;padding-bottom:12px;margin-bottom:6px}
@@ -115,17 +114,14 @@
 .ref-header .logo b{font-size:17px}
 .ref-header .logo small{font-size:8px;letter-spacing:2px}
 .ref-header .logo img{height:40px}
-.stage3d .hint3d{max-width:52%;font-size:11px}
 }
 @media(max-width:480px){
-/* En móvil las 3 píldoras de arriba del escenario se encimaban (live pill
-   a la izquierda, 360° centrado y pantalla completa a la derecha, las 3 en
-   top:12px). Se apilan: live y pantalla completa quedan arriba, más
-   compactas, y el 360° baja a la esquina inferior derecha, encima de los
-   controles de cámara (que están en bottom:70px). Sin cambios en escritorio. */
-.stage3d .live3d{left:10px;top:10px;font-size:10px;letter-spacing:1px;padding:6px 9px;max-width:56%}
-.stage3d .fs-btn{right:10px;top:10px;padding:6px 9px;font-size:12px;min-height:36px}
-.stage3d .deg360{left:auto;right:12px;top:auto;bottom:126px;transform:none}
+/* Barra de controles en móvil: envuelve en varias filas centradas, botones
+   táctiles de 44 px, sin superposiciones (ya no hay píldoras sobre el
+   escenario). */
+.stage-toolbar{gap:6px;padding:8px}
+.stage-toolbar button{padding:8px 10px;font-size:13px}
+.stage-hint{font-size:11px}
 }
 /* --- Corrección ZIP: progreso de pasos, aviso de cambio en vivo, resumen
    con precios por fila, y botones flotantes compactos SOLO en esta página --- */
@@ -139,15 +135,20 @@
 .change-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .sel-row .price{margin-left:auto;color:#F2B705;font-weight:700;white-space:nowrap;font-size:14px}
 .sel-row span{flex:1;min-width:0}
-/* WhatsApp y ayuda: en ESTA página son botones compactos de 44px, solo icono,
-   abajo sin tapar la escena, los pasos ni el resumen. No se toca chat.js ni
-   el resto del sitio: estos estilos solo existen en viste-tu-cama.html. */
-body .wa-fab{left:10px!important;bottom:10px!important;padding:0!important;width:44px;height:44px;border-radius:50%!important;justify-content:center}
-body .wa-fab svg{width:24px;height:24px}
-body .wa-fab-label,body .chat-fab-label{display:none!important}
-body .chat-fab{right:10px!important;bottom:10px!important;padding:0!important;width:44px;height:44px;border-radius:50%!important;justify-content:center;font-size:20px}
-body .chat-panel{bottom:64px!important;right:10px!important}
-main{padding-bottom:84px!important}
+/* WhatsApp y ayuda FUERA del área interactiva: los botones flotantes de
+   chat.js quedan ocultos SOLO en esta página (no se toca chat.js ni el
+   resto del sitio) y en su lugar hay una barra de contacto fija en el flujo
+   de la página, debajo del configurador: nunca tapan la escena 3D, los
+   controles ni las instrucciones. El panel del asistente sigue funcionando:
+   se abre desde la barra de contacto. */
+body .wa-fab,body .chat-fab{display:none!important}
+body .chat-panel{bottom:16px!important;right:16px!important}
+main{padding-bottom:24px!important}
+.contact-bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:18px;padding:14px 16px;background:#fff;border:1px solid #e3e8ee;border-radius:12px}
+.contact-bar a,.contact-bar button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:24px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;border:0}
+.contact-bar .contact-wa{background:#25D366;color:#fff}
+.contact-bar .contact-chat{background:#F2B705;color:#123a6b}
+.contact-bar span{color:#53616f;font-size:13px}
 </style></head><body>
 <header class="site ref-header"><div class="header-in">
 <a class="logo" href="index.html"><img src="assets/logo.png" alt="Inovation Store"><span><b>Inovation Store<sup>®</sup></b><small>HOGAR PREMIUM</small></span></a>
@@ -173,32 +174,33 @@ main{padding-bottom:84px!important}
 <div class="stage-col">
 <div class="stage-heading"><span>VISTA PREVIA</span><span class="live-dot">● CONFIGURACIÓN EN VIVO</span></div>
 <div class="stage3d" id="stage3d">
-<div class="live3d">● MODELO 3D EN VIVO · <b>Three.js</b></div>
 <div class="change-toast" id="changeToast" role="status"></div>
-<button class="fs-btn" id="fsBtn" type="button" onclick="toggleFS()" aria-label="Ver la habitación a pantalla completa">⛶ Pantalla completa</button>
 <div class="gl-loading" id="glLoading"><b>Cargando modelo 3D…</b><span>Si tarda más de unos segundos, revisa tu conexión.</span></div>
 <div class="gl-fallback" id="glFallback"><span class="gl-err-icon">⚠️</span><p><b>La escena 3D no se pudo cargar en este teléfono/navegador.</b><br><span id="glError">Revisa tu conexión a internet y recarga la página.</span><br>El configurador de opciones de abajo sigue funcionando.</p></div>
-<div class="stage-controls" role="group" aria-label="Controles de cámara">
-<button type="button" onclick="rotateBed(-1)" aria-label="Girar a la izquierda">‹</button>
-<button type="button" onclick="rotateBed(1)" aria-label="Girar a la derecha">›</button>
-<button type="button" onclick="zoomBed(-0.15)" aria-label="Alejar">−</button>
-<button type="button" onclick="zoomBed(0.15)" aria-label="Acercar">＋</button>
 </div>
-<div class="deg360">⟳ 360° ⟲</div>
-<div class="hint3d">Arrastra para girar 360° · Rueda o pellizca para acercar · Dos dedos para desplazar</div>
+<div class="stage-toolbar" role="group" aria-label="Controles de cámara y vista">
+<span class="tb-label">⟳ 360°</span>
+<button type="button" class="tb-round" onclick="rotateBed(-1)" aria-label="Girar a la izquierda">‹</button>
+<button type="button" class="tb-round" onclick="rotateBed(1)" aria-label="Girar a la derecha">›</button>
+<span class="tb-sep" aria-hidden="true"></span>
+<button type="button" class="tb-round" onclick="zoomBed(-0.15)" aria-label="Alejar">−</button>
+<button type="button" class="tb-round" onclick="zoomBed(0.15)" aria-label="Acercar">＋</button>
+<span class="tb-sep" aria-hidden="true"></span>
+<button type="button" id="fsBtn" onclick="toggleFS()" aria-label="Ver la habitación a pantalla completa">⛶ Pantalla completa</button>
+<button type="button" onclick="toggleAuto()" id="btnAuto">Giro automático: apagado</button>
+<span class="tb-sep" aria-hidden="true"></span>
+<button type="button" class="view-btn" onclick="setView('front',this)">Vista frontal</button>
+<button type="button" class="view-btn on" onclick="setView('angle',this)" id="btnAngle">Vista 3/4</button>
+<button type="button" class="view-btn" onclick="setView('top',this)">Vista superior</button>
+<span class="tb-sep" aria-hidden="true"></span>
+<button type="button" onclick="flipDuvet()" id="btnFlip">⟲ Dar la vuelta al edredón</button>
+<button type="button" onclick="toggleRemoveDuvet()" id="btnRemoveDuvet">－ Quitar edredón</button>
 </div>
+<div class="stage-hint">Arrastra para girar 360° · Rueda o pellizca para acercar · Dos dedos para desplazar</div>
 <div class="color-strip">
 <button class="strip-arrow" type="button" onclick="cycleDuvet(-1)" aria-label="Color anterior">‹</button>
 <div class="color-items" id="duvetColors"></div>
 <button class="strip-arrow" type="button" onclick="cycleDuvet(1)" aria-label="Color siguiente">›</button>
-</div>
-<div class="viewbar">
-<button type="button" onclick="setView('front',this)">Vista frontal</button>
-<button type="button" onclick="setView('angle',this)" class="on" id="btnAngle">Vista 3/4</button>
-<button type="button" onclick="setView('top',this)">Vista superior</button>
-<button type="button" onclick="toggleAuto()" id="btnAuto">Giro automático: apagado</button>
-<button type="button" onclick="flipDuvet()" id="btnFlip">⟲ Dar la vuelta al edredón</button>
-<button type="button" onclick="toggleRemoveDuvet()" id="btnRemoveDuvet">－ Quitar edredón</button>
 </div>
 <div class="stage-footer"><span>Colores rápidos del edredón — toca uno para cambiarlo en vivo</span><span class="swatches" id="quickSwatches"></span></div>
 <p class="sheet-chip" id="sheetChip">Sábanas: Algodón Egipcio · Blanco</p>
@@ -215,6 +217,7 @@ main{padding-bottom:84px!important}
 <p><a href="index.html" style="color:#F2B705">← Volver a la tienda</a></p>
 </div>
 </div>
+<div class="contact-bar"><a class="contact-wa" href="https://wa.me/525636858623?text=Hola%20Inovation%20Store%2C%20quiero%20informaci%C3%B3n%20sobre%20sus%20productos" target="_blank" rel="noopener">💬 WhatsApp</a><button class="contact-chat" type="button" onclick="openChatPanel()">💬 Asistente</button><span>¿Dudas con tu set? Escríbenos por WhatsApp o con el asistente.</span></div>
 <p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D con Three.js y el modelo real de la cama en GLB (assets/bed.glb, construido en Blender con piezas nombradas: estructura, cabecera, colchón, sábana ajustada, edredón doble vista, almohadas y banca), con texturas de las fotos reales de tus productos. Si el modelo GLB no carga, la página muestra la cama procedural de respaldo con las mismas opciones y precios.</p>
 </main>
 <aside id="cartDrawer" aria-label="Carrito">
@@ -383,6 +386,15 @@ function mat(c,r,extra){
   var o=Object.assign({color:c,roughness:(r===undefined?0.85:r),metalness:0},extra||{});
   return new THREE.MeshStandardMaterial(o);
 }
+/* Material de TELA (MeshPhysicalMaterial r147): el `sheen` da el brillo
+   suave y difuso de las fibras — sábanas, edredón, almohadas y cortinas se
+   ven textiles en vez de plástico. La madera y el metal siguen con
+   MeshStandardMaterial. */
+function fabricMat(c,r,extra){
+  var o=Object.assign({color:c,roughness:(r===undefined?0.92:r),metalness:0,sheen:0.4,sheenRoughness:0.55,sheenColor:0xffffff},extra||{});
+  return new THREE.MeshPhysicalMaterial(o);
+}
+function sstepJS(a,b,x){var t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);}
 function box(parent,w,h,d,x,y,z,material){
   var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
   m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; parent.add(m); return m;
@@ -483,21 +495,40 @@ function duvetPhotoTex(url){
   if(!url)return null;
   return loadTex(url);
 }
-function duvetGeometry(w,len){
-  var geo=new THREE.PlaneGeometry(w,len,48,30);
+/* Drape textil con pliegues naturales (misma fórmula que build_bed.py, para
+   que la cama procedural de respaldo se vea igual que el modelo GLB):
+   rollos suaves a lo largo de la cama, ondas del acolchado, rizo fino sobre
+   una superficie PLANA que sigue el colchón. La caída empieza SOLO en la
+   banda de voladizo más allá del borde del colchón (|nx| > 0.825, medio
+   ancho del colchón 1.30 m); antes caía desde |nx| = 0.45 y el edredón era
+   una carpa con una meseta pequeña en el centro y la sábana visible
+   alrededor (2026-11-21). El pie cae sobre el pie del colchón en los
+   últimos 0.30 m; la cabecera solo se remete 0.08 bajo las almohadas.
+   En coords locales +y = cabecera, -y = pie. La solapa (isFlap) lleva
+   además el rollo redondeado del doblez en el borde de la cabecera, con el
+   labio remetido, y su borde del pie sigue la pendiente del edredón. */
+function duvetGeometry(w,len,isFlap){
+  var geo=new THREE.PlaneGeometry(w,len,64,40);
   var pos=geo.attributes.position;
   for(var i=0;i<pos.count;i++){
     var x=pos.getX(i), y=pos.getY(i);
     var nx=x/(w/2), ny=y/(len/2);
-    var z=0.016*Math.sin(x*5)*Math.sin(y*4)+0.008*Math.sin(x*10+y*6);
-    var edge=Math.max(0,(Math.abs(nx)-0.5)/0.5);
-    var edgeY=Math.max(0,(Math.abs(ny)-0.75)/0.25);
-    /* Caída natural lateral: el borde empieza a caer a la mitad del ancho y
-       baja 0.38 m hasta rozar el marco de la cama. Antes caía solo 0.20 m y
-       empezaba al 72% del ancho, así que el edredón quedaba suspendido en el
-       aire a 15 cm del colchón. Ahora APOYA sobre el colchón y cuelga por los
-       costados como una tela real. */
-    z-=0.38*Math.max(edge,edgeY*0.8);
+    var z;
+    if(isFlap){
+      z=0.05*Math.sin(x*3.1+0.8)*(0.6+0.4*Math.sin(y*2.0))
+       +0.03*Math.abs(Math.sin((x+y)*6.3))*Math.abs(Math.sin((x-y)*6.3))
+       +0.008*Math.sin(x*11)*Math.sin(y*9);
+      var d=len/2-y; /* distancia al borde del doblez (local +y = cabecera) */
+      z+=0.09*Math.exp(-(d*d)/(2*0.06*0.06));
+      z-=0.06*Math.exp(-(d*d)/(2*0.02*0.02));
+      z-=0.45*Math.max(sstepJS(0.825,1.0,Math.abs(nx)),sstepJS(0.43,1.0,-ny));
+    }else{
+      z=0.075*Math.sin(x*3.1+0.8)*(0.6+0.4*Math.sin(y*2.0))
+       +0.045*Math.abs(Math.sin((x+y)*5.2))*Math.abs(Math.sin((x-y)*4.7))
+       +0.012*Math.sin(x*11)*Math.sin(y*9);
+      z-=0.47*Math.max(sstepJS(0.825,1.0,Math.abs(nx)),sstepJS(0.755,1.0,-ny));
+      z-=0.08*sstepJS(0.85,1.0,ny);
+    }
     pos.setZ(i,z);
   }
   geo.computeVertexNormals();
@@ -535,10 +566,10 @@ function buildBed(){
   var wood=mat("#6b4a2f",0.65), darkWood=mat("#4d3a28",0.7);
   var gold=mat("#c5a15b",0.35,{metalness:0.65});
   var sheetCol=st.sheetColor.hex;
-  /* SÁBANA AJUSTADA (fitted sheet): color puro, sin foto. */
-  var sheetMat=new THREE.MeshStandardMaterial({color:sheetCol,roughness:0.9});
+  /* SÁBANA AJUSTADA (fitted sheet): color puro, sin foto, tela con sheen. */
+  var sheetMat=fabricMat(sheetCol,0.92);
   /* COLCHÓN: superficie principal, material propio con su textura tenue. */
-  var mattressMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:makeMattressTex(),roughness:0.9});
+  var mattressMat=fabricMat("#ffffff",0.9,{map:makeMattressTex(),sheen:0.4});
   var dc=DUVET_COLORS[st.duvetColor];
   /* DOBLE VISTA con fotos generadas iguales al edredón real: la cara lleva la
      textura generada de su color y el reverso la de su color contrario.
@@ -549,11 +580,11 @@ function buildBed(){
      y reverso se intercambian. */
   var faceUrl=duvetFlipped?dc.revTex:dc.tex, revUrl=duvetFlipped?dc.tex:dc.revTex;
   var faceHex=duvetFlipped?dc.rev:dc.hex;
-  var faceTex=fitTex(faceUrl,w+0.55,2.3);
-  var revTex=fitTex(revUrl,w+0.55,2.3);
+  var faceTex=fitTex(faceUrl,w+0.55,2.45);
+  var revTex=fitTex(revUrl,w+0.55,2.45);
   var bumpScale=0.025;
-  var duvetMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:faceTex,bumpMap:faceTex,bumpScale:bumpScale,roughness:0.95,side:THREE.FrontSide});
-  var duvetRevMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:revTex,bumpMap:revTex,bumpScale:bumpScale,roughness:0.95,side:THREE.BackSide});
+  var duvetMat=fabricMat("#ffffff",0.95,{map:faceTex,bumpMap:faceTex,bumpScale:bumpScale,side:THREE.FrontSide});
+  var duvetRevMat=fabricMat("#ffffff",0.95,{map:revTex,bumpMap:revTex,bumpScale:bumpScale,side:THREE.BackSide});
   duvetMat.userData.faceHex=faceHex; duvetMat.userData.faceTexUrl=faceUrl; duvetMat.userData.faceTex=faceTex;
   duvetRevMat.userData.faceHex=duvetFlipped?dc.hex:dc.rev; duvetRevMat.userData.faceTexUrl=revUrl; duvetRevMat.userData.faceTex=revTex;
   [-w*0.43,w*0.43].forEach(function(x){[-1.34,1.34].forEach(function(z){box(bedGroup,0.13,0.46,0.13,x,0.23,z,wood);});});
@@ -576,13 +607,17 @@ function buildBed(){
   box(bedGroup,w+0.06,0.30,0.04,0,MAT_TOP-0.12,-d/2-0.01,sheetMat);
   /* Protector/cubrecolchón VA DEBAJO de la sábana, no encima del edredón. */
   if(st.comp===1||st.comp===2){box(bedGroup,w+0.02,0.03,d+0.02,0,MAT_TOP-0.02,0,mat("#cbd9df",0.6));}
-  /* EDREDÓN APOYADO SOBRE EL COLCHÓN: y = MAT_TOP+0.05 (antes +0.16: flotaba
-     15 cm) y más ancho/largo (w+0.55 x 2.3) para que cuelgue por los costados.
-     La caída lateral de duvetGeometry (-0.38) lo baja hasta el marco. */
+  /* EDREDÓN APOYADO SOBRE LA SÁBANA: y = MAT_TOP+0.16 (base 1.22). La sábana
+     llega hasta MAT_TOP+0.05 y los valles del drape bajan -0.075, así que
+     con +0.05 el edredón quedaba ENTERRADO bajo la sábana y solo asomaban
+     las crestas como un trapo arrugado en el centro (2026-11-21). Con +0.16
+     los valles quedan en ~1.145, justo sobre la sábana, y la caída lateral
+     (-0.38) lo baja hasta el marco. Más ancho/largo (w+0.55 x 2.45) para que
+     cuelgue por los costados. */
   if(!duvetRemoved){
-  var duvetGeo=duvetGeometry(w+0.55,2.3);
+  var duvetGeo=duvetGeometry(w+0.55,2.45);
   var duvet=new THREE.Mesh(duvetGeo,duvetMat);
-  duvet.position.set(0,MAT_TOP+0.05,0.30); duvet.castShadow=true; duvet.receiveShadow=true; bedGroup.add(duvet);
+  duvet.position.set(0,MAT_TOP+0.16,0.30); duvet.castShadow=true; duvet.receiveShadow=true; bedGroup.add(duvet);
   /* Reverso del edredón (misma geometría, cara trasera): al girar la cama o
      ver los bordes caídos se ve el color contrario, como un edredón real. */
   var duvetRev=new THREE.Mesh(duvetGeo,duvetRevMat);
@@ -590,11 +625,11 @@ function buildBed(){
      por debajo: desde el lateral se ve el reverso aunque la cara tape el centro.
      Antes estaba exactamente debajo de la cara, mismo tamaño, y era invisible. */
   duvetRev.scale.set(1.02,1,1.02);
-  duvetRev.position.set(0,MAT_TOP+0.04,0.30); duvetRev.castShadow=false; duvetRev.receiveShadow=true; bedGroup.add(duvetRev);
-  var flapMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:fitTex(revUrl,w+0.57,0.72),bumpMap:fitTex(revUrl,w+0.57,0.72),bumpScale:0.03,roughness:0.95,side:THREE.DoubleSide});
+  duvetRev.position.set(0,MAT_TOP+0.15,0.30); duvetRev.castShadow=false; duvetRev.receiveShadow=true; bedGroup.add(duvetRev);
+  var flapMat=fabricMat("#ffffff",0.95,{map:fitTex(revUrl,w+0.57,0.72),bumpMap:fitTex(revUrl,w+0.57,0.72),bumpScale:0.03,side:THREE.DoubleSide});
   flapMat.userData.faceHex=duvetFlipped?dc.hex:dc.rev; flapMat.userData.faceTexUrl=revUrl; flapMat.userData.faceTex=fitTex(revUrl,w+0.57,0.72);
-  var flap=new THREE.Mesh(duvetGeometry(w+0.57,0.72),flapMat);
-  flap.position.set(0,MAT_TOP+0.10,1.09); flap.castShadow=true; flap.receiveShadow=true; bedGroup.add(flap);
+  var flap=new THREE.Mesh(duvetGeometry(w+0.57,0.72,true),flapMat);
+  flap.position.set(0,MAT_TOP+0.21,1.09); flap.castShadow=true; flap.receiveShadow=true; bedGroup.add(flap);
   }
   /* Sin rollo de doblez: el cilindro rígido (foldRoll) se veía como una barra metálica cruzando el edredón. La solapa drapeada sola ya marca el doblez. */
   if(st.comp===0||st.comp===2){box(bedGroup,w+0.08,0.05,0.46,0,MAT_TOP,1.25,mat("#9b806b",0.85));}
@@ -605,12 +640,12 @@ function buildBed(){
   var pw=Math.min(w*0.40,1.05); /* ancho de almohada a escala de la cama */
   var py=MAT_TOP+0.13, pz=-1.22; /* apoyada en la sábana, contra la cabecera */
   var px=pw/2+0.06;
-  function sleepPillow(x,z,yy){return pillowMesh(x,yy===undefined?py:yy,z,pw,0.55,0.30,mat("#fbfaf6",0.9),-0.38);}
+  function sleepPillow(x,z,yy){return pillowMesh(x,yy===undefined?py:yy,z,pw,0.55,0.30,fabricMat("#fbfaf6",0.92),-0.38);}
   if(pilOpt===0){
     bedGroup.add(sleepPillow(-px,pz));
     bedGroup.add(sleepPillow(px,pz));
-    bedGroup.add(pillowMesh(-0.28,py+0.10,-0.82,0.5,0.42,0.26,mat("#c5a15b",0.85),-0.25));
-    bedGroup.add(pillowMesh(0.28,py+0.10,-0.82,0.5,0.42,0.26,mat("#1f3a5f",0.85),-0.25));
+    bedGroup.add(pillowMesh(-0.28,py+0.10,-0.82,0.5,0.42,0.26,fabricMat("#c5a15b",0.88),-0.25));
+    bedGroup.add(pillowMesh(0.28,py+0.10,-0.82,0.5,0.42,0.26,fabricMat("#1f3a5f",0.88),-0.25));
   }else if(pilOpt===1){
     bedGroup.add(sleepPillow(-px,pz));
     bedGroup.add(sleepPillow(px,pz));
@@ -620,14 +655,14 @@ function buildBed(){
     bedGroup.add(sleepPillow(-px,-0.70,py+0.08));
     bedGroup.add(sleepPillow(px,-0.70,py+0.08));
   }else if(pilOpt===3){
-    bedGroup.add(pillowMesh(-px,py,pz,pw,0.55,0.30,mat("#f2ead8",0.95),-0.38));
-    bedGroup.add(pillowMesh(px,py,pz,pw,0.55,0.30,mat("#f2ead8",0.95),-0.38));
+    bedGroup.add(pillowMesh(-px,py,pz,pw,0.55,0.30,fabricMat("#f2ead8",0.95),-0.38));
+    bedGroup.add(pillowMesh(px,py,pz,pw,0.55,0.30,fabricMat("#f2ead8",0.95),-0.38));
   }else{
-    bedGroup.add(pillowMesh(0,py,pz,pw,0.55,0.30,mat("#fbfaf6",0.9),-0.38)); /* 1 almohada (Standard o King) */
+    bedGroup.add(pillowMesh(0,py,pz,pw,0.55,0.30,fabricMat("#fbfaf6",0.92),-0.38)); /* 1 almohada (Standard o King) */
   }
   if(st.comp===3){
     for(var ci=-1;ci<=1;ci++){
-      bedGroup.add(pillowMesh(ci*0.5,py+0.12,-0.55,0.5,0.42,0.26,mat(ci===0?"#c5a15b":"#b5a28b",0.85),-0.25));
+      bedGroup.add(pillowMesh(ci*0.5,py+0.12,-0.55,0.5,0.42,0.26,fabricMat(ci===0?"#c5a15b":"#b5a28b",0.88),-0.25));
     }
   }
   buildCurtains();
@@ -642,13 +677,14 @@ function buildCurtains(){
   /* La ventana siempre lleva cortinas: el color elegido (17 colores) o,
      si aún no se elige ninguno, un visillo blanco translúcido. */
   while(curtainGroup.children.length){curtainGroup.remove(curtainGroup.children[0]);}
+  /* Cortinas: tela con sheen para que caigan como textil, no como plástico. */
   var cMat;
   if(st.curtain>=0){
     var cc=CUR[st.curtain];
-    cMat=new THREE.MeshStandardMaterial({color:cc.img?"#ffffff":cc.hex,roughness:0.95,side:THREE.DoubleSide});
+    cMat=fabricMat(cc.img?"#ffffff":cc.hex,0.95,{side:THREE.DoubleSide});
     if(cc.img)cMat.map=fitTex(cc.img,1.35,3.45);
   }else{
-    cMat=new THREE.MeshStandardMaterial({color:"#ffffff",roughness:0.9,side:THREE.DoubleSide,transparent:true,opacity:0.55});
+    cMat=fabricMat("#ffffff",0.9,{side:THREE.DoubleSide,transparent:true,opacity:0.55});
   }
   [-1,1].forEach(function(s){
     var cg=new THREE.PlaneGeometry(1.35,3.45,24,1);
@@ -687,7 +723,8 @@ function setDuvetMat(mesh,tex,bumpScale){
   if(!mesh)return;
   if(!mesh.userData)mesh.userData={}; /* THREE.Mesh siempre lo trae; por si acaso. */
   if(!mesh.userData.stdMat){
-    mesh.userData.stdMat=new THREE.MeshStandardMaterial({color:"#ffffff",roughness:0.95});
+    /* Tela con sheen: el edredón del GLB se ve textil, no plástico. */
+    mesh.userData.stdMat=new THREE.MeshPhysicalMaterial({color:"#ffffff",roughness:0.95,sheen:0.4,sheenRoughness:0.55,sheenColor:0xffffff});
   }
   if(mesh.material!==mesh.userData.stdMat)mesh.material=mesh.userData.stdMat;
   var m=mesh.material;
@@ -710,8 +747,8 @@ function applyStateToGLB(){
   var dc=DUVET_COLORS[st.duvetColor];
   var faceUrl=duvetFlipped?dc.revTex:dc.tex, revUrl=duvetFlipped?dc.tex:dc.revTex;
   var bumpScale=0.025;
-  setDuvetMat(glbMesh("duvet"),fitTex(faceUrl,w+0.55,2.3),bumpScale);
-  setDuvetMat(glbMesh("duvet_reverse"),fitTex(revUrl,w+0.55,2.3),bumpScale);
+  setDuvetMat(glbMesh("duvet"),fitTex(faceUrl,w+0.55,2.45),bumpScale);
+  setDuvetMat(glbMesh("duvet_reverse"),fitTex(revUrl,w+0.55,2.45),bumpScale);
   setDuvetMat(glbMesh("duvet_flap"),fitTex(revUrl,w+0.57,0.72),0.03);
   setGlbVis("duvet",!duvetRemoved);
   setGlbVis("duvet_reverse",!duvetRemoved);
@@ -769,12 +806,10 @@ var camAnim=null;
    proporciones no se deformen al alejar/acercar la cámara. En el Paso 5
    (cortinas) se encuadra la habitación completa para ver la ventana. */
 var ROOM_TARGET={x:0,y:1.3,z:-0.2}, ROOM_W=7.2, ROOM_H=4.6;
-var BED_FIT_MARGIN=1.08; /* 1/0.93: la cama llena ~93% de la dimensión
-   limitante del visor (ZIP: 80-90% del área visible; el Box3 incluye banca y
-   cabecera, así que la cama vestida queda en ~83-88% en alto y ancho). Antes
-   1.15 (87% del Box3) y en vivo la cama se veía al ~79% de ancho y ~76% de
-   alto. Con 1.08 no hay recortes: la distancia se calcula para que el Box3
-   quepa justo. */
+var BED_FIT_MARGIN=1.08; /* Punto de partida del encuadre: el ajuste fino lo
+   hace la iteración por ÁREA en frameObject() (la cama ocupa ~70% del área
+   del escenario, medida con su Box3 proyectado), así que el margen solo
+   fija la distancia inicial. */
 function bedBounds(){
   /* El encuadre mide la cama ACTIVA: el modelo GLB cuando cargó, o la cama
      procedural si el GLB no está (respaldo). */
@@ -799,7 +834,7 @@ function frameFov(){
    iPhone vertical y en escritorio, sin deformarse al hacer zoom (la cámara
    solo se aleja/acercar, las proporciones del modelo son fijas). */
 function fitDistanceFor(size,az,el){
-  if(az===undefined)az=0.61; if(el===undefined)el=0.38; /* vista 3/4 por defecto */
+  if(az===undefined)az=0.70; if(el===undefined)el=0.42; /* vista diagonal 40° / 24° por defecto */
   var fov=THREE.MathUtils.degToRad(camera.fov);
   var t=Math.tan(fov/2);
   var aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
@@ -811,6 +846,26 @@ function fitDistanceFor(size,az,el){
   var maxV=hx*Math.abs(ux)+hy*Math.abs(uy)+hz*Math.abs(uz);
   var dV=maxV/t, dH=maxH/(t*aspect);
   return Math.max(dV,dH)*BED_FIT_MARGIN;
+}
+/* Fracción del área del escenario que ocupa la caja 2D proyectada de la
+   cama (8 esquinas del Box3 proyectadas a pantalla). Es la medida que manda
+   el encuadre: la cama debe ocupar ~70% del área del escenario, en
+   escritorio y en móvil. */
+function projectedAreaFraction(center,size,az,el,dist){
+  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
+  var tmp=new THREE.PerspectiveCamera(camera.fov,camera.aspect,0.1,100);
+  tmp.position.set(center.x+dx*dist,center.y+dy*dist,center.z+dz*dist);
+  tmp.lookAt(center); tmp.updateMatrixWorld(true);
+  var hx=size.x/2, hy=size.y/2, hz=size.z/2;
+  var minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9;
+  for(var i=0;i<8;i++){
+    var v=new THREE.Vector3(center.x+((i&1)?hx:-hx),center.y+((i&2)?hy:-hy),center.z+((i&4)?hz:-hz));
+    v.project(tmp);
+    if(v.x<minX)minX=v.x; if(v.x>maxX)maxX=v.x;
+    if(v.y<minY)minY=v.y; if(v.y>maxY)maxY=v.y;
+  }
+  var w=(maxX-minX)/2*stage.clientWidth, h=(maxY-minY)/2*stage.clientHeight;
+  return (w*h)/Math.max(1,stage.clientWidth*stage.clientHeight);
 }
 /* Transición suave de cámara (450 ms, ease in-out). Se cancela al tocar. */
 function flyTo(pos,tgt,instant){
@@ -829,8 +884,21 @@ function frameObject(instant){
   var size=b.getSize(new THREE.Vector3());
   camera.aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
   camera.fov=frameFov();
-  var az=0.61, el=0.38;
+  /* Vista diagonal: azimut 40° (0.70 rad, dentro de 35–45°) y elevación 24°
+     (0.42 rad): se ve la habitación en diagonal y la cama se lee en 3D. */
+  var az=0.70, el=0.42;
   var dist=fitDistanceFor(size,az,el);
+  /* Ajuste por ÁREA: la cama debe ocupar ~70% del área del escenario
+     (medida real con la proyección de su Box3). El área escala con 1/dist²,
+     así que se corrige la distancia en 3 iteraciones; converge en cualquier
+     aspecto (escritorio, tablet, iPhone vertical). */
+  for(var k=0;k<3;k++){
+    var frac=projectedAreaFraction(center,size,az,el,dist);
+    if(!(frac>0))break;
+    var nd=dist*Math.sqrt(frac/0.70);
+    if(Math.abs(nd-dist)/dist<0.02){dist=nd;break;}
+    dist=nd;
+  }
   var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
   flyTo(new THREE.Vector3(center.x+dx*dist,center.y+dy*dist,center.z+dz*dist),center,instant);
   var maxDim=Math.max(size.x,size.y,size.z);
@@ -855,7 +923,7 @@ function frameRoom(instant){
   camera.aspect=w/h;
   camera.fov=frameFov();
   var dist=fitDistanceRoom();
-  var az=0.61, el=0.38;
+  var az=0.70, el=0.42; /* misma diagonal que el encuadre de la cama */
   var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
   flyTo(new THREE.Vector3(ROOM_TARGET.x+dx*dist,ROOM_TARGET.y+dy*dist,ROOM_TARGET.z+dz*dist),new THREE.Vector3(ROOM_TARGET.x,ROOM_TARGET.y,ROOM_TARGET.z),instant);
   controls.minDistance=4.2; controls.maxDistance=24;
@@ -927,9 +995,24 @@ function init3D(){
   key.shadow.camera.left=-6; key.shadow.camera.right=6; key.shadow.camera.top=6; key.shadow.camera.bottom=-6;
   scene.add(key);
   var fill=new THREE.DirectionalLight(0xdfe8ff,0.65); fill.position.set(5,4,-5); scene.add(fill);
+  /* Rebote cálido desde el frente (pie de la cama): levanta las sombras de
+     la cara del edredón sin lavar los colores. */
+  var bounce=new THREE.DirectionalLight(0xffe8c8,0.35); bounce.position.set(0,2.5,6); scene.add(bounce);
   bedGroup=new THREE.Group(); scene.add(bedGroup);
   curtainGroup=new THREE.Group(); scene.add(curtainGroup);
   buildRoom(); buildBed();
+  /* Sombra de contacto suave bajo la cama: ancla la cama al piso y le da
+     peso visual (además de las sombras PCFSoft de la luz clave). */
+  (function(){
+    var c=document.createElement("canvas"); c.width=c.height=256;
+    var x=c.getContext("2d");
+    var g=x.createRadialGradient(128,128,10,128,128,128);
+    g.addColorStop(0,"rgba(0,0,0,0.32)"); g.addColorStop(0.65,"rgba(0,0,0,0.16)"); g.addColorStop(1,"rgba(0,0,0,0)");
+    x.fillStyle=g; x.fillRect(0,0,256,256);
+    var t=new THREE.CanvasTexture(c);
+    var m=new THREE.Mesh(new THREE.PlaneGeometry(4.8,5.4),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));
+    m.rotation.x=-Math.PI/2; m.position.set(0,0.03,0.3); scene.add(m);
+  })();
   loadBedGLB(); /* Modelo GLB real (Blender); si falla, queda la procedural. */
   frameObject(true); /* encuadre inicial: Box3 real de la cama, sin animación */
   if(window.ResizeObserver){
@@ -1025,7 +1108,7 @@ document.addEventListener("fullscreenchange",function(){updateFsBtn();if(typeof 
 document.addEventListener("webkitfullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
 function setView(v,btn){
   if(!camera)return;
-  document.querySelectorAll(".viewbar button").forEach(function(b){b.classList.remove("on");});
+  document.querySelectorAll(".stage-toolbar .view-btn").forEach(function(b){b.classList.remove("on");});
   if(btn)btn.classList.add("on");
   var bounds=bedBounds();
   var center=bounds?bounds.getCenter(new THREE.Vector3()):new THREE.Vector3(0,1.2,0);
@@ -1035,7 +1118,7 @@ function setView(v,btn){
     flyTo(new THREE.Vector3(center.x,center.y+0.3,center.z+distF),center);
   }
   else if(v==="top"){
-    var distT=size?fitDistanceFor(size,0.61,1.45):8;
+    var distT=size?fitDistanceFor(size,0.70,1.45):8;
     flyTo(new THREE.Vector3(center.x,center.y+distT,center.z+0.01),center);
   }
   else frameObject();
@@ -1208,6 +1291,14 @@ window.setDuvetColor=setDuvetColor; window.flipDuvet=flipDuvet; window.toggleRem
 window.setCurtain=setCurtain; window.setCurtainSize=setCurtainSize; window.setCurtainPanels=setCurtainPanels; window.pickSheet=pickSheet; window.pickCurtain=pickCurtain; window.cycleDuvet=cycleDuvet;
 window.setView=setView; window.toggleAuto=toggleAuto; window.zoomBed=zoomBed; window.rotateBed=rotateBed;
 window.addCfgToCart=addCfgToCart;
+/* Abrir el panel del asistente desde la barra de contacto (los botones
+   flotantes de chat.js están ocultos solo en esta página). El panel se
+   cierra con su propio botón ✕, que quita la clase 'open'. */
+function openChatPanel(){
+  var p=document.getElementById("chatPanel");
+  if(p){p.classList.add("open"); var inp=document.getElementById("chatText"); if(inp)inp.focus();}
+}
+window.openChatPanel=openChatPanel;
 /* La interfaz corre SIEMPRE y PRIMERO, sin esperar a Three.js: los 5 pasos,
    colores, medidas y total funcionan aunque el 3D falle. El 3D arranca aparte
    y de forma asíncrona; si tarda más de 8 s aparece solo un mensaje de error
