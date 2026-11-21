@@ -196,7 +196,7 @@
 
     /* Envíos — cargos reales: gratis en compras de más de $1,000 */
     if (has(n, ['envio', 'envios', 'entrega', 'llega', 'tarda', 'mandan', 'mandar', 'donde entregan'])) {
-      return 'Hacemos envíos a todo México. En compras de más de $1,000 MXN, el envío es gratis. Si su compra es menor, el cargo de envío es:<br>· $150 MXN a domicilio en cualquier parte del área metropolitana<br>· $50 MXN si la entrega es en alguna estación del Metro, Metrobús, Mexibús, Tren Ligero o Suburbano<br>· $250 MXN al interior de la República<br>¿Le gustaría ver algún producto? ' + link('tienda.html', 'Ir a la Tienda');
+      return 'Hacemos envíos a todo México. En compras de más de $1,000 MXN, el envío es gratis. Si su compra es menor, el cargo de envío es:<br>· $150 MXN a domicilio en cualquier parte del área metropolitana<br>· $50 MXN si la entrega es en alguna estación del Metro, Metrobús, Mexibús, Tren Ligero o Suburbano<br>· $250 MXN al interior de la República<br>La entrega tarda de 1 a 2 días hábiles como máximo; al interior de la República, hasta 5 días hábiles.<br>¿Le gustaría ver algún producto? ' + link('tienda.html', 'Ir a la Tienda');
     }
 
     /* Precio genérico */

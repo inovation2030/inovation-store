@@ -42,8 +42,23 @@ function renderCart(){var c=getCart(),el=document.getElementById('cartItems');if
   if(subLine)subLine.style.display=show?'':'none';
   if(shipLine)shipLine.style.display=show?'':'none';
   if(box)box.style.display=show?'':'none';
+  /* Aviso de tiempo de entrega, justo antes de los botones de pago.
+     1 a 2 días hábiles como máximo; al interior, hasta 5 días hábiles. */
+  var payBtn=drawer?drawer.querySelector('.btn'):null;
+  var timeLine=document.getElementById('shipTime');
+  if(payBtn&&!timeLine){
+    timeLine=document.createElement('p');timeLine.className='ship-time';timeLine.id='shipTime';
+    drawer.insertBefore(timeLine,payBtn.parentElement);
+  }
+  if(timeLine)timeLine.style.display=show?'':'none';
   var subEl=document.getElementById('cartSubtotal');if(subEl)subEl.textContent=money(t);
   var sel=getShip();
+  if(timeLine){
+    timeLine.innerHTML=(sel==='interior')
+      ?'⏱ La entrega al interior de la República tarda hasta <b>5 días hábiles</b>.'
+      :(sel?'⏱ La entrega tarda de <b>1 a 2 días hábiles</b> como máximo.'
+           :'⏱ La entrega tarda de <b>1 a 2 días hábiles</b> como máximo (al interior de la República, hasta <b>5 días hábiles</b>).');
+  }
   if(box)box.querySelectorAll('input[name="shipOpt"]').forEach(function(r){r.checked=(r.value===sel)});
   var free=t>FREE_SHIP_MIN,fee=shipFee(t,sel);
   var shipEl=document.getElementById('cartShip');

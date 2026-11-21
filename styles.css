@@ -57,6 +57,7 @@ footer a{color:var(--gold2)}
 #shipBox .ship-note{margin:8px 0 0;font-size:12px;opacity:.75}
 .cart-line{display:flex;justify-content:space-between;gap:10px;padding:4px 0}
 .ship-free{color:#1a7a3a}
+.ship-time{margin:12px 0;padding:10px 12px;background:#fff8dd;border:1px solid var(--gold);border-radius:10px;font-size:14px;line-height:1.4}
 .wideimg{width:100%;border-radius:14px;display:block}
 .notice{background:#fff8dd;border:1px solid var(--gold);border-radius:10px;padding:14px;margin:16px 0}
 h1.page{font-size:34px;color:var(--blue);margin:6px 0}
