@@ -91,7 +91,7 @@
     if (colors.length > 1 && main.rev && colors[1].name === 'Gris' && main.rev.indexOf('Gris carbón') === 0) {
       txt += '<br>El edredón ya trae las dos caras que me pide: Azul Marino y su reverso Gris carbón.';
     }
-    txt += '<br>¿Su cama es ' + sizeLabel(size) + ' o de otro tamaño? Con mucho gusto se lo ajusto. También puede verlo armado en 3D aquí: ' + link('viste-tu-cama.html', 'Viste tu Cama 3D');
+    txt += '<br>¿Su cama es ' + sizeLabel(size) + ' o de otro tamaño? Con mucho gusto se lo ajusto. Y como su paquete es de más de $1,000 MXN, el envío es gratis. También puede verlo armado en 3D aquí: ' + link('viste-tu-cama.html', 'Viste tu Cama 3D');
     lastPackage = {size: size, colors: colors};
     lastPackageTotal = total;
     return txt;
@@ -194,15 +194,15 @@
       return 'No vendemos colchones, pero sí cubrecolchones ($999) y protectores de colchón ($649). Ver: ' + link('cubrecolchones.html', 'Cubrecolchones') + ' · ' + link('protectores.html', 'Protectores');
     }
 
+    /* Envíos — cargos reales: gratis en compras de más de $1,000 */
+    if (has(n, ['envio', 'envios', 'entrega', 'llega', 'tarda', 'mandan', 'mandar', 'donde entregan'])) {
+      return 'Hacemos envíos a todo México. En compras de más de $1,000 MXN, el envío es gratis. Si su compra es menor, el cargo de envío es:<br>· $150 MXN a domicilio en cualquier parte del área metropolitana<br>· $50 MXN si la entrega es en alguna estación del Metro, Metrobús, Mexibús, Tren Ligero o Suburbano<br>· $250 MXN al interior de la República<br>¿Le gustaría ver algún producto? ' + link('tienda.html', 'Ir a la Tienda');
+    }
+
     /* Precio genérico */
     if (has(n, ['precio', 'precios', 'costo', 'cuesta', 'cuestan', 'cuanto vale', 'cuanto cuesta', 'oferta', 'ofertas', 'descuento', 'promocion', 'promociones'])) {
       if (has(n, ['oferta', 'descuento', 'promocion'])) return 'Nuestras ofertas actuales están aquí: ' + link('ofertas.html', 'Ofertas') + '. ¿De qué producto quiere el precio? Edredones desde $999, sábanas desde $500, almohadas de bambú desde $800 y cortinas desde $550.';
       return 'Con mucho gusto, estos son nuestros precios:<br>· ' + PRICE_EDREDON + '<br>· ' + PRICE_SABANA + '<br>· ' + PRICE_ALMOHADA + '<br>· Cortinas Blackout Thermal desde $550. ' + link('cortinas.html', 'Ver cortinas');
-    }
-
-    /* Envíos */
-    if (has(n, ['envio', 'envios', 'entrega', 'llega', 'tarda', 'mandan', 'mandar', 'donde entregan'])) {
-      return 'Hacemos envíos automatizados a todo México y también entregamos en cualquier estación del Metro, Metrobús, Mexibús, Mexicable, Cablebús, Tren Ligero y Suburbano. El envío es gratis en pedidos participantes (lo verá en su carrito). ¿Le gustaría ver algún producto? ' + link('tienda.html', 'Ir a la Tienda');
     }
 
     /* Pagos */
