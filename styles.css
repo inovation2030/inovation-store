@@ -193,3 +193,13 @@ nav.main>a.active{border-radius:12px}
 .color-opt span{display:block;font-size:11px;line-height:1.2;padding:4px 2px;color:var(--ink)}
 .color-opt.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .color-opt.on span{font-weight:700;color:var(--blue)}
+
+/* --- Flotantes solo icono en móvil: no tapan «Agregar al carrito» ---
+   En móvil (≤768 px) WhatsApp y el chat pasan a círculos de 48 px sin
+   texto, para que el botón de agregar al carrito quede libre y clicable. */
+@media(max-width:768px){
+  .wa-fab{left:12px;bottom:12px;width:48px;height:48px;padding:0;justify-content:center;border-radius:50%}
+  .wa-fab-label{display:none}
+  .chat-fab{right:12px;bottom:12px;width:48px;height:48px;padding:0;justify-content:center;border-radius:50%;font-size:20px}
+  .chat-fab-label{display:none}
+}
