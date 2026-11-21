@@ -323,8 +323,8 @@ function build(){
   cover(hw,zb,zb+.36,.28,.31,.075,.617,fb.stripes?.02:.03,.3,mb,.83,true,0);
   cover(hw,zb+.35,l/2,.28,.31,.075,.612,fa.stripes?.028:.045,.3,ma,.83,false,.06)}
  let bm=null;if(s.bam&&!s.cs){bm=bamTex();DT.push(bm)}
- const bz=s.bam?(s.bsz==='kg'?[.91,.51]:[.71,.48]):[.62,.46],pn=s.size==='ind'?1:(s.bam?s.bqt:2),pw=Math.min(bz[0],(w-.1)/pn*.95),pc=s.cs?mat(s.shC,FEEL[s.shF].r,TW):(bm?mat('#ffffff',.9,bm):mat('#f2efe8',FEEL[s.shF].r,TW));
- for(let i=0;i<pn;i++){const x=(i-(pn-1)/2)*(w/pn);const pm=sh(new THREE.Mesh(pillow(pw,bz[1],s.bam?.17:.15),pc));pm.position.set(x,.68,-l/2+.3);pm.rotation.x=.2;G.add(pm)}
+ const bz=s.bam?(s.bsz==='kg'?[.91,.55]:[.71,.48]):[.62,.46],pn=s.size==='ind'?1:(s.bam?s.bqt:2),pw=Math.min(bz[0],(w-.1)/pn*(s.bam&&s.bsz==='kg'?1.22:.95)),pc=s.cs?mat(s.shC,FEEL[s.shF].r,TW):(bm?mat('#ffffff',.9,bm):mat('#f2efe8',FEEL[s.shF].r,TW));
+ for(let i=0;i<pn;i++){const x=(i-(pn-1)/2)*(w/pn);const pm=sh(new THREE.Mesh(pillow(pw,bz[1],s.bam?(s.bsz==='kg'?.19:.17):.15),pc));pm.position.set(x,.68,-l/2+.3);pm.rotation.x=.2;G.add(pm)}
  if(s.cur)room(l);sun.target.position.set(0,.4,0);scene.add(sun.target)}
 /* cámara — Frontal = desde los pies, cabecera atrás, cama centrada y
    grande. La cámara arranca EXACTA en Frontal desde el primer cuadro
