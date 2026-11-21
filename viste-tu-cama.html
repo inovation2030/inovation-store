@@ -166,10 +166,6 @@ main{padding-bottom:24px!important}
 .toggle b{font-weight:600}
 .toggle .tgl-price{margin-left:auto;color:#F2B705;font-weight:700;font-size:13px;white-space:nowrap}
 .fabric-lbl{color:#b9c9de;font-size:13px;margin:12px 0 6px}
-.face-ctl{display:flex;gap:8px;align-items:center;margin:8px 0 10px;flex-wrap:wrap}
-.face-ctl span{color:#b9c9de;font-size:13px}
-.face-btn{border:1px solid #1c3a6b;border-radius:20px;background:#0e2c56;color:#fff;padding:9px 16px;cursor:pointer;font-size:14px;font-weight:600;min-height:44px}
-.face-btn.on{border-color:#F2B705;background:#123a5f;font-weight:700}
 .sec-note{color:#b9c9de;font-size:13px;line-height:1.5;margin:8px 0 0}
 .sec-body.off{opacity:.45;pointer-events:none}
 </style></head><body>
@@ -992,8 +988,15 @@ function flyTo(pos,tgt,instant){
   camAnim={p0:camera.position.clone(),p1:pos.clone(),t0:controls.target.clone(),t1:tgt.clone(),start:performance.now(),dur:450,wasAuto:controls.autoRotate};
   controls.autoRotate=false; controls.enabled=false;
 }
-function frameObject(instant){
+function frameObject(instant,az,el){
   if(!camera||!controls||!stage)return;
+  /* az/el opcionales: la vista inicial y 3/4 usan la diagonal 40°/24°
+     (0.70/0.42 rad); los presets frontal y superior pasan los suyos. TODAS
+     las vistas pasan por la misma iteración por ÁREA (objetivo 0.88): antes
+     frontal y superior usaban solo fitDistanceFor (analítico, sin iterar)
+     y la superior quedaba al 0.30 del área del escenario, y al volver a 3/4
+     la cámara quedaba varada arriba. */
+  if(az===undefined)az=0.70; if(el===undefined)el=0.42;
   var b=bedBounds(); if(!b)return;
   /* La banca NO entra en el encuadre (2026-11-21): su Box3 alargaba la
      caja 0.8 m hacia el pie y alejaba la cámara, así la cama se veía al
@@ -1004,9 +1007,6 @@ function frameObject(instant){
   var size=b.getSize(new THREE.Vector3());
   camera.aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
   camera.fov=frameFov();
-  /* Vista diagonal: azimut 40° (0.70 rad, dentro de 35–45°) y elevación 24°
-     (0.42 rad): se ve la habitación en diagonal y la cama se lee en 3D. */
-  var az=0.70, el=0.42;
   var dist=fitDistanceFor(size,az,el);
   /* Ajuste por ÁREA: la cama debe ocupar ~88% del área del escenario
      (medida real con la proyección de su Box3). 0.70 dejaba la cama al
@@ -1211,18 +1211,14 @@ function setView(v,btn){
   if(!camera)return;
   document.querySelectorAll(".stage-toolbar .view-btn").forEach(function(b){b.classList.remove("on");});
   if(btn)btn.classList.add("on");
-  var bounds=bedBounds();
-  var center=bounds?bounds.getCenter(new THREE.Vector3()):new THREE.Vector3(0,1.2,0);
-  var size=bounds?bounds.getSize(new THREE.Vector3()):null;
-  if(v==="front"){
-    var distF=size?fitDistanceFor(size,0,0.08):8;
-    flyTo(new THREE.Vector3(center.x,center.y+0.3,center.z+distF),center);
-  }
-  else if(v==="top"){
-    var distT=size?fitDistanceFor(size,0.70,1.45):8;
-    flyTo(new THREE.Vector3(center.x,center.y+distT,center.z+0.01),center);
-  }
-  else frameObject();
+  /* Cada preset re-encuadra con la MISMA lógica por área que la vista
+     inicial (frameObject con el az/el del preset): frontal desde el pie
+     (az 0, el 0.08), superior casi cenital con la misma orientación
+     diagonal (az 0.70, el 1.45 — no π/2 exacto, para que el vector up de
+     la cámara no degenere), 3/4 la diagonal 40°/24°. */
+  if(v==="front") frameObject(false,0,0.08);
+  else if(v==="top") frameObject(false,0.70,1.45);
+  else frameObject(false,0.70,0.42);
 }
 function toggleAuto(){
   if(!controls)return;
@@ -1267,9 +1263,6 @@ function render(){
     +'<label class="toggle"><input type="checkbox" '+(st.showDuvet?"checked":"")+' onchange="setShowDuvet(this.checked)"><b>Mostrar edredón</b></label>'
     +'<p class="fabric-lbl">Tela: algodón egipcio</p>'
     +'<div class="sec-body'+(st.showDuvet?"":" off")+'">'
-    +'<div class="face-ctl"><span>Cara visible</span>'
-    +'<button type="button" class="face-btn'+(st.duvetFace==="front"?" on":"")+'" onclick="setDuvetFace(\'front\')">Cara</button>'
-    +'<button type="button" class="face-btn'+(st.duvetFace==="reverse"?" on":"")+'" onclick="setDuvetFace(\'reverse\')">Reverso</button></div>'
     +'<div class="type-grid">'+DUVET_COLORS.map(function(c,i){
       return '<div class="type-card'+(st.duvetColor===i?" on":"")+'" onclick="setDuvetColor('+i+')">'+(st.duvetColor===i?'<span class="tick">✓</span>':"")+'<img src="'+c.img+'" alt="'+c.n+'" onerror="imgFallback(this)"><span>'+duvetLabel(c)+' · $'+duvetPrice().toLocaleString("es-MX")+'</span></div>';
     }).join("")+'</div>'
