@@ -75,25 +75,30 @@ h1.page{font-size:34px;color:var(--blue);margin:6px 0}
 .total{font-size:30px;font-weight:800;color:var(--blue);text-align:right}
 .menu-toggle{display:none}
 @media(max-width:900px){.cfg{grid-template-columns:1fr}.bed-stage img.main{height:380px}}
-/* --- Encabezado móvil compacto: una sola fila (logo + carrito + hamburguesa) --- */
+/* --- Encabezado móvil: logo + carrito arriba, menú horizontal abajo --- */
 @media(max-width:768px){
 header.site{position:sticky;top:0}
-.header-in{position:relative;flex-wrap:nowrap;gap:10px;min-height:64px;max-height:64px;padding:8px 12px;justify-content:space-between}
+.header-in{position:relative;flex-wrap:wrap;gap:0 10px;min-height:0;max-height:none;padding:8px 12px 0;justify-content:space-between}
 .logo img{height:40px}
 .logo b{font-size:15px;white-space:nowrap}
 .logo small{font-size:8px;letter-spacing:2px}
 .logo span{white-space:nowrap}
-.menu-toggle{display:flex;align-items:center;justify-content:center;flex:0 0 auto;width:44px;height:44px;background:none;border:1px solid rgba(255,255,255,.45);border-radius:10px;color:#fff;font-size:24px;line-height:1;cursor:pointer;order:3}
-.cart-btn{flex:0 0 auto;height:40px;padding:8px 12px;font-size:14px;order:2}
-nav.main{display:none;position:absolute;top:100%;left:0;right:0;background:var(--blue);flex-direction:column;align-items:stretch;gap:0;padding:6px 12px 14px;border-top:1px solid rgba(255,255,255,.25);box-shadow:0 18px 30px rgba(0,0,0,.35);z-index:60}
-body.nav-open nav.main{display:flex}
-nav.main>a,nav.main .drop>button{display:block;width:100%;text-align:left;padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.12)}
+.ref-header .header-in{min-height:0}
+.ref-header .logo b{font-size:15px}
+.ref-header .logo small{font-size:8px;letter-spacing:2px}
+.menu-toggle{display:none}
+.cart-btn{flex:0 0 auto;height:40px;padding:8px 12px;font-size:14px;order:2;margin-left:auto}
+.head-icons{order:2;margin-left:auto;display:flex;align-items:center;gap:8px}
+.hide-m{display:none}
+nav.main{display:flex;order:3;flex:1 1 100%;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:flex-start;gap:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:transparent;border-top:1px solid rgba(255,255,255,.25);margin:6px -12px 0;padding:0 8px;position:static;box-shadow:none;z-index:60}
+nav.main::-webkit-scrollbar{display:none}
+nav.main>a,nav.main .drop>button{display:block;flex:0 0 auto;width:auto;text-align:left;padding:12px 11px;border-bottom:0;white-space:nowrap;font-size:14px}
 nav.main>a.active{border-radius:12px}
-.drop{position:static}
-.drop .submenu{position:static;display:none;box-shadow:none;border:0;background:rgba(0,0,0,.18);min-width:0;border-radius:10px}
+.drop{position:relative}
+.drop .submenu{position:fixed;left:8px;right:8px;top:96px;display:none;min-width:0;background:var(--blue);border:1px solid rgba(255,255,255,.3);border-radius:10px;box-shadow:0 18px 30px rgba(0,0,0,.35);padding:6px;z-index:70}
 .drop:hover .submenu{display:none}
 .drop.open .submenu{display:block}
-.submenu a{color:#fff}
+.submenu a{color:#fff;display:block;padding:11px 12px;border-radius:8px}
 .submenu a:hover{background:rgba(255,255,255,.12);color:#fff}
 }
 @media(max-width:400px){

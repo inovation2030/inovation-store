@@ -31,10 +31,11 @@ document.addEventListener('DOMContentLoaded',function(){
       document.body.classList.remove('nav-open');
       var t=document.querySelector('.menu-toggle');
       if(t){t.textContent='☰';t.setAttribute('aria-expanded','false');}
+      document.querySelectorAll('.drop.open').forEach(function(d){d.classList.remove('open');var s=d.querySelector('.submenu');if(s)s.style.top='';});
     }
   });
   window.addEventListener('resize',function(){
-    if(window.innerWidth>768)document.body.classList.remove('nav-open');
+    if(window.innerWidth>768){document.body.classList.remove('nav-open');document.querySelectorAll('.drop.open').forEach(function(d){d.classList.remove('open');var s=d.querySelector('.submenu');if(s)s.style.top='';});}
   });
   /* Selector de tamaño en tarjetas de producto (edredones, sábanas): actualiza precio y carrito */
   document.querySelectorAll('.size-sel').forEach(function(sel){
@@ -75,7 +76,15 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   });
   document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){addToCart(b.getAttribute('data-add'),parseInt(b.getAttribute('data-price')||'0',10))})});
-  document.querySelectorAll('.drop>button').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();b.parentElement.classList.toggle('open')})});
+  document.querySelectorAll('.drop>button').forEach(function(b){b.addEventListener('click',function(e){
+    e.stopPropagation();
+    var d=b.parentElement, open=d.classList.toggle('open'), sub=d.querySelector('.submenu');
+    /* En móvil el submenú es un panel fijo bajo el encabezado: se mide su posición real */
+    if(window.matchMedia('(max-width:768px)').matches&&sub){
+      if(open){var h=document.querySelector('header.site'), r=h?h.getBoundingClientRect():null; sub.style.top=((r?r.bottom:96)+2)+'px';}
+      else{ sub.style.top=''; }
+    }
+  })});
 
   /* Selector de almohadas de bambú: tamaño (Standard/King) + cantidad (1/par) */
   document.querySelectorAll('article.product').forEach(function(art){
