@@ -1,18 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Viste tu Cama 3D | Inovation Store</title><link rel="stylesheet" href="styles.css">
-<!-- Spline Viewer (web component). Versión fijada 2.0.211, CDN oficial de Spline:
-     es la versión del runtime con la que se publicó la escena (la página
-     publicada de Spline carga @splinetool/runtime@2.0.211). La versión
-     anterior (2.0.204) avisaba en consola que el archivo .splinecode es
-     más reciente que la librería ("Please upgrade @splinetool/runtime").
-     Se usa la variante SOLO WebGL (spline-viewer.webgl.js, HTTP 200
-     verificado): el build dual (spline-viewer.js) intenta WebGPU primero
-     y en iOS/WebKit ese intento puede quedarse colgado sin caer a WebGL.
-     Carga el elemento <spline-viewer> que muestra la escena .splinecode.
-     El preload del .splinecode hace que la descarga de la escena (4.65 MB)
-     empiece con la página y no hasta que el visor termina de cargar. -->
-<link rel="preload" href="https://my.spline.design/spline3dstarterfile-Vd6txbVaaIpOHrio6Iwb5lF0/scene.splinecode" as="fetch" crossorigin>
-<script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.211/build/spline-viewer.webgl.js"></script>
-<style>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Viste tu Cama 3D | Inovation Store</title><link rel="stylesheet" href="styles.css"><link rel="preload" href="assets/three.min.js" as="script"><link rel="preload" href="assets/bed.glb" as="fetch" crossorigin="anonymous"><style>
 /* Viste tu Cama — diseño exacto de la referencia: azul marino + dorado */
 .ref-header{background:linear-gradient(180deg,#081a38,#0d2a52);border-bottom:3px solid #E8A90C}
 .ref-header .header-in{max-width:1400px;min-height:72px}
@@ -57,14 +43,9 @@
 .cfg3d .swatches .sw.on{box-shadow:0 0 0 3px #F2B705}
 .stage-col{background:#e8edf1;display:flex;flex-direction:column;min-width:0}
 .stage3d{position:relative;background:#e8edf1;height:calc(100vh - 210px);min-height:560px;flex:1}
-/* El visor llena el escenario con position:absolute + inset:0. ERROR REAL
-   (medido en móvil 390×844): con height:100% (CSS o inline) el visor se
-   quedaba en 176 px de alto — una tirita — dentro de un escenario de
-   844 px, porque el porcentaje no resolvía contra el escenario. Con
-   inset:0 el visor ocupa todo el escenario desde el inicio. */
-.stage3d spline-viewer{width:100%;height:100%;display:block;position:absolute;inset:0}
+.stage3d canvas{width:100%;height:100%;display:block;touch-action:pan-y}
 .stage3d:fullscreen{height:100vh;min-height:100vh}
-.stage3d:fullscreen spline-viewer{height:100%}
+.stage3d:fullscreen canvas{height:100%}
 .fs-btn{position:absolute;right:14px;top:12px;background:rgba(255,255,255,.92);border:1px solid #dfe5ea;border-radius:20px;padding:7px 12px;min-height:44px;display:flex;align-items:center;font-size:13px;font-weight:700;color:#123a6b;cursor:pointer;z-index:5}
 .stage3d .hint3d{position:absolute;left:14px;bottom:70px;background:rgba(255,255,255,.88);color:#53616f;font-size:12px;padding:9px 12px;border-radius:8px;pointer-events:none;z-index:3;max-width:46%}
 .stage3d .live3d{position:absolute;left:14px;top:12px;background:#0B3D91;color:#fff;font-size:11px;letter-spacing:2px;padding:7px 12px;border-radius:20px;z-index:3}
@@ -75,13 +56,11 @@
 .stage-controls{position:absolute;right:12px;bottom:70px;display:flex;gap:8px;z-index:5}
 .stage-controls button{width:44px;height:44px;border-radius:50%;border:1px solid #dfe5ea;background:rgba(255,255,255,.95);font-size:24px;cursor:pointer;color:#123a6b;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 .deg360{position:absolute;left:50%;top:12px;bottom:auto;height:auto;white-space:nowrap;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.45);padding:8px 14px;border-radius:20px;font-weight:700;z-index:3;pointer-events:none}
-/* Indicador de carga: chip compacto arriba del escenario, sin tapar el
-   visor (fondo translúcido y sin capturar clics) para que la escena se
-   vea mientras carga. La foto de respaldo (.spline-fallback) solo aparece
-   ante un fallo real, nunca encima de un visor que aún carga. */
-.spline-loading{position:absolute;left:50%;top:64px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:#123a6b;background:rgba(255,255,255,.92);border:1px solid #dfe5ea;border-radius:12px;text-align:center;padding:12px 18px;z-index:2;pointer-events:none;max-width:92%}
-.spline-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f7f6f2;text-align:center;padding:20px;z-index:4}
-.spline-fallback img{max-width:420px;width:100%;border-radius:12px}
+.gl-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#53616f;background:#e8edf1;text-align:center;padding:20px;z-index:2}
+.gl-fallback{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#f7f6f2;text-align:center;padding:20px;z-index:4}
+.gl-fallback .gl-err-icon{font-size:44px;line-height:1}
+.gl-fallback b{font-size:17px;color:#123a6b}
+.gl-fallback p{margin:0;color:#53616f;font-size:14px;line-height:1.5;max-width:420px}
 .color-strip{background:#fff;padding:14px 10px 10px;display:flex;align-items:center;gap:8px;border-top:1px solid #e3e8ee}
 .strip-arrow{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid #dfe5ea;background:#fff;font-size:20px;cursor:pointer;color:#123a6b}
 .color-items{display:flex;gap:14px;overflow-x:auto;flex:1;padding:2px}
@@ -114,7 +93,7 @@
 .panel-steps{order:0}
 .panel-sel{order:1}
 .stage3d{height:100svh;min-height:100svh}
-.stage3d spline-viewer{height:100%}
+.stage3d canvas{height:100%}
 .ref-header .logo b{font-size:20px}
 }
 /* --- Layout del ejemplo (Muse): encabezado de vista previa, pie con colores
@@ -194,11 +173,11 @@ main{padding-bottom:84px!important}
 <div class="stage-col">
 <div class="stage-heading"><span>VISTA PREVIA</span><span class="live-dot">● CONFIGURACIÓN EN VIVO</span></div>
 <div class="stage3d" id="stage3d">
-<div class="live3d">● MODELO 3D EN VIVO · <b>Spline</b></div>
+<div class="live3d">● MODELO 3D EN VIVO · <b>Three.js</b></div>
 <div class="change-toast" id="changeToast" role="status"></div>
 <button class="fs-btn" id="fsBtn" type="button" onclick="toggleFS()" aria-label="Ver la habitación a pantalla completa">⛶ Pantalla completa</button>
-<div class="spline-loading" id="splineLoading"><b>Cargando escena 3D de Spline…</b><span>Si tarda más de unos segundos, revisa tu conexión.</span></div>
-<div class="spline-fallback" id="splineFallback"><img id="splineFallbackImg" src="assets/habitacion-real-azul-marino.jpg" alt="Habitación real con la cama vestida"><p><b>Vista previa con foto real de la habitación.</b><br><span id="splineError">La escena 3D de Spline aún no está conectada.</span><br>El configurador de abajo sigue funcionando: elige colores y medidas y el total se actualiza.</p></div>
+<div class="gl-loading" id="glLoading"><b>Cargando modelo 3D…</b><span>Si tarda más de unos segundos, revisa tu conexión.</span></div>
+<div class="gl-fallback" id="glFallback"><span class="gl-err-icon">⚠️</span><p><b>La escena 3D no se pudo cargar en este teléfono/navegador.</b><br><span id="glError">Revisa tu conexión a internet y recarga la página.</span><br>El configurador de opciones de abajo sigue funcionando.</p></div>
 <div class="stage-controls" role="group" aria-label="Controles de cámara">
 <button type="button" onclick="rotateBed(-1)" aria-label="Girar a la izquierda">‹</button>
 <button type="button" onclick="rotateBed(1)" aria-label="Girar a la derecha">›</button>
@@ -206,7 +185,7 @@ main{padding-bottom:84px!important}
 <button type="button" onclick="zoomBed(0.15)" aria-label="Acercar">＋</button>
 </div>
 <div class="deg360">⟳ 360° ⟲</div>
-<div class="hint3d">Arrastra para girar 360° · Rueda o pellizca para acercar · Toca el edredón para darle la vuelta · Toca la solapa para quitarlo y ver solo las sábanas</div>
+<div class="hint3d">Arrastra para girar 360° · Rueda o pellizca para acercar · Dos dedos para desplazar</div>
 </div>
 <div class="color-strip">
 <button class="strip-arrow" type="button" onclick="cycleDuvet(-1)" aria-label="Color anterior">‹</button>
@@ -236,8 +215,7 @@ main{padding-bottom:84px!important}
 <p><a href="index.html" style="color:#F2B705">← Volver a la tienda</a></p>
 </div>
 </div>
-<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D con Spline: habitación de lujo y cama en 3D real (no es una foto). La cama se va armando paso a paso: Paso 1 la cama, Paso 2 las sábanas, Paso 3 el edredón, Paso 4 las almohadas y Paso 5 los complementos y cortinas. El edredón es un objeto 3D reversible: dale la vuelta para ver el otro lado (Azul Marino / Gris) y quítalo para ver solo las sábanas. Si la escena no carga, se muestra la foto real de la habitación y el configurador sigue funcionando igual (5 pasos, colores, medidas y precios reales).</p>
-<p class="spline-credit" style="font-size:13px;margin-top:6px"><a href="https://app.spline.design/file/dcf5db59-d958-417a-ad20-d66d1a908fd6" target="_blank" rel="noopener">Open in Spline</a> · <a href="https://spline.design" target="_blank" rel="noopener">Made with Spline</a></p>
+<p style="color:#5a6a7a;font-size:13px;margin-top:14px">Escena 3D con Three.js y el modelo real de la cama en GLB (assets/bed.glb, construido en Blender con piezas nombradas: estructura, cabecera, colchón, sábana ajustada, edredón doble vista, almohadas y banca), con texturas de las fotos reales de tus productos. Si el modelo GLB no carga, la página muestra la cama procedural de respaldo con las mismas opciones y precios.</p>
 </main>
 <aside id="cartDrawer" aria-label="Carrito">
 <h2>Tu carrito</h2><div id="cartItems"></div>
@@ -256,6 +234,13 @@ main{padding-bottom:84px!important}
 </div></footer>
 <script src="app.js"></script>
 <script src="chat.js"></script>
+<!-- Three.js r147 VENDIDO EN LOCAL y síncrono (assets/three.min.js +
+     OrbitControls.js + GLTFLoader.js): todo se sirve desde el propio repo,
+     CERO descargas de CDN externos, así la escena arranca en pocos segundos
+     en el iPhone. Nada de runtimes pesados ni WASM. -->
+<script src="assets/three.min.js"></script>
+<script src="assets/OrbitControls.js"></script>
+<script src="assets/GLTFLoader.js"></script>
 <script>
 /* ---------- Datos del catálogo (mismos precios de la tienda) ---------- */
 var EG=[
@@ -311,10 +296,7 @@ var COMPS=[{n:"Cubrecolchón - Impermeable",p:200},{n:"Protector Impermeable",p:
 var st={step:3,size:2,sheetType:0,sheetColor:{name:"Blanco",hex:"#ffffff",img:null},duvetColor:0,pillow:0,comp:0,curtain:-1,curtainSize:1,curtainPanels:1};
 function money(n){return "$"+Number(n).toLocaleString("es-MX")+" MXN";}
 function sheetPrice(){return SHEET_SIZE_PRICES[st.size]+SHEET_TYPES[st.sheetType].adj;}
-/* Precio del edredón: SOLO el precio real por tamaño (sin tipos inventados).
-   Individual $999 · Matrimonial $1,099 · Queen $1,199 · King $1,299 · King Jumbo $1,499. */
 function duvetPrice(){return DUVET_PRICES[st.size];}
-/* Nombre del edredón para mostrar: color y reverso solo si la foto real lo respalda. */
 function duvetLabel(dc){return dc.n+(dc.revName?" / "+dc.revName:"");}
 function curtainPrice(){if(st.curtain<0)return 0;var p=CUR_SIZES[st.curtainSize].p;return st.curtainPanels===2&&p[1]?p[1]:p[0];}
 function calcTotal(){
@@ -323,441 +305,689 @@ function calcTotal(){
   return sheetPrice()+duvetPrice()+PILLOWS[st.pillow].p+COMPS[st.comp].p+curtainPrice();
 }
 
-/* ---------- Visor 3D: Spline (@splinetool/viewer) ----------
-   El motor 3D anterior se quitó por orden de Alberto: "Quita el programa
-   y utiliza el otro" — el otro es Spline, la primera recomendación de su
-   guía para la habitación y la cama en 3D.
-   El visor es el web component oficial <spline-viewer> (script en <head>).
-   La escena (habitación + cama) se creó en el editor de Spline
-   (https://app.spline.design/file/dcf5db59-d958-417a-ad20-d66d1a908fd6,
-   cuenta babyfacebad@icloud.com, plan Hobby gratuito) y se publicó en
-   https://my.spline.design/spline3dstarterfile-Vd6txbVaaIpOHrio6Iwb5lF0/
-   La URL .splinecode de abajo es el archivo real de esa escena publicada,
-   verificado: responde HTTP 200, pesa 4.650.023 bytes, es un .splinecode
-   válido y permite CORS (Access-Control-Allow-Origin: *). Es el mismo
-   archivo que carga la página publicada de Spline con su runtime. */
-
-/* ========================================================================
-   URL DE LA ESCENA SPLINE (verificada, archivo real publicado)
-   https://my.spline.design/spline3dstarterfile-Vd6txbVaaIpOHrio6Iwb5lF0/scene.splinecode
-   Si la escena se vuelve a publicar o se crea una nueva, se pega aquí su
-   URL .splinecode (Spline → Export → Code). Mientras esté vacía (""), el
-   visor muestra la foto real de la habitación y TODO el configurador
-   sigue funcionando (pasos, colores, total, carrito).
-   ======================================================================== */
-var SPLINE_SCENE_URL="https://my.spline.design/spline3dstarterfile-Vd6txbVaaIpOHrio6Iwb5lF0/scene.splinecode";
-
-/* Objetos de la escena Spline con estos nombres exactos (verificados en el
-   archivo .splinecode publicado). Si un objeto no existe, ese cambio
-   simplemente no se aplica en la escena; el configurador y el total siguen
-   funcionando. NOTA: la escena NO tiene un objeto "DuvetReverse" (no existe
-   en el archivo): el reverso se muestra dándole la vuelta al objeto Duvet
-   y cambiando su color de material (cara ↔ reverso, ver flipDuvet()). */
-var SPLINE_OBJECTS={
-  bed:"Bed",                 /* grupo completo de la cama (para girarla) */
-  sheet:"FittedSheet",       /* sábana ajustada al colchón */
-  duvet:"Duvet",             /* edredón, objeto 3D real (no es foto) */
-  duvetFlap:"DuvetFlap",     /* solapa doblada al pie; al tocarla en la escena el edredón se quita */
-  pillowLeft:"PillowLeft", pillowRight:"PillowRight",
-  pillowLeft2:"PillowLeft2", pillowRight2:"PillowRight2",
-  cushionLeft:"CushionLeft", cushionRight:"CushionRight", cushionCenter:"CushionCenter",
-  runner:"Runner",           /* pie de cama / cubrecolchón al pie */
-  curtainLeft:"CurtainLeft", curtainRight:"CurtainRight",
-  room:"Room"                /* grupo de la habitación (ventana, paredes) */
-};
-/* Variables REALES de la escena Spline (plan Hobby: solo permite 4
-   variables, verificadas en el archivo .splinecode publicado).
-   BedSize es texto ("King" por defecto en la escena); SheetColor,
-   DuvetColor y PillowOption son índices numéricos. NO existen SheetType,
-   CurtainColor, CameraView ni AutoRotate en esta escena: el tipo de
-   sábana solo cambia el precio; las cortinas se colorean cambiando el
-   material de CurtainLeft/CurtainRight; las vistas y el giro automático
-   se hacen girando el grupo "Bed" y con zoom (ver setView/toggleAuto). */
-var SPLINE_VARIABLES={
-  bedSize:"BedSize",       /* texto: "Individual" | "Matrimonial" | "Queen" | "King" | "King Jumbo" */
-  sheetColor:"SheetColor", /* número: índice 0-39 (20 egipcias + 20 de paleta, en el orden de la página) */
-  duvetColor:"DuvetColor", /* número: índice 0-4 (0 Azul Marino, 1 Gris, 2 Beige, 3 Blanco, 4 Blanco con Rayas) */
-  pillowOption:"PillowOption" /* número: índice 0-5 de las opciones del Paso 4 */
-};
+/* ---------- Escena 3D (Three.js clásico r147) ---------- */
 var stage=document.getElementById("stage3d");
-/* Foto real de la habitación que se muestra mientras no hay escena Spline
-   conectada (o si la escena falla). Cambia con el color del edredón. Las
-   fotos habitacion-real-*.jpg son fotos generadas iguales a una habitación
-   real; Blanco con Rayas no tiene foto de habitación, así que usa
-   la foto real de su edredón. */
-var ROOM_PHOTOS={0:"assets/habitacion-real-azul-marino.jpg",1:"assets/habitacion-real-gris.jpg",2:"assets/habitacion-real-beige.jpg",3:"assets/habitacion-real-blanco.jpg"};
-
-var splineViewer=null, splineApp=null, splineLoaded=false, splineFailed=false;
-var splineZoom=1;
-
-function splineFallbackPhoto(){
-  var img=document.getElementById("splineFallbackImg");
-  if(!img)return;
-  img.src=ROOM_PHOTOS[st.duvetColor]||DUVET_COLORS[st.duvetColor].img;
-}
-function showSplineFallback(reason){
-  var f=document.getElementById("splineFallback"), l=document.getElementById("splineLoading");
+var scene,camera,renderer,controls,bedGroup,curtainGroup,texCache={};
+var glbGroup=null, glbParts=null, glbReady=false; /* Modelo GLB real (Blender): cuando carga, sustituye a la cama procedural. */
+var BED_D=3.1, MAT_TOP=1.06;
+function showFallback(reason){
+  var f=document.getElementById("glFallback"), l=document.getElementById("glLoading");
   if(l)l.style.display="none";
-  if(f)f.style.display="flex";
-  var e=document.getElementById("splineError");
+  if(f){f.style.display="flex";}
+  var e=document.getElementById("glError");
   if(e&&reason)e.textContent=reason;
-  splineFallbackPhoto();
 }
-/* La instancia Application del runtime de Spline. El web component
-   <spline-viewer> 2.0.211 NO expone .app (no existe ese getter en el
-   código del visor: el.app es siempre undefined). La instancia vive en el
-   campo interno el._spline, creado por _createApplication(). Se resuelve
-   en cada llamada (no se cachea solo) porque el visor puede recrear la
-   aplicación al perder/restaurar el contexto WebGL. */
-function splineAppReady(){
-  var app=null;
-  if(splineViewer){
-    try{app=splineViewer._spline||null;}catch(e){app=null;}
+/* Sin foto de respaldo: si WebGL falla, se muestra solo el mensaje de
+   error honesto (glFallback). Las fotos reales solo viven en las tarjetas
+   y miniaturas de selección, nunca como la cama del visor. */
+function webglOK(){
+  try{
+    var c=document.createElement("canvas");
+    return !!(window.WebGLRenderingContext && (c.getContext("webgl")||c.getContext("experimental-webgl")));
+  }catch(e){return false;}
+}
+/* Three.js ya viene cargado por las etiquetas <script> síncronas locales
+   (assets/three.min.js + OrbitControls.js + GLTFLoader.js): no hay cadena
+   de CDN ni timeouts de 5 s por fuente. Si falta algo, se muestra solo el
+   mensaje de error honesto (nunca una foto en lugar de la cama). */
+function ensureThree(){
+  return Promise.resolve(!!(window.THREE && THREE.OrbitControls && THREE.GLTFLoader));
+}
+function loadTex(url){
+  if(!url)return null;
+  if(texCache[url])return texCache[url];
+  var t=new THREE.TextureLoader().load(url);
+  t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.anisotropy=4;
+  texCache[url]=t; return t;
+}
+/* Textura ajustada a la proporción real del plano (ZIP: sin estiramientos).
+   La foto del edredón es 1024x990 (casi cuadrada) y el plano del edredón es
+   ~1.4:1; mapearla 1:1 estiraba los rombos. fitTex clona la textura y recorta
+   por el centro (repeat/offset) para que la proporción se conserve. */
+function fitTex(url,pw,pl){
+  if(!url)return null;
+  var key=url+"|"+pw.toFixed(2)+"x"+pl.toFixed(2);
+  if(texCache[key])return texCache[key];
+  var base=loadTex(url);
+  var t=base.clone();
+  var img=base.image;
+  var texAspect=(img&&img.width&&img.height)?img.width/img.height:1.03;
+  var planeAspect=pw/Math.max(pl,0.01);
+  var rx=1, ry=1, ox=0, oy=0;
+  if(planeAspect>texAspect){ry=texAspect/planeAspect;oy=(1-ry)/2;}
+  else{rx=planeAspect/texAspect;ox=(1-rx)/2;}
+  t.repeat.set(rx,ry); t.offset.set(ox,oy); t.needsUpdate=true;
+  texCache[key]=t; return t;
+}
+var mattressTexCache=null;
+/* Textura propia del colchón (material independiente, no comparte la del
+   edredón ni la de las sábanas): acolchado blanco muy tenue, procedural. */
+function makeMattressTex(){
+  if(mattressTexCache)return mattressTexCache;
+  var c=document.createElement("canvas"); c.width=c.height=256;
+  var x=c.getContext("2d");
+  x.fillStyle="#fbfaf6"; x.fillRect(0,0,256,256);
+  x.strokeStyle="rgba(190,185,170,0.5)"; x.lineWidth=1.5;
+  for(var i=-256;i<=512;i+=64){
+    x.beginPath(); x.moveTo(i,0); x.lineTo(i+256,256); x.stroke();
+    x.beginPath(); x.moveTo(i+256,0); x.lineTo(i,256); x.stroke();
   }
-  if(!app)app=splineApp;
-  if(!app)return null;
-  /* Debe parecer una Application: setVariable y findObjectByName. Si no,
-     es un objeto viejo o incompleto y las llamadas no harían nada. */
-  if(typeof app.setVariable!=="function"&&typeof app.findObjectByName!=="function")return null;
-  return app;
+  var t=new THREE.CanvasTexture(c);
+  t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(3,3); t.anisotropy=4;
+  mattressTexCache=t; return t;
 }
-function splineSetVar(name,value){
-  var app=splineAppReady();
-  if(!app||typeof app.setVariable!=="function")return false;
-  try{app.setVariable(name,value);return true;}
-  catch(e){console.warn("Spline: no se pudo fijar la variable",name,e&&e.message);return false;}
+/* Miniatura rota: sustituto neutro dorado en vez de imagen rota. */
+function imgFallback(el){el.onerror=null;el.src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%23c5a15b'/%3E%3C/svg%3E";}
+window.imgFallback=imgFallback;
+function mat(c,r,extra){
+  var o=Object.assign({color:c,roughness:(r===undefined?0.85:r),metalness:0},extra||{});
+  return new THREE.MeshStandardMaterial(o);
 }
-function splineFind(name){
-  var app=splineAppReady();
-  if(!app||typeof app.findObjectByName!=="function")return null;
-  try{return app.findObjectByName(name)||null;}
-  catch(e){return null;}
+function box(parent,w,h,d,x,y,z,material){
+  var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+  m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; parent.add(m); return m;
 }
-/* Cambio directo de color sobre el objeto. La API real del runtime es la
-   PROPIEDAD color del objeto (set color(h) en @splinetool/runtime 2.0.211):
-   actualiza la capa "color" del material (o la inserta) y pide un
-   re-render. El material en sí NO tiene .color (solo {layers, alpha}):
-   el código anterior hacía obj.material.color.set(hex), que no existe en
-   la escena real y no hacía nada en silencio — por eso el edredón, las
-   sábanas y las cortinas nunca cambiaban de color en el 3D aunque las
-   variables sí llegaban. Se conserva la ruta vieja como respaldo por si
-   un objeto sí expone material.color. */
-function splineSetColor(objName,hex){
-  var o=splineFind(objName);
-  if(!o)return false;
-  try{ o.color=hex; return true; }
-  catch(e){}
-  if(!o.material)return false;
-  var mats=[].concat(o.material), ok=false;
-  mats.forEach(function(m){
-    if(m&&m.color){ try{m.color.set(hex);ok=true;}catch(e2){} }
+function buildRoom(){
+  /* --- Piso de madera: tablones con tonos alternos --- */
+  var floorBase=new THREE.Mesh(new THREE.PlaneGeometry(30,30),mat("#7a5a38",0.9));
+  floorBase.rotation.x=-Math.PI/2; floorBase.position.y=-0.05; floorBase.receiveShadow=true; scene.add(floorBase);
+  var plankCols=["#a67c52","#9a7448","#b08a5e","#8f6b42","#a37a50"];
+  for(var pi=-7;pi<7;pi++){
+    var plank=new THREE.Mesh(new THREE.PlaneGeometry(1,30),mat(plankCols[((pi%5)+5)%5],0.9));
+    plank.rotation.x=-Math.PI/2; plank.position.set(pi+0.5,-0.04,0); plank.receiveShadow=true; scene.add(plank);
+  }
+  /* --- Alfombra con borde dorado --- */
+  var rugOut=new THREE.Mesh(new THREE.PlaneGeometry(5.8,4.8),mat("#c5a15b",1));
+  rugOut.rotation.x=-Math.PI/2; rugOut.position.set(0,0.005,0.4); rugOut.receiveShadow=true; scene.add(rugOut);
+  var rug=new THREE.Mesh(new THREE.PlaneGeometry(5.4,4.4),mat("#d9c9a3",1));
+  rug.rotation.x=-Math.PI/2; rug.position.set(0,0.012,0.4); rug.receiveShadow=true; scene.add(rug);
+  var rugIn=new THREE.Mesh(new THREE.PlaneGeometry(4.6,3.6),mat("#1f3a5f",1));
+  rugIn.rotation.x=-Math.PI/2; rugIn.position.set(0,0.018,0.4); rugIn.receiveShadow=true; scene.add(rugIn);
+  /* --- Pared del fondo con VENTANA grande (x -1.8..1.8, y 1.05..3.35) --- */
+  var wallMat=mat("#ece5d8",0.95);
+  function wallPiece(w,h,x,y){
+    var p=new THREE.Mesh(new THREE.PlaneGeometry(w,h),wallMat);
+    p.position.set(x,y,-2.9); p.receiveShadow=true; scene.add(p); return p;
+  }
+  wallPiece(5.2,4.4,-4.4,2.2);   /* izquierda de la ventana */
+  wallPiece(5.2,4.4,4.4,2.2);    /* derecha de la ventana */
+  wallPiece(3.6,1.05,0,0.525);   /* debajo de la ventana */
+  wallPiece(3.6,1.05,0,3.875);   /* encima de la ventana */
+  /* Vista por la ventana: cielo, sol, nubes y colinas */
+  var sky=new THREE.Mesh(new THREE.PlaneGeometry(3.6,2.3),new THREE.MeshBasicMaterial({color:"#bfe6f7"}));
+  sky.position.set(0,2.2,-2.98); scene.add(sky);
+  var sun=new THREE.Mesh(new THREE.CircleGeometry(0.32,24),new THREE.MeshBasicMaterial({color:"#ffd76a"}));
+  sun.position.set(-1.0,2.85,-2.96); scene.add(sun);
+  var hill=new THREE.Mesh(new THREE.PlaneGeometry(3.6,0.55),new THREE.MeshBasicMaterial({color:"#7ab87a"}));
+  hill.position.set(0,1.32,-2.96); scene.add(hill);
+  [[-0.3,2.5,0.5],[0.9,2.9,0.65]].forEach(function(c){
+    var cloud=new THREE.Mesh(new THREE.SphereGeometry(c[2],12,8),new THREE.MeshBasicMaterial({color:"#ffffff"}));
+    cloud.scale.set(1.6,0.45,0.2); cloud.position.set(c[0],c[1],-2.96); scene.add(cloud);
   });
-  return ok;
+  /* Marco de la ventana + alféizar + barrotes (blanco y dorado) */
+  var frameMat=mat("#ffffff",0.6), goldTrim=mat("#c5a15b",0.35,{metalness:0.7});
+  box(scene,3.8,0.1,0.08,0,3.4,-2.86,frameMat);
+  box(scene,3.8,0.1,0.08,0,1.0,-2.86,frameMat);
+  box(scene,0.1,2.5,0.08,-1.85,2.2,-2.86,frameMat);
+  box(scene,0.1,2.5,0.08,1.85,2.2,-2.86,frameMat);
+  box(scene,0.07,2.3,0.05,0,2.2,-2.9,frameMat);      /* barrote vertical */
+  box(scene,3.6,0.07,0.05,0,2.2,-2.9,frameMat);      /* barrote horizontal */
+  box(scene,4.0,0.09,0.22,0,0.96,-2.8,goldTrim);     /* alféizar */
+  /* --- Paredes laterales --- */
+  var left=new THREE.Mesh(new THREE.PlaneGeometry(12,4.4),mat("#e2dacb",0.95));
+  left.rotation.y=Math.PI/2; left.position.set(-6,2.16,0); left.receiveShadow=true; scene.add(left);
+  var right=new THREE.Mesh(new THREE.PlaneGeometry(12,4.4),mat("#e8e0d2",0.95));
+  right.rotation.y=-Math.PI/2; right.position.set(6,2.16,0); right.receiveShadow=true; scene.add(right);
+  box(scene,14,0.14,0.06,0,0.07,-2.86,mat("#ffffff",0.7));
+  /* --- Cuadro en la pared (a la derecha de la ventana, no encima) --- */
+  box(scene,1.5,1.0,0.05,4.6,2.5,-2.84,mat("#c5a15b",0.35,{metalness:0.7}));
+  var art=new THREE.Mesh(new THREE.PlaneGeometry(1.34,0.84),mat("#1f3a5f",0.9));
+  art.position.set(4.6,2.5,-2.81); scene.add(art);
+  var art2=new THREE.Mesh(new THREE.PlaneGeometry(1.1,0.8),mat("#7a8a5a",0.9));
+  art2.rotation.y=Math.PI/2; art2.position.set(-5.94,2.4,0.6); scene.add(art2);
+  /* --- Mesitas de noche con lámparas, libro y jarrón --- */
+  [-1,1].forEach(function(s){
+    var x=s*2.35;
+    box(scene,0.7,0.62,0.55,x,0.31,-2.35,mat("#6b4a2f",0.7));
+    var lamp=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.07,0.42,16),mat("#c5a15b",0.4,{metalness:0.6}));
+    lamp.position.set(x,0.85,-2.35); lamp.castShadow=true; scene.add(lamp);
+    var shade=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.22,0.24,16),mat("#f5ead0",0.9,{emissive:"#ffdf9e",emissiveIntensity:0.35}));
+    shade.position.set(x,1.12,-2.35); shade.castShadow=true; scene.add(shade);
+    var pl=new THREE.PointLight(0xffdf9e,6,3.5); pl.position.set(x,1.05,-2.2); scene.add(pl);
+  });
+  box(scene,0.34,0.05,0.24,-2.35,0.65,-2.3,mat("#7a1f2b",0.85)); /* libro en mesita izquierda */
+  var vase=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.09,0.22,12),mat("#2a6a8a",0.5));
+  vase.position.set(2.35,0.73,-2.3); vase.castShadow=true; scene.add(vase);
+  /* --- Planta en la esquina derecha --- */
+  var pot=new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.16,0.4,14),mat("#a85a3a",0.85));
+  pot.position.set(5.1,0.2,-2.2); pot.castShadow=true; scene.add(pot);
+  [[0,0.75,0],[0.18,0.6,0.1],[-0.16,0.62,-0.08]].forEach(function(o){
+    var leaf=new THREE.Mesh(new THREE.SphereGeometry(0.26,12,10),mat("#4a7a3a",0.95));
+    leaf.scale.set(1,1.5,1); leaf.position.set(5.1+o[0],o[1],-2.2+o[2]); leaf.castShadow=true; scene.add(leaf);
+  });
 }
-function splineSetVisible(objName,on){
-  var o=splineFind(objName);
-  if(!o)return false;
-  try{o.visible=!!on;return true;}
-  catch(e){return false;}
+/* ---------- TEXTURA DEL EDREDÓN: FOTO GENERADA IGUAL QUE EL EDREDÓN REAL ----------
+   Cambio de dirección de Alberto: SÍ se pueden crear fotos, con la condición de
+   que sean IGUALES que su edredón real. Las texturas son imágenes generadas a
+   partir de sus fotos reales (assets/duvet-tex-*.jpg): solo el edredón extendido
+   en plano cenital, con su acolchado en rombos, sus pliegues y su color exacto,
+   SIN dormitorio ni cama ni fondo. Por eso ya NO se usa el lienzo procedural:
+   el lienzo anterior era el que dejaba el edredón pálido/blanco (base blanca +
+   brillos blancos) y sin relieve visible de cerca.
+   La textura generada se usa como map Y como bumpMap (el relieve del acolchado
+   viene de la propia foto), y el color del material es blanco porque la imagen
+   YA lleva el color exacto (Gris = gris medio #919096 medido; Azul Marino =
+   azul noche #232639). La cara lleva su textura y el reverso la suya (doble
+   vista). Las sábanas NO llevan textura: son color puro (ver buildBed). */
+function duvetPhotoTex(url){
+  if(!url)return null;
+  return loadTex(url);
 }
-/* Índice del color de sábana elegido en la variable SheetColor de la
-   escena: 0-19 las 20 egipcias (EG) y 20-39 las 20 de paleta (PAL), en el
-   orden de la página. Las egipcias tienen foto (img); las de paleta no. */
-function sheetIndex(){
-  var s=st.sheetColor, i;
-  if(s.img){ for(i=0;i<EG.length;i++){ if(EG[i].name===s.name)return i; } }
-  for(i=0;i<PAL.length;i++){ if(PAL[i].name===s.name)return 20+i; }
-  return 0;
-}
-/* Estado del edredón en la escena: volteado (cara/reverso) y quitado.
-   La escena también tiene estas interacciones al tocarla: tocar el edredón
-   le da la vuelta (estado "Flipped", gira 180°) y tocar la solapa lo quita
-   (estado "Removed", escala 0.01). Los botones de la página hacen lo mismo
-   y además cambian el color del material, porque la escena no tiene un
-   objeto "DuvetReverse" separado. */
-var duvetFlipped=false, duvetRemoved=false;
-function flipDuvet(){
-  if(!splineLoaded){lastChange="La escena 3D aún no carga: el edredón se voltea cuando cargue.";showToast();return;}
-  if(st.step<3){lastChange="Llega al Paso 3 para ver el edredón y darle la vuelta.";showToast();return;}
-  if(duvetRemoved){lastChange="Primero pon el edredón para darle la vuelta.";showToast();return;}
-  var dc=DUVET_COLORS[st.duvetColor];
-  duvetFlipped=!duvetFlipped;
-  var duvet=splineFind(SPLINE_OBJECTS.duvet);
-  if(duvet){ try{duvet.rotation.x+=Math.PI;}catch(e){} }
-  splineSetColor(SPLINE_OBJECTS.duvet,duvetFlipped?dc.rev:dc.hex);
-  splineSetColor(SPLINE_OBJECTS.duvetFlap,duvetFlipped?dc.hex:dc.rev);
-  var b=document.getElementById("btnFlip");
-  if(b)b.textContent=duvetFlipped?"⟲ Ver cara del edredón":"⟲ Dar la vuelta al edredón";
-  lastChange=duvetFlipped?("Edredón: reverso ("+(dc.revName||"reverso")+")"):("Edredón: cara ("+dc.n+")");
-  showToast();
-}
-function toggleRemoveDuvet(){
-  if(!splineLoaded){lastChange="La escena 3D aún no carga: el edredón se quita cuando cargue.";showToast();return;}
-  if(st.step<3){lastChange="Llega al Paso 3 para quitar o poner el edredón.";showToast();return;}
-  duvetRemoved=!duvetRemoved;
-  splineSetVisible(SPLINE_OBJECTS.duvet,!duvetRemoved);
-  splineSetVisible(SPLINE_OBJECTS.duvetFlap,!duvetRemoved);
-  var b=document.getElementById("btnRemoveDuvet");
-  if(b)b.textContent=duvetRemoved?"＋ Poner edredón":"－ Quitar edredón";
-  lastChange=duvetRemoved?"Edredón quitado: se ven solo las sábanas":"Edredón puesto de nuevo";
-  showToast();
-}
-/* Al elegir otro color de edredón, el edredón vuelve a su cara, se pone
-   si estaba quitado y se restaura su escala (por si se quitó tocando la
-   solapa en la escena, que usa el estado "Removed" con escala 0.01). */
-function restoreDuvet(){
-  duvetRemoved=false; duvetFlipped=false;
-  var d=splineFind(SPLINE_OBJECTS.duvet);
-  if(d){
-    try{
-      if(d.scale&&d.scale.x<0.1)d.scale.set(1,1,1);
-      if(d.rotation){d.rotation.x=0;d.rotation.z=0;}
-    }catch(e){}
+function duvetGeometry(w,len){
+  var geo=new THREE.PlaneGeometry(w,len,48,30);
+  var pos=geo.attributes.position;
+  for(var i=0;i<pos.count;i++){
+    var x=pos.getX(i), y=pos.getY(i);
+    var nx=x/(w/2), ny=y/(len/2);
+    var z=0.016*Math.sin(x*5)*Math.sin(y*4)+0.008*Math.sin(x*10+y*6);
+    var edge=Math.max(0,(Math.abs(nx)-0.5)/0.5);
+    var edgeY=Math.max(0,(Math.abs(ny)-0.75)/0.25);
+    /* Caída natural lateral: el borde empieza a caer a la mitad del ancho y
+       baja 0.38 m hasta rozar el marco de la cama. Antes caía solo 0.20 m y
+       empezaba al 72% del ancho, así que el edredón quedaba suspendido en el
+       aire a 15 cm del colchón. Ahora APOYA sobre el colchón y cuelga por los
+       costados como una tela real. */
+    z-=0.38*Math.max(edge,edgeY*0.8);
+    pos.setZ(i,z);
   }
-  splineSetVisible(SPLINE_OBJECTS.duvet,true);
-  splineSetVisible(SPLINE_OBJECTS.duvetFlap,true);
-  var b=document.getElementById("btnRemoveDuvet"); if(b)b.textContent="－ Quitar edredón";
-  var f=document.getElementById("btnFlip"); if(f)f.textContent="⟲ Dar la vuelta al edredón";
+  geo.computeVertexNormals();
+  geo.rotateX(-Math.PI/2);
+  return geo;
 }
-/* Aplica el estado actual del configurador a la escena Spline (variables +
-   colores directos + armado paso a paso). Se llama en cada render(), así
-   que cada cambio se ve en vivo en cuanto la escena está cargada. Sin
-   escena, solo actualiza la foto real de respaldo. */
-function applyStateToSpline(){
-  splineFallbackPhoto();
-  if(!splineLoaded)return;
+/* Almohada a escala real de la cama, con ancho/profundidad/alto explícitos.
+   Antes cada almohada medía w/2 de escala (2.6 m en una Queen: las dos se
+   solapaban por completo) y flotaba 9 cm sobre el colchón. Ahora apoya sobre
+   la sábana (base ligeramente hundida en el colchón) y se inclina contra la
+   cabecera. */
+function pillowMesh(x,y,z,pw,pd,ph,material,tilt){
+  var g=new THREE.SphereGeometry(1,24,16);
+  var m=new THREE.Mesh(g,material);
+  m.scale.set(pw/2,ph/2,pd/2);
+  m.position.set(x,y,z); m.rotation.x=tilt||-0.38; m.rotation.z=(Math.random()-0.5)*0.04;
+  m.castShadow=true; m.receiveShadow=true;
+  return m;
+}
+function buildBed(){
+  if(!bedGroup)return;
+  while(bedGroup.children.length){
+    var o=bedGroup.children[0]; bedGroup.remove(o);
+    o.traverse(function(n){
+      if(n.geometry)n.geometry.dispose();
+      /* Las texturas en caché (fotos del edredón/cortinas) NO se eliminan:
+         material.dispose() no toca las texturas, así que es seguro. */
+      if(n.material){(Array.isArray(n.material)?n.material:[n.material]).forEach(function(m){m.dispose();});}
+    });
+  }
+  var w=SIZES[st.size].w, d=BED_D;
+  /* Materiales INDEPENDIENTES por pieza (ZIP): cada pieza crea su propio
+     material; antes colchón y almohadas compartían la misma instancia
+     `white`, así que un cambio en una pieza afectaba a la otra. */
+  var wood=mat("#6b4a2f",0.65), darkWood=mat("#4d3a28",0.7);
+  var gold=mat("#c5a15b",0.35,{metalness:0.65});
+  var sheetCol=st.sheetColor.hex;
+  /* SÁBANA AJUSTADA (fitted sheet): color puro, sin foto. */
+  var sheetMat=new THREE.MeshStandardMaterial({color:sheetCol,roughness:0.9});
+  /* COLCHÓN: superficie principal, material propio con su textura tenue. */
+  var mattressMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:makeMattressTex(),roughness:0.9});
   var dc=DUVET_COLORS[st.duvetColor];
-  /* Variables REALES de la escena (plan Hobby: solo 4). BedSize es texto;
-     SheetColor, DuvetColor y PillowOption son índices numéricos. */
-  splineSetVar(SPLINE_VARIABLES.bedSize,SIZES[st.size].n);
-  splineSetVar(SPLINE_VARIABLES.sheetColor,sheetIndex());
-  splineSetVar(SPLINE_VARIABLES.duvetColor,st.duvetColor);
-  splineSetVar(SPLINE_VARIABLES.pillowOption,st.pillow);
-  /* Colores directos sobre los materiales. La escena no tiene variable de
-     cortinas ni de reverso: las cortinas se colorean aquí, y el edredón
-     muestra cara o reverso según esté volteado (ver flipDuvet). */
-  splineSetColor(SPLINE_OBJECTS.sheet,st.sheetColor.hex);
-  splineSetColor(SPLINE_OBJECTS.duvet,duvetFlipped?dc.rev:dc.hex);
-  splineSetColor(SPLINE_OBJECTS.duvetFlap,duvetFlipped?dc.hex:dc.rev);
+  /* DOBLE VISTA con fotos generadas iguales al edredón real: la cara lleva la
+     textura generada de su color y el reverso la de su color contrario.
+     El color ESTÁ en la imagen (por eso el material es blanco: no se duplica
+     el tinte), así Gris pinta TODO el edredón de gris medio y Azul Marino de
+     azul noche. La misma imagen se usa como bumpMap para que el acolchado en
+     rombos tenga relieve de cerca. Si el edredón está volteado (flip), cara
+     y reverso se intercambian. */
+  var faceUrl=duvetFlipped?dc.revTex:dc.tex, revUrl=duvetFlipped?dc.tex:dc.revTex;
+  var faceHex=duvetFlipped?dc.rev:dc.hex;
+  var faceTex=fitTex(faceUrl,w+0.55,2.3);
+  var revTex=fitTex(revUrl,w+0.55,2.3);
+  var bumpScale=0.025;
+  var duvetMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:faceTex,bumpMap:faceTex,bumpScale:bumpScale,roughness:0.95,side:THREE.FrontSide});
+  var duvetRevMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:revTex,bumpMap:revTex,bumpScale:bumpScale,roughness:0.95,side:THREE.BackSide});
+  duvetMat.userData.faceHex=faceHex; duvetMat.userData.faceTexUrl=faceUrl; duvetMat.userData.faceTex=faceTex;
+  duvetRevMat.userData.faceHex=duvetFlipped?dc.hex:dc.rev; duvetRevMat.userData.faceTexUrl=revUrl; duvetRevMat.userData.faceTex=revTex;
+  [-w*0.43,w*0.43].forEach(function(x){[-1.34,1.34].forEach(function(z){box(bedGroup,0.13,0.46,0.13,x,0.23,z,wood);});});
+  box(bedGroup,w+0.22,0.34,d+0.18,0,0.55,0,wood);
+  box(bedGroup,w+0.3,1.5,0.16,0,1.35,-d/2-0.12,darkWood);
+  for(var hx=-1;hx<=1;hx++){for(var hy=0;hy<2;hy++){
+    box(bedGroup,w/3-0.06,0.62,0.07,hx*(w/3),1.05+hy*0.66,-d/2-0.02,mat("#1f3a5f",0.9));
+    var btn=new THREE.Mesh(new THREE.SphereGeometry(0.03,10,8),gold);
+    btn.position.set(hx*(w/3),1.05+hy*0.66,-d/2+0.03); bedGroup.add(btn);
+  }}
+  box(bedGroup,w,0.38,d,0,0.88,0,mattressMat);
+  /* SÁBANA AJUSTADA AL COLCHÓN: panel superior + 4 faldones que envuelven los
+     costados del colchón (como una sábana puesta de verdad). Antes era una
+     lámina fina apoyada encima, que se veía flotando. El panel superior queda
+     0.005 m sobre el colchón y los faldones bajan 0.30 m por los lados. */
+  box(bedGroup,w+0.06,0.05,d+0.02,0,MAT_TOP+0.005,0,sheetMat);
+  box(bedGroup,0.04,0.30,d, w/2+0.01,MAT_TOP-0.12,0,sheetMat);
+  box(bedGroup,0.04,0.30,d,-w/2-0.01,MAT_TOP-0.12,0,sheetMat);
+  box(bedGroup,w+0.06,0.30,0.04,0,MAT_TOP-0.12, d/2+0.01,sheetMat);
+  box(bedGroup,w+0.06,0.30,0.04,0,MAT_TOP-0.12,-d/2-0.01,sheetMat);
+  /* Protector/cubrecolchón VA DEBAJO de la sábana, no encima del edredón. */
+  if(st.comp===1||st.comp===2){box(bedGroup,w+0.02,0.03,d+0.02,0,MAT_TOP-0.02,0,mat("#cbd9df",0.6));}
+  /* EDREDÓN APOYADO SOBRE EL COLCHÓN: y = MAT_TOP+0.05 (antes +0.16: flotaba
+     15 cm) y más ancho/largo (w+0.55 x 2.3) para que cuelgue por los costados.
+     La caída lateral de duvetGeometry (-0.38) lo baja hasta el marco. */
+  if(!duvetRemoved){
+  var duvetGeo=duvetGeometry(w+0.55,2.3);
+  var duvet=new THREE.Mesh(duvetGeo,duvetMat);
+  duvet.position.set(0,MAT_TOP+0.05,0.30); duvet.castShadow=true; duvet.receiveShadow=true; bedGroup.add(duvet);
+  /* Reverso del edredón (misma geometría, cara trasera): al girar la cama o
+     ver los bordes caídos se ve el color contrario, como un edredón real. */
+  var duvetRev=new THREE.Mesh(duvetGeo,duvetRevMat);
+  /* El reverso asoma 2% por los bordes (ribete del color contrario) y queda 1 cm
+     por debajo: desde el lateral se ve el reverso aunque la cara tape el centro.
+     Antes estaba exactamente debajo de la cara, mismo tamaño, y era invisible. */
+  duvetRev.scale.set(1.02,1,1.02);
+  duvetRev.position.set(0,MAT_TOP+0.04,0.30); duvetRev.castShadow=false; duvetRev.receiveShadow=true; bedGroup.add(duvetRev);
+  var flapMat=new THREE.MeshStandardMaterial({color:"#ffffff",map:fitTex(revUrl,w+0.57,0.72),bumpMap:fitTex(revUrl,w+0.57,0.72),bumpScale:0.03,roughness:0.95,side:THREE.DoubleSide});
+  flapMat.userData.faceHex=duvetFlipped?dc.hex:dc.rev; flapMat.userData.faceTexUrl=revUrl; flapMat.userData.faceTex=fitTex(revUrl,w+0.57,0.72);
+  var flap=new THREE.Mesh(duvetGeometry(w+0.57,0.72),flapMat);
+  flap.position.set(0,MAT_TOP+0.10,1.09); flap.castShadow=true; flap.receiveShadow=true; bedGroup.add(flap);
+  }
+  /* Sin rollo de doblez: el cilindro rígido (foldRoll) se veía como una barra metálica cruzando el edredón. La solapa drapeada sola ya marca el doblez. */
+  if(st.comp===0||st.comp===2){box(bedGroup,w+0.08,0.05,0.46,0,MAT_TOP,1.25,mat("#9b806b",0.85));}
+  /* Banca al pie de la cama */
+  box(bedGroup,w*0.8,0.1,0.45,0,0.52,d/2+0.55,mat("#c5a15b",0.85));
+  [-w*0.36,w*0.36].forEach(function(bx){box(bedGroup,0.08,0.5,0.4,bx,0.26,d/2+0.55,wood);});
+  var pilOpt=st.pillow;
+  var pw=Math.min(w*0.40,1.05); /* ancho de almohada a escala de la cama */
+  var py=MAT_TOP+0.13, pz=-1.22; /* apoyada en la sábana, contra la cabecera */
+  var px=pw/2+0.06;
+  function sleepPillow(x,z,yy){return pillowMesh(x,yy===undefined?py:yy,z,pw,0.55,0.30,mat("#fbfaf6",0.9),-0.38);}
+  if(pilOpt===0){
+    bedGroup.add(sleepPillow(-px,pz));
+    bedGroup.add(sleepPillow(px,pz));
+    bedGroup.add(pillowMesh(-0.28,py+0.10,-0.82,0.5,0.42,0.26,mat("#c5a15b",0.85),-0.25));
+    bedGroup.add(pillowMesh(0.28,py+0.10,-0.82,0.5,0.42,0.26,mat("#1f3a5f",0.85),-0.25));
+  }else if(pilOpt===1){
+    bedGroup.add(sleepPillow(-px,pz));
+    bedGroup.add(sleepPillow(px,pz));
+  }else if(pilOpt===2){
+    bedGroup.add(sleepPillow(-px,-1.18));
+    bedGroup.add(sleepPillow(px,-1.18));
+    bedGroup.add(sleepPillow(-px,-0.70,py+0.08));
+    bedGroup.add(sleepPillow(px,-0.70,py+0.08));
+  }else if(pilOpt===3){
+    bedGroup.add(pillowMesh(-px,py,pz,pw,0.55,0.30,mat("#f2ead8",0.95),-0.38));
+    bedGroup.add(pillowMesh(px,py,pz,pw,0.55,0.30,mat("#f2ead8",0.95),-0.38));
+  }else{
+    bedGroup.add(pillowMesh(0,py,pz,pw,0.55,0.30,mat("#fbfaf6",0.9),-0.38)); /* 1 almohada (Standard o King) */
+  }
+  if(st.comp===3){
+    for(var ci=-1;ci<=1;ci++){
+      bedGroup.add(pillowMesh(ci*0.5,py+0.12,-0.55,0.5,0.42,0.26,mat(ci===0?"#c5a15b":"#b5a28b",0.85),-0.25));
+    }
+  }
+  buildCurtains();
+}
+/* Cortinas Blackout Thermal a los lados de la ventana (Paso 5). Se construyen
+   aparte de la cama para que el Paso 5 siga funcionando también cuando la cama
+   es el modelo GLB (antes las cortinas solo se reconstruían dentro de
+   buildBed(), que ya no corre con el GLB activo). */
+function buildCurtains(){
+  if(!curtainGroup)return;
+  var gold=mat("#c5a15b",0.35,{metalness:0.65});
+  /* La ventana siempre lleva cortinas: el color elegido (17 colores) o,
+     si aún no se elige ninguno, un visillo blanco translúcido. */
+  while(curtainGroup.children.length){curtainGroup.remove(curtainGroup.children[0]);}
+  var cMat;
   if(st.curtain>=0){
-    splineSetColor(SPLINE_OBJECTS.curtainLeft,CUR[st.curtain].hex);
-    splineSetColor(SPLINE_OBJECTS.curtainRight,CUR[st.curtain].hex);
+    var cc=CUR[st.curtain];
+    cMat=new THREE.MeshStandardMaterial({color:cc.img?"#ffffff":cc.hex,roughness:0.95,side:THREE.DoubleSide});
+    if(cc.img)cMat.map=fitTex(cc.img,1.35,3.45);
+  }else{
+    cMat=new THREE.MeshStandardMaterial({color:"#ffffff",roughness:0.9,side:THREE.DoubleSide,transparent:true,opacity:0.55});
   }
-  /* Armado paso a paso: la cama se va armando conforme se avanza.
-     Paso 1: solo la cama. Paso 2: + sábanas. Paso 3: + edredón.
-     Paso 4: + almohadas (y cojines decorativos si la opción los trae).
-     Paso 5: + pie de cama y cortinas (si se eligieron). */
-  var s=st.step, p=st.pillow;
-  splineSetVisible(SPLINE_OBJECTS.bed,true);
-  splineSetVisible(SPLINE_OBJECTS.sheet,s>=2);
-  var duvetOn=s>=3&&!duvetRemoved;
-  splineSetVisible(SPLINE_OBJECTS.duvet,duvetOn);
-  splineSetVisible(SPLINE_OBJECTS.duvetFlap,duvetOn);
-  splineSetVisible(SPLINE_OBJECTS.pillowLeft,s>=4);
-  splineSetVisible(SPLINE_OBJECTS.pillowRight,s>=4&&(p===0||p===1||p===2||p===3));
-  splineSetVisible(SPLINE_OBJECTS.pillowLeft2,s>=4&&p===2);
-  splineSetVisible(SPLINE_OBJECTS.pillowRight2,s>=4&&p===2);
-  splineSetVisible(SPLINE_OBJECTS.cushionLeft,(s>=4&&p===0)||(s>=5&&st.comp===3));
-  splineSetVisible(SPLINE_OBJECTS.cushionRight,(s>=4&&p===0)||(s>=5&&st.comp===3));
-  splineSetVisible(SPLINE_OBJECTS.cushionCenter,s>=5&&st.comp===3);
-  splineSetVisible(SPLINE_OBJECTS.runner,s>=5&&(st.comp===0||st.comp===2));
-  splineSetVisible(SPLINE_OBJECTS.curtainLeft,s>=5&&st.curtain>=0);
-  splineSetVisible(SPLINE_OBJECTS.curtainRight,s>=5&&st.curtain>=0);
-}
-/* Monta el visor Spline en el escenario. Si no hay URL, muestra la foto
-   real de la habitación. La foto de respaldo SOLO aparece ante un fallo
-   real: error de carga del visor, pérdida del contexto WebGL, que el visor
-   nunca arranque, o que la escena no complete su carga en 60 s. Mientras
-   la escena todavía puede estar cargando, el visor queda visible (sin la
-   foto encima) y solo se muestra el indicador "Cargando escena 3D…". */
-var splineLoadTimer=null, splineStartTimer=null;
-var SPLINE_LOAD_TIMEOUT_MS=60000; /* la escena publicada tarda 12-20 s en cargar: 12 s la cortaba */
-var SPLINE_START_TIMEOUT_MS=30000; /* si el visor nunca empieza a cargar (módulo bloqueado), es un fallo real, no lentitud */
-function clearSplineTimers(){
-  if(splineLoadTimer){clearTimeout(splineLoadTimer);splineLoadTimer=null;}
-  if(splineStartTimer){clearTimeout(splineStartTimer);splineStartTimer=null;}
-}
-/* Ajusta el visor al tamaño real del escenario en píxeles (la API propia
-   del visor: width/height numéricos). Al fijarlos, el visor pone el
-   contenedor en px exactos, borra sus estilos :host 100% y el canvas
-   llena el escenario con el buffer redimensionado (verificado en móvil:
-   352×844, buffer 1056×2532, sin la tirita de 176 px). El
-   ResizeObserver lo mantiene al girar el teléfono o al entrar a
-   pantalla completa. Se llama al crear el visor y en cada cambio. */
-var splineFitRO=null;
-function fitSplineViewer(){
-  if(!splineViewer||!stage)return;
-  try{
-    var r=stage.getBoundingClientRect();
-    var w=Math.max(1,Math.round(r.width)), h=Math.max(1,Math.round(r.height));
-    if(splineViewer.width!==w)splineViewer.width=w;
-    if(splineViewer.height!==h)splineViewer.height=h;
-  }catch(e){}
-}
-/* Red de seguridad para fallos que el visor NO reporta: su load() es
-   `this._spline.load(url).then(onLoaded)` SIN .catch, así que si la carga
-   de la escena rechaza (red, parseo, WASM) o si crear el contexto WebGL
-   lanza una excepción, nada dispara load-complete ni el evento "error":
-   la página se quedaría en "Cargando…" hasta el temporizador de 60 s.
-   Estos dos escuchas muestran el respaldo de inmediato con el motivo
-   real. Solo reaccionan a errores de Spline/WebGL, no a otros errores
-   de la página. */
-function installSplineErrorTraps(){
-  if(window.__splineErrTraps)return;
-  window.__splineErrTraps=true;
-  window.addEventListener("unhandledrejection",function(ev){
-    if(splineLoaded||splineFailed)return;
-    var r=ev&&ev.reason?ev.reason:null;
-    var txt=r?((r.message||"")+" "+(r.stack||"")):"";
-    if(/spline|webgl/i.test(txt)){
-      splineFailed=true; clearSplineTimers();
-      showSplineFallback("La escena 3D no cargó: hubo un error al cargar la escena (red o archivo). Revisa tu conexión y recarga la página.");
-    }
+  [-1,1].forEach(function(s){
+    var cg=new THREE.PlaneGeometry(1.35,3.45,24,1);
+    var p=cg.attributes.position;
+    for(var i=0;i<p.count;i++){p.setZ(i,0.13*Math.sin(p.getY(i)*2.6+s*1.2));}
+    cg.computeVertexNormals();
+    var panel=new THREE.Mesh(cg,cMat);
+    panel.position.set(s*2.45,1.75,-2.72); panel.castShadow=true; panel.receiveShadow=true;
+    curtainGroup.add(panel);
   });
-  window.addEventListener("error",function(ev){
-    if(splineLoaded||splineFailed)return;
-    var txt=((ev&&(ev.message||""))+" "+((ev&&ev.filename)||""));
-    if(/spline|webgl/i.test(txt)){
-      splineFailed=true; clearSplineTimers();
-      showSplineFallback("La escena 3D no cargó: el navegador no pudo iniciar el 3D (WebGL). Recarga la página.");
-    }
-  },true);
+  /* Barra de la cortina: antes medía 6.0 m y cruzaba TODA la pared; en la
+     vista 3/4 se proyectaba como una barra metálica en diagonal cruzando el
+     edredón. Ahora solo cubre la ventana (4.0 m, de -2.0 a 2.0), con las
+     borlas en sus extremos, y ya no cruza la cama. */
+  var rod=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.035,4.0,12),gold);
+  rod.rotation.z=Math.PI/2; rod.position.set(0,3.55,-2.72); rod.castShadow=true; curtainGroup.add(rod);
+  [-1,1].forEach(function(s){
+    var fin=new THREE.Mesh(new THREE.SphereGeometry(0.07,10,8),gold);
+    fin.position.set(s*2.0,3.55,-2.72); curtainGroup.add(fin);
+  });
 }
-/* El temporizador de 60 s arranca SOLO cuando la carga de la escena ya
-   empezó de verdad (evento load-start del visor), nunca durante el parse
-   del body antes de que corra el script del módulo del visor. */
-function startSplineLoadTimer(){
-  clearSplineTimers();
-  splineLoadTimer=setTimeout(function(){
-    splineLoadTimer=null;
-    if(!splineLoaded&&!splineFailed){
-      splineFailed=true;
-      showSplineFallback("La escena 3D tardó demasiado en cargar (más de 60 s). Revisa tu conexión y recarga la página. El configurador de abajo sigue funcionando.");
-    }
-  },SPLINE_LOAD_TIMEOUT_MS);
+/* ---------- Modelo GLB real (Blender) ----------
+   assets/bed.glb: cama Queen construida en Blender con piezas nombradas
+   (bed_frame, headboard, mattress, fitted_sheet, duvet, duvet_reverse,
+   duvet_flap, pillow_left/right, pillow_left2/right2, cushion_left/right/
+   center, runner, bench) y materiales independientes por pieza. Cuando el
+   GLB carga, sustituye a la cama procedural (bedGroup se oculta) y TODOS
+   los cambios del configurador se aplican a sus materiales en vivo. Si el
+   GLB no carga (sin GLTFLoader, archivo ausente o error de red), la página
+   sigue con la cama procedural sin romperse. */
+var GLB_URL="assets/bed.glb";
+var GLB_BASE_W=2.6; /* ancho Queen del modelo, igual que SIZES Queen w */
+function glbMesh(name){return (glbParts&&glbParts[name])||null;}
+function setGlbVis(name,on){var m=glbMesh(name); if(m)m.visible=!!on;}
+function setDuvetMat(mesh,tex,bumpScale){
+  if(!mesh)return;
+  if(!mesh.userData)mesh.userData={}; /* THREE.Mesh siempre lo trae; por si acaso. */
+  if(!mesh.userData.stdMat){
+    mesh.userData.stdMat=new THREE.MeshStandardMaterial({color:"#ffffff",roughness:0.95});
+  }
+  if(mesh.material!==mesh.userData.stdMat)mesh.material=mesh.userData.stdMat;
+  var m=mesh.material;
+  m.map=tex; m.bumpMap=tex; m.bumpScale=bumpScale;
+  m.roughness=0.95;
+  m.side=mesh.name==="duvet_reverse"?THREE.BackSide:(mesh.name==="duvet_flap"?THREE.DoubleSide:THREE.FrontSide);
+  m.needsUpdate=true;
 }
-function initSpline(){
-  if(!SPLINE_SCENE_URL){
-    showSplineFallback("La escena 3D de Spline aún no está conectada: falta pegar la URL .splinecode de la habitación en la constante SPLINE_SCENE_URL de esta página. Mientras tanto ves la foto real de la habitación con tu edredón. El configurador de abajo funciona igual.");
+function applyStateToGLB(){
+  if(!glbReady||!glbGroup)return;
+  var w=SIZES[st.size].w;
+  /* El modelo es Queen (2.6 m); los demás tamaños escalan el ancho. */
+  glbGroup.scale.set(w/GLB_BASE_W,1,1);
+  /* Sábanas: color puro sobre la sábana ajustada del modelo. */
+  var sh=glbMesh("fitted_sheet");
+  if(sh&&sh.material){sh.material.color=new THREE.Color(st.sheetColor.hex); sh.material.needsUpdate=true;}
+  /* Edredón doble vista con las fotos generadas iguales al real. Si está
+     volteado (flip), cara y reverso se intercambian; si está quitado, se
+     ocultan las 3 piezas y se ven solo las sábanas. */
+  var dc=DUVET_COLORS[st.duvetColor];
+  var faceUrl=duvetFlipped?dc.revTex:dc.tex, revUrl=duvetFlipped?dc.tex:dc.revTex;
+  var bumpScale=0.025;
+  setDuvetMat(glbMesh("duvet"),fitTex(faceUrl,w+0.55,2.3),bumpScale);
+  setDuvetMat(glbMesh("duvet_reverse"),fitTex(revUrl,w+0.55,2.3),bumpScale);
+  setDuvetMat(glbMesh("duvet_flap"),fitTex(revUrl,w+0.57,0.72),0.03);
+  setGlbVis("duvet",!duvetRemoved);
+  setGlbVis("duvet_reverse",!duvetRemoved);
+  setGlbVis("duvet_flap",!duvetRemoved);
+  /* Almohadas según la opción elegida. */
+  var p=st.pillow;
+  var show2=(p===0||p===1||p===2||p===3);
+  setGlbVis("pillow_left",show2||p===4||p===5);
+  setGlbVis("pillow_right",show2);
+  setGlbVis("pillow_left2",p===2);
+  setGlbVis("pillow_right2",p===2);
+  var pilCol=(p===3)?"#f2ead8":"#fbfaf6"; /* Pluma Sintética: tono crema */
+  ["pillow_left","pillow_right","pillow_left2","pillow_right2"].forEach(function(n){
+    var m=glbMesh(n); if(m&&m.material){m.material.color=new THREE.Color(pilCol); m.material.needsUpdate=true;}
+  });
+  /* Cojines decorativos: opción 0 (2 decorativas) y complemento 3 (set de 3). */
+  setGlbVis("cushion_left",p===0||st.comp===3);
+  setGlbVis("cushion_right",p===0||st.comp===3);
+  setGlbVis("cushion_center",st.comp===3);
+  /* Runner al pie: cubrecolchón (comp 0) o Premium (comp 2). */
+  setGlbVis("runner",st.comp===0||st.comp===2);
+}
+function loadBedGLB(){
+  if(!window.THREE||!THREE.GLTFLoader){console.warn("Viste tu cama: sin GLTFLoader, se usa la cama procedural.");return;}
+  var loader=new THREE.GLTFLoader();
+  loader.load(GLB_URL,function(gltf){
+    try{
+      glbGroup=gltf.scene;
+      glbParts={};
+      glbGroup.traverse(function(n){
+        if(n.isMesh){n.castShadow=true; n.receiveShadow=true; if(n.name)glbParts[n.name]=n;}
+      });
+      var d=glbMesh("duvet"); if(d&&d.material)d.material.side=THREE.FrontSide;
+      var dr=glbMesh("duvet_reverse"); if(dr&&dr.material)dr.material.side=THREE.BackSide;
+      scene.add(glbGroup);
+      glbReady=true;
+      bedGroup.visible=false;
+      applyStateToGLB();
+      frameObject();
+      redraw3D();
+      console.log("Viste tu cama: modelo GLB cargado (bed.glb).");
+    }catch(e){console.warn("Viste tu cama: error al activar el GLB, se queda la cama procedural.",e);}
+  },undefined,function(e){
+    console.warn("Viste tu cama: no se pudo cargar bed.glb, se usa la cama procedural.",e&&e.message);
+  });
+}
+var lastAspect=0;
+var camAnim=null;
+/* ---------- Encuadre por Box3 REAL del conjunto cama (ZIP: frameObject) ------
+   Antes se encuadraba la HABITACIÓN (7.2 x 4.6 m): la cama quedaba al 20-35%
+   del visor. Ahora se encuadra el Box3 real de bedGroup (estructura, cabecera,
+   colchón, edredón, almohadas, banca): la cama ocupa ~80-90% de la dimensión
+   limitante del visor, centrada, sin recortes, en iPhone vertical/horizontal,
+   tablet y escritorio. FOV más cerrado (40-48° en vez de 55°) para que las
+   proporciones no se deformen al alejar/acercar la cámara. En el Paso 5
+   (cortinas) se encuadra la habitación completa para ver la ventana. */
+var ROOM_TARGET={x:0,y:1.3,z:-0.2}, ROOM_W=7.2, ROOM_H=4.6;
+var BED_FIT_MARGIN=1.08; /* 1/0.93: la cama llena ~93% de la dimensión
+   limitante del visor (ZIP: 80-90% del área visible; el Box3 incluye banca y
+   cabecera, así que la cama vestida queda en ~83-88% en alto y ancho). Antes
+   1.15 (87% del Box3) y en vivo la cama se veía al ~79% de ancho y ~76% de
+   alto. Con 1.08 no hay recortes: la distancia se calcula para que el Box3
+   quepa justo. */
+function bedBounds(){
+  /* El encuadre mide la cama ACTIVA: el modelo GLB cuando cargó, o la cama
+     procedural si el GLB no está (respaldo). */
+  var g=(glbReady&&glbGroup)?glbGroup:bedGroup;
+  if(!g)return null;
+  g.updateWorldMatrix(true,true);
+  var b=new THREE.Box3().setFromObject(g);
+  if(b.isEmpty())return null;
+  return b;
+}
+function frameFov(){
+  var a=stage.clientWidth/Math.max(1,stage.clientHeight);
+  return a<0.7?48:a<1.2?44:40;
+}
+/* Distancia de encuadre desde la PROYECCIÓN REAL del Box3 de la cama
+   (ZIP starter frameObject): se proyectan las 8 esquinas del Box3 sobre los
+   ejes derecha/arriba de la cámara para la dirección de vista (az, el) y se
+   toma la distancia que hace caber la mayor de las dos extensiones. El
+   término de profundidad analítico anterior ((size.z/2)/t*0.7) sobreestimaba
+   la distancia en escritorio y dejaba la cama al 61% de la altura del visor;
+   con la proyección real la cama llena ~87% de la dimensión limitante en
+   iPhone vertical y en escritorio, sin deformarse al hacer zoom (la cámara
+   solo se aleja/acercar, las proporciones del modelo son fijas). */
+function fitDistanceFor(size,az,el){
+  if(az===undefined)az=0.61; if(el===undefined)el=0.38; /* vista 3/4 por defecto */
+  var fov=THREE.MathUtils.degToRad(camera.fov);
+  var t=Math.tan(fov/2);
+  var aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
+  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
+  var rx=dz, rz=-dx, rl=Math.hypot(rx,rz)||1; rx/=rl; rz/=rl; /* eje derecha */
+  var ux=rz*dy, uy=rz*(-dx)-rx*(-dz), uz=rx*(-dy); /* eje arriba = right × forward */
+  var hx=size.x/2, hy=size.y/2, hz=size.z/2;
+  var maxH=hx*Math.abs(rx)+hz*Math.abs(rz);
+  var maxV=hx*Math.abs(ux)+hy*Math.abs(uy)+hz*Math.abs(uz);
+  var dV=maxV/t, dH=maxH/(t*aspect);
+  return Math.max(dV,dH)*BED_FIT_MARGIN;
+}
+/* Transición suave de cámara (450 ms, ease in-out). Se cancela al tocar. */
+function flyTo(pos,tgt,instant){
+  if(!camera||!controls)return;
+  if(instant){
+    camera.position.copy(pos); controls.target.copy(tgt);
+    camera.updateProjectionMatrix(); controls.update(); return;
+  }
+  camAnim={p0:camera.position.clone(),p1:pos.clone(),t0:controls.target.clone(),t1:tgt.clone(),start:performance.now(),dur:450,wasAuto:controls.autoRotate};
+  controls.autoRotate=false; controls.enabled=false;
+}
+function frameObject(instant){
+  if(!camera||!controls||!stage)return;
+  var b=bedBounds(); if(!b)return;
+  var center=b.getCenter(new THREE.Vector3());
+  var size=b.getSize(new THREE.Vector3());
+  camera.aspect=stage.clientWidth/Math.max(1,stage.clientHeight);
+  camera.fov=frameFov();
+  var az=0.61, el=0.38;
+  var dist=fitDistanceFor(size,az,el);
+  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
+  flyTo(new THREE.Vector3(center.x+dx*dist,center.y+dy*dist,center.z+dz*dist),center,instant);
+  var maxDim=Math.max(size.x,size.y,size.z);
+  controls.minDistance=maxDim*0.5;
+  controls.maxDistance=maxDim*2.8;
+  camera.near=Math.max(0.01,maxDim/1000); camera.far=maxDim*100;
+  camera.updateProjectionMatrix();
+  lastAspect=camera.aspect;
+}
+function fitDistanceRoom(){
+  var w=stage.clientWidth,h=stage.clientHeight;
+  if(!w||!h)return 10;
+  var aspect=w/h;
+  var vTan=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2);
+  var hTan=vTan*aspect;
+  return Math.max((ROOM_W/2)/Math.max(hTan,0.05),(ROOM_H/2)/vTan)*1.15;
+}
+function frameRoom(instant){
+  if(!camera||!controls||!stage)return;
+  var w=stage.clientWidth,h=stage.clientHeight;
+  if(!w||!h)return;
+  camera.aspect=w/h;
+  camera.fov=frameFov();
+  var dist=fitDistanceRoom();
+  var az=0.61, el=0.38;
+  var dx=Math.sin(az)*Math.cos(el), dy=Math.sin(el), dz=Math.cos(az)*Math.cos(el);
+  flyTo(new THREE.Vector3(ROOM_TARGET.x+dx*dist,ROOM_TARGET.y+dy*dist,ROOM_TARGET.z+dz*dist),new THREE.Vector3(ROOM_TARGET.x,ROOM_TARGET.y,ROOM_TARGET.z),instant);
+  controls.minDistance=4.2; controls.maxDistance=24;
+  camera.updateProjectionMatrix();
+  lastAspect=camera.aspect;
+}
+function frameForStep(){
+  if(st.step===5)frameRoom(); else frameObject();
+}
+function resize3D(){
+  if(!renderer||!camera||!stage)return;
+  var w=stage.clientWidth,h=stage.clientHeight;
+  if(!w||!h)return;
+  var aspect=w/h;
+  camera.aspect=aspect; camera.updateProjectionMatrix();
+  renderer.setSize(w,h,false);
+  if(Math.abs(aspect-lastAspect)>0.08) frameForStep();
+}
+function redraw3D(){
+  /* Tras reconstruir la cama (cambio de color/tipo/tamaño) el buffer del
+     canvas puede quedar desfasado y verse solo una franja: se fuerza el
+     resize + un render inmediato. */
+  if(!renderer||!scene||!camera)return;
+  resize3D();
+  renderer.render(scene,camera);
+}
+function init3D(){
+  var isMobile=window.innerWidth<768;
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color("#edf1f4");
+  camera=new THREE.PerspectiveCamera(45,stage.clientWidth/Math.max(1,stage.clientHeight),0.1,100);
+  renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,isMobile?1.5:2));
+  renderer.setSize(stage.clientWidth,stage.clientHeight,false);
+  renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.outputEncoding=THREE.sRGBEncoding;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.85; /* Gris lavado: con 0.95 + luces 2.0/1.15 el gris medio (#6c6c71, lineal 0.155) salia ~RGB 120 de media y ~214 en los centros claros de los rombos (casi blanco). Con 0.85 y luces 1.8/1.05/0.65 el gris medio renderiza ~RGB 106 (igual que el archivo), Azul Marino sigue ~RGB 29 y las paredes blancas ~RGB 218. Ver calculo en buildBed/init3D. */
+  stage.appendChild(renderer.domElement);
+  renderer.domElement.addEventListener("webglcontextlost",function(e){
+    e.preventDefault();
+    showFallback("El navegador perdió el contexto WebGL (memoria del teléfono). Recarga la página.");
+  });
+  controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true; controls.dampingFactor=0.07;
+  controls.maxPolarAngle=Math.PI/2.04; controls.minDistance=4.2; controls.maxDistance=24;
+  controls.autoRotateSpeed=0.8; controls.update();
+  /* Táctil (ZIP): un dedo gira, dos dedos zoom/desplazar, y el deslizamiento
+     VERTICAL desplaza la página (antes touch-action:none bloqueaba el scroll
+     fuera del visor en el celular). */
+  renderer.domElement.style.touchAction="pan-y";
+  controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
+  /* El encuadre inicial va DESPUÉS de construir la cama: frameObject mide el
+     Box3 real de bedGroup, y antes de buildBed() el grupo está vacío. */
+  /* Giro automatico de INTRO: la camara se mueve sola al cargar para que
+     se VEA que es 3D en vivo (una foto no se mueve). Se apaga con el
+     primer arrastre del usuario, con el boton, o a los 20 s. */
+  autoRot=true; introRot=true; controls.autoRotate=true; updateAutoBtn();
+  renderer.domElement.addEventListener("pointerdown",function(){
+    if(camAnim){camAnim=null;controls.enabled=true;controls.autoRotate=autoRot;}
+    if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
+  });
+  setTimeout(function(){
+    if(introRot){introRot=false; autoRot=false; controls.autoRotate=false; updateAutoBtn();}
+  },20000);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8a94a3,1.05));
+  var key=new THREE.DirectionalLight(0xfff2df,1.8);
+  key.position.set(-4,8,5); key.castShadow=true;
+  key.shadow.mapSize.set(isMobile?1024:2048,isMobile?1024:2048);
+  key.shadow.camera.left=-6; key.shadow.camera.right=6; key.shadow.camera.top=6; key.shadow.camera.bottom=-6;
+  scene.add(key);
+  var fill=new THREE.DirectionalLight(0xdfe8ff,0.65); fill.position.set(5,4,-5); scene.add(fill);
+  bedGroup=new THREE.Group(); scene.add(bedGroup);
+  curtainGroup=new THREE.Group(); scene.add(curtainGroup);
+  buildRoom(); buildBed();
+  loadBedGLB(); /* Modelo GLB real (Blender); si falla, queda la procedural. */
+  frameObject(true); /* encuadre inicial: Box3 real de la cama, sin animación */
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){resize3D();}).observe(stage);
+  }
+  window.addEventListener("resize",resize3D);
+  document.addEventListener("fullscreenchange",function(){setTimeout(resize3D,120);});
+  window.addEventListener("orientationchange",function(){setTimeout(resize3D,350);});
+  setTimeout(resize3D,300);
+  (function animate(){
+    requestAnimationFrame(animate);
+    if(camAnim){
+      var k=Math.min(1,(performance.now()-camAnim.start)/camAnim.dur);
+      var e=k<0.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+      camera.position.lerpVectors(camAnim.p0,camAnim.p1,e);
+      controls.target.lerpVectors(camAnim.t0,camAnim.t1,e);
+      if(k>=1){var wA=camAnim.wasAuto; camAnim=null; controls.enabled=true; if(wA&&autoRot)controls.autoRotate=true;}
+    }
+    controls.update(); renderer.render(scene,camera);
+    if(!window.__vtcReady){
+      window.__vtcReady=true;
+      var l=document.getElementById("glLoading"); if(l)l.style.display="none";
+    }
+  })();
+}
+function start3D(){
+  if(!webglOK()){
+    showFallback("Este navegador no tiene WebGL activado. Activa WebGL en los ajustes del navegador y recarga.");
     return;
   }
-  /* Pre-flight WebGL: si el navegador bloquea WebGL (p. ej. Brave con
-     Shields estricto en iPhone), el visor esperaría 60 s en vano. Un
-     canvas de prueba lo detecta al instante y muestra el mensaje honesto
-     con la foto real, sin esperar. Si WebGL sí funciona, esto no cambia
-     nada: la carga sigue su curso normal. */
-  var _webglOK=false;
-  try{
-    var _tc=document.createElement("canvas");
-    var _gl=_tc.getContext("webgl2")||_tc.getContext("webgl");
-    _webglOK=!!_gl;
-    /* Suelta el contexto de prueba de inmediato: en iPhone los contextos
-       WebGL son escasos y este canvas no se vuelve a usar. Sin esto, el
-       visor crearía su contexto con uno ya ocupado. */
-    if(_gl){ try{var _ext=_gl.getExtension("WEBGL_lose_context"); if(_ext)_ext.loseContext();}catch(e){} }
-  }catch(e){_webglOK=false;}
-  if(!_webglOK){
-    splineFailed=true;
-    showSplineFallback("Tu navegador bloquea el 3D (WebGL) en esta página — por ejemplo, Brave con los escudos activados. Apaga los escudos para esta página y recarga. Mientras tanto ves la foto real de la habitación; el configurador de abajo funciona igual.");
-    return;
-  }
-  installSplineErrorTraps();
-  /* Si el módulo del visor nunca se ejecuta (CDN bloqueado), load-start
-     no se dispara jamás: a los 30 s se muestra la foto con un mensaje de
-     error real ("no cargó"), no de lentitud. Si load-start sí se dispara,
-     este temporizador se cancela y manda el de 60 s. Arranca aquí, antes
-     de esperar a que el visor se defina, para que también cubra un
-     módulo que nunca llega. */
-  splineStartTimer=setTimeout(function(){
-    splineStartTimer=null;
-    if(!splineLoaded&&!splineFailed&&!splineLoadTimer){
-      splineFailed=true;
-      showSplineFallback("La escena 3D no cargó: no se pudo iniciar el visor de Spline (revisa tu conexión). El configurador de abajo sigue funcionando.");
-    }
-  },SPLINE_START_TIMEOUT_MS);
-  /* El script del visor es type="module" (diferido): cuando este script
-     clásico corre al final del body, el custom element todavía puede no
-     estar definido. Antes se creaba el elemento sin definir y se
-     dependía de que el navegador lo "actualizara" al cargar el módulo;
-     ahora se espera a customElements.whenDefined para crear el elemento
-     ya con su clase, sus atributos y sus eventos en orden. Si el
-     navegador no tiene whenDefined, se crea directo como antes. */
-  function createViewer(){
+  ensureThree().then(function(ok){
+    if(!ok){showFallback("No se pudo cargar Three.js local (assets/three.min.js). Revisa tu conexión a internet y recarga.");return;}
     try{
-      var el=document.createElement("spline-viewer");
-  el.id="splineViewer";
-  el.setAttribute("url",SPLINE_SCENE_URL);
-  el.setAttribute("events-target","global");
-  el.setAttribute("loading-anim-type","spinner-small-dark");
-  /* loading="eager": el visor con loading="auto" (por defecto) retrasa la
-     carga si el elemento no está en el viewport al inicio; en móvil el
-     escenario está arriba pero el lazy-load lo dejaba en espera.
-     renderer="webgl": explícito para el build solo-WebGL (el build
-     ignora cualquier otro valor y avisa en consola si no coincide). */
-  el.setAttribute("loading","eager");
-  el.setAttribute("renderer","webgl");
-  el.addEventListener("load-start",function(){
-    var l=document.getElementById("splineLoading"); if(l)l.style.display="flex";
-    startSplineLoadTimer();
-  });
-  el.addEventListener("load-complete",function(){
-    splineLoaded=true; splineFailed=false;
-    clearSplineTimers();
-    fitSplineViewer();
-    /* Accesor real: el._spline (la Application del runtime). el.app NO
-       existe en el visor 2.0.211 (verificado también en 2.0.204) y siempre
-       era undefined, así que antes splineApp quedaba en null y los
-       setVariable no llegaban a la escena. */
-    try{splineApp=(el._spline&&typeof el._spline.setVariable==="function")?el._spline:null;}catch(e){splineApp=null;}
-    var l=document.getElementById("splineLoading"); if(l)l.style.display="none";
-    var f=document.getElementById("splineFallback"); if(f)f.style.display="none";
-    applyStateToSpline();
-  });
-  el.addEventListener("context-loss",function(){
-    splineFailed=true;
-    clearSplineTimers();
-    showSplineFallback("La escena 3D no cargó: el navegador perdió el contexto WebGL (memoria del teléfono). Recarga la página.");
-  });
-  el.addEventListener("error",function(){
-    if(splineLoaded)return;
-    splineFailed=true;
-    clearSplineTimers();
-    showSplineFallback("La escena 3D no cargó: hubo un error al cargar el archivo de la escena. Revisa tu conexión y recarga la página.");
-  });
-    splineViewer=el;
-    stage.appendChild(el);
-    /* El visor ya está definido y en el escenario: se ajusta a su tamaño
-       en píxeles y se vigila cada cambio de tamaño del escenario (giro
-       del teléfono, pantalla completa). */
-    fitSplineViewer();
-    try{
-      if(splineFitRO)splineFitRO.disconnect();
-      splineFitRO=new ResizeObserver(function(){fitSplineViewer();});
-      splineFitRO.observe(stage);
-    }catch(e){}
+      init3D();
     }catch(e){
-      splineFailed=true; clearSplineTimers();
-      showSplineFallback("La escena 3D no cargó: no se pudo iniciar el visor de Spline. Revisa tu conexión y recarga la página.");
+      console.error("Viste tu cama 3D:",e);
+      showFallback("La escena 3D no se pudo iniciar en este dispositivo: "+(e&&e.message?e.message:"error desconocido"));
     }
-  }
-  if(window.customElements&&customElements.whenDefined){
-    try{ customElements.whenDefined("spline-viewer").then(createViewer); }
-    catch(e){ createViewer(); }
-  }else{ createViewer(); }
+  });
+  setTimeout(function(){
+    if(!window.__vtcReady){
+      showFallback("La escena 3D tardó demasiado en cargar (conexión lenta o CDN bloqueado). El configurador de abajo sigue funcionando.");
+    }
+  },8000);
 }
 
-/* ---------- Controles de vista (Spline) ----------
-   El visor Spline ya gira con arrastre y acerca con rueda/pellizco de forma
-   nativa. La escena NO tiene variables CameraView ni AutoRotate (plan
-   Hobby, solo 4 variables), así que las vistas y el giro automático se
-   hacen con la API del runtime: girar el grupo "Bed" y app.setZoom().
-   La cámara de la escena es fija: "Vista superior" aleja al máximo para
-   ver toda la habitación desde arriba, no mueve la cámara de verdad. */
-var autoRot=false, autoTimer=null;
+/* ---------- Controles de vista ---------- */
+var autoRot=false, introRot=false;
 function updateAutoBtn(){
   var b=document.getElementById("btnAuto"); if(!b)return;
   b.textContent="Giro automático: "+(autoRot?"encendido":"apagado");
 }
+/* Pantalla completa robusta: la versión anterior solo llamaba a
+   el.requestFullscreen() sin promesa ni respaldo, y en el navegador en vivo
+   no activaba nada (2 intentos). Ahora: webkit fallback, manejo de la
+   promesa, actualización de la etiqueta, resize del 3D al entrar/salir, y
+   modo expandido por CSS (.fs-fallback) cuando el navegador no ofrece la
+   API de pantalla completa (p. ej. Safari en iPhone). */
 function fsElement(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
 function updateFsBtn(){
   var el=document.getElementById("stage3d");
@@ -774,74 +1004,65 @@ function toggleFS(){
     if(document.exitFullscreen)document.exitFullscreen();
     else if(document.webkitExitFullscreen)document.webkitExitFullscreen();
     el.classList.remove("fs-fallback");
-    updateFsBtn(); return;
+    updateFsBtn(); setTimeout(resize3D,120); return;
   }
-  if(el.classList.contains("fs-fallback")){el.classList.remove("fs-fallback");updateFsBtn();return;}
+  if(el.classList.contains("fs-fallback")){el.classList.remove("fs-fallback");updateFsBtn();setTimeout(resize3D,120);return;}
   var req=el.requestFullscreen||el.webkitRequestFullscreen;
   if(req){
     var p=null;
     try{p=req.call(el);}catch(e){p=null;}
-    if(p&&p.catch){p.catch(function(){el.classList.add("fs-fallback");updateFsBtn();});}
+    if(p&&p.catch){p.catch(function(){el.classList.add("fs-fallback");updateFsBtn();setTimeout(resize3D,120);});}
+    /* Si a los 600 ms no entró en pantalla completa (p. ej. Safari iOS lo
+       ignora en silencio), usar el modo expandido por CSS. */
     setTimeout(function(){
-      if(!fsElement()&&!el.classList.contains("fs-fallback")){el.classList.add("fs-fallback");updateFsBtn();}
+      if(!fsElement()&&!el.classList.contains("fs-fallback")){el.classList.add("fs-fallback");updateFsBtn();setTimeout(resize3D,120);}
     },600);
   }else{
-    el.classList.add("fs-fallback"); updateFsBtn();
+    el.classList.add("fs-fallback"); updateFsBtn(); setTimeout(resize3D,120);
   }
 }
-document.addEventListener("fullscreenchange",function(){updateFsBtn();});
-document.addEventListener("webkitfullscreenchange",function(){updateFsBtn();});
+document.addEventListener("fullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
+document.addEventListener("webkitfullscreenchange",function(){updateFsBtn();if(typeof resize3D==="function")setTimeout(resize3D,120);});
 function setView(v,btn){
+  if(!camera)return;
   document.querySelectorAll(".viewbar button").forEach(function(b){b.classList.remove("on");});
   if(btn)btn.classList.add("on");
-  /* Sin variable CameraView en la escena: la vista se aproxima girando el
-     grupo "Bed" y ajustando el zoom. Frontal: cama de frente. 3/4: cama
-     girada 0.6 rad. Superior: cama de frente y zoom al mínimo para ver
-     toda la habitación (la cámara de la escena es fija). */
-  var bed=splineFind(SPLINE_OBJECTS.bed);
-  var app=splineAppReady();
-  function setZ(z){
-    if(app&&typeof app.setZoom==="function"){
-      splineZoom=Math.min(2.5,Math.max(0.5,z));
-      try{app.setZoom(splineZoom);}catch(e){console.warn("Spline: setZoom falló",e&&e.message);}
-    }
+  var bounds=bedBounds();
+  var center=bounds?bounds.getCenter(new THREE.Vector3()):new THREE.Vector3(0,1.2,0);
+  var size=bounds?bounds.getSize(new THREE.Vector3()):null;
+  if(v==="front"){
+    var distF=size?fitDistanceFor(size,0,0.08):8;
+    flyTo(new THREE.Vector3(center.x,center.y+0.3,center.z+distF),center);
   }
-  if(v==="front"){ if(bed){try{bed.rotation.y=0;}catch(e){}} setZ(1); }
-  else if(v==="angle"){ if(bed){try{bed.rotation.y=0.6;}catch(e){}} setZ(1); }
-  else if(v==="top"){ if(bed){try{bed.rotation.y=0;}catch(e){}} setZ(0.55); }
+  else if(v==="top"){
+    var distT=size?fitDistanceFor(size,0.61,1.45):8;
+    flyTo(new THREE.Vector3(center.x,center.y+distT,center.z+0.01),center);
+  }
+  else frameObject();
 }
 function toggleAuto(){
-  autoRot=!autoRot;
-  if(autoTimer){clearInterval(autoTimer);autoTimer=null;}
-  if(autoRot){
-    /* Giro automático tipo tornamesa: gira el grupo "Bed" poco a poco.
-       Se detiene con el mismo botón. Sin escena cargada no hace nada. */
-    autoTimer=setInterval(function(){
-      var bed=splineFind(SPLINE_OBJECTS.bed);
-      if(bed){try{bed.rotation.y+=0.02;}catch(e){}}
-    },50);
-  }
+  if(!controls)return;
+  introRot=false;
+  autoRot=!autoRot; controls.autoRotate=autoRot;
   updateAutoBtn();
 }
 function zoomBed(f){
-  var app=splineAppReady();
-  if(app&&typeof app.setZoom==="function"){
-    splineZoom=Math.min(2.5,Math.max(0.5,splineZoom*(1+f)));
-    try{app.setZoom(splineZoom);}catch(e){console.warn("Spline: setZoom falló",e&&e.message);}
-  }
+  if(!camera)return;
+  var dir=camera.position.clone().sub(controls.target).multiplyScalar(1-f);
+  var len=THREE.MathUtils.clamp(dir.length(),controls.minDistance,controls.maxDistance);
+  dir.setLength(len); camera.position.copy(controls.target).add(dir); controls.update();
 }
 function rotateBed(dir){
-  /* Gira el grupo "Bed" de la escena sobre su eje vertical. Si la escena
-     no tiene un objeto llamado "Bed", el giro se hace arrastrando el visor. */
-  var bed=splineFind(SPLINE_OBJECTS.bed);
-  if(bed){
-    try{bed.rotation.y+=dir*0.45;}catch(e){console.warn("Spline: no se pudo girar la cama",e&&e.message);}
-  }
+  if(!camera)return;
+  var off=camera.position.clone().sub(controls.target);
+  var ang=Math.atan2(off.x,off.z)+dir*0.45;
+  var r=Math.sqrt(off.x*off.x+off.z*off.z);
+  camera.position.set(controls.target.x+Math.sin(ang)*r,camera.position.y,controls.target.z+Math.cos(ang)*r);
+  controls.update();
 }
 function cycleDuvet(d){
   var n=DUVET_COLORS.length;
   st.duvetColor=(st.duvetColor+d+n)%n;
-  restoreDuvet();
   lastChange="Edredón: "+duvetLabel(DUVET_COLORS[st.duvetColor])+" (reversible)";
   render();
 }
@@ -936,16 +1157,41 @@ function render(){
   }).join("");
   document.getElementById("cfgTotal").textContent=money(calcTotal());
   showToast();
-  /* La escena Spline (si está conectada) se actualiza en vivo con el estado
-     del configurador; si no hay escena, la foto real de respaldo cambia
-     con el color del edredón elegido. */
-  applyStateToSpline();
+  if(scene){
+    if(glbReady){applyStateToGLB(); buildCurtains();}
+    else{buildBed();}
+  }
+  /* Redibujo forzado tras reconstruir la cama: sin esto el canvas podía
+     quedarse en una franja superior hasta tocar pantalla completa. */
+  if(window.requestAnimationFrame){requestAnimationFrame(function(){redraw3D();});}
 }
-function setStep(n){st.step=n;render();}
-function setSize(i){st.size=i;lastChange="Tamaño: "+SIZES[i].n;render();}
+function setStep(n){st.step=n;render();frameForStep();}
+function setSize(i){st.size=i;lastChange="Tamaño: "+SIZES[i].n;render();frameForStep();}
 function setSheetType(i){st.sheetType=i;lastChange="Sábanas: "+SHEET_TYPES[i].n;render();}
 function setSheetColor(n,h,img){st.sheetColor={name:n,hex:h,img:img||null};lastChange="Sábanas: "+n;render();}
-function setDuvetColor(i){st.duvetColor=i;restoreDuvet();lastChange="Edredón: "+duvetLabel(DUVET_COLORS[i])+" (reversible)";render();}
+var duvetFlipped=false, duvetRemoved=false;
+function flipDuvet(){
+  if(duvetRemoved){lastChange="Primero pon el edredón para darle la vuelta.";showToast();return;}
+  duvetFlipped=!duvetFlipped;
+  var dc=DUVET_COLORS[st.duvetColor];
+  var b=document.getElementById("btnFlip"); if(b)b.textContent=duvetFlipped?"⟲ Ver cara del edredón":"⟲ Dar la vuelta al edredón";
+  lastChange=duvetFlipped?("Edredón: reverso ("+(dc.revName||"reverso")+")"):("Edredón: cara ("+dc.n+")");
+  render();
+}
+function toggleRemoveDuvet(){
+  duvetRemoved=!duvetRemoved;
+  if(duvetRemoved)duvetFlipped=false;
+  var b=document.getElementById("btnRemoveDuvet"); if(b)b.textContent=duvetRemoved?"＋ Poner edredón":"－ Quitar edredón";
+  var f=document.getElementById("btnFlip"); if(f)f.textContent="⟲ Dar la vuelta al edredón";
+  lastChange=duvetRemoved?"Edredón quitado: se ven solo las sábanas":"Edredón puesto de nuevo";
+  render();
+}
+function setDuvetColor(i){
+  st.duvetColor=i; duvetRemoved=false; duvetFlipped=false;
+  var b=document.getElementById("btnRemoveDuvet"); if(b)b.textContent="－ Quitar edredón";
+  var f=document.getElementById("btnFlip"); if(f)f.textContent="⟲ Dar la vuelta al edredón";
+  lastChange="Edredón: "+duvetLabel(DUVET_COLORS[i])+" (reversible)"; render();
+}
 function setPillow(i){st.pillow=i;lastChange="Almohadas: "+PILLOWS[i].n;render();}
 function setComp(i){st.comp=i;lastChange="Complementos: "+COMPS[i].n;render();}
 function setCurtain(i){st.curtain=i;lastChange=i>=0?"Cortinas: "+CUR[i].name:"Sin cortinas";render();}
@@ -958,16 +1204,15 @@ function addCfgToCart(){
   addToCart(name,t);
 }
 window.setStep=setStep; window.setSize=setSize; window.setSheetType=setSheetType; window.setSheetColor=setSheetColor;
-window.setDuvetColor=setDuvetColor; window.setPillow=setPillow; window.setComp=setComp;
+window.setDuvetColor=setDuvetColor; window.flipDuvet=flipDuvet; window.toggleRemoveDuvet=toggleRemoveDuvet; window.setPillow=setPillow; window.setComp=setComp;
 window.setCurtain=setCurtain; window.setCurtainSize=setCurtainSize; window.setCurtainPanels=setCurtainPanels; window.pickSheet=pickSheet; window.pickCurtain=pickCurtain; window.cycleDuvet=cycleDuvet;
 window.setView=setView; window.toggleAuto=toggleAuto; window.zoomBed=zoomBed; window.rotateBed=rotateBed;
 window.addCfgToCart=addCfgToCart;
-/* La interfaz corre SIEMPRE y PRIMERO, sin esperar a Spline: los 5 pasos,
-   colores, medidas y total funcionan aunque la escena 3D falle o aún no esté
-   conectada. El visor Spline arranca aparte; sin URL muestra la foto real
-   de la habitación, y si la escena no completa su carga en 60 s (o el visor
-   nunca arranca) también muestra la foto, con un mensaje de error honesto. */
+/* La interfaz corre SIEMPRE y PRIMERO, sin esperar a Three.js: los 5 pasos,
+   colores, medidas y total funcionan aunque el 3D falle. El 3D arranca aparte
+   y de forma asíncrona; si tarda más de 8 s aparece solo un mensaje de error
+   honesto (nunca una foto en lugar de la cama). */
 render();
-try{ initSpline(); }catch(e){ showSplineFallback("La escena Spline no se pudo iniciar: "+(e&&e.message?e.message:"error desconocido")); }
+try{ start3D(); }catch(e){ showFallback("La escena 3D no se pudo iniciar: "+(e&&e.message?e.message:"error desconocido")); }
 </script>
 </body></html>
