@@ -1,15 +1,16 @@
 /* Asistente Inovation Store — bot de atención a clientes, 100% en el navegador.
-   Sin API ni backend: responde por palabras clave con los precios y datos
-   REALES de la tienda. Si no sabe algo, lo dice y ofrece WhatsApp/contacto.
-   Nunca inventa precios ni productos. */
+   Sin API ni backend: responde con los precios y datos REALES de la tienda.
+   Nunca inventa precios ni productos. Trato siempre de usted, muy amable:
+   bienvenida cálida, despedida cálida, y "con mucho gusto" en todo.
+   Sabe armar paquetes (edredón + sábanas + almohadas) con su total, y
+   recuerda el último producto/paquete para contestar seguimientos como
+   "¿y en king?" o "¿cuánto es todo?". */
 (function () {
   'use strict';
 
   var WHATSAPP_PAGE = 'contacto.html';
 
-  /* Enlace de WhatsApp Business. Por ahora abre contacto.html (donde está
-     el QR). Cuando Alberto dé su número, cambiar aquí a:
-     'https://wa.me/<numero>' — NO inventar un número. */
+  /* Enlace de WhatsApp Business. */
   var WA_LINK = 'https://wa.me/525636858623?text=Hola%20Inovation%20Store%2C%20quiero%20informaci%C3%B3n%20sobre%20sus%20productos';
 
   function normalize(s) {
@@ -27,6 +28,74 @@
   function link(href, text) {
     return '<a href="' + href + '">' + text + '</a>';
   }
+  function fmt(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  /* Precios REALES de la tienda (MXN) */
+  var EDREDON_P = {individual: 999, matrimonial: 1099, queen: 1199, king: 1299, 'king jumbo': 1499};
+  var SABANA_P = {individual: 500, matrimonial: 600, queen: 700, king: 800, 'king jumbo': 800};
+  var ALM_PAR_STD = 1500, ALM_PAR_KING = 1700;
+
+  var SIZES = ['king jumbo', 'individual', 'matrimonial', 'queen', 'king'];
+  function detectSize(n) {
+    for (var i = 0; i < SIZES.length; i++) {
+      if (n.indexOf(SIZES[i]) !== -1) return SIZES[i];
+    }
+    return null;
+  }
+  function sizeLabel(s) {
+    return s === 'king jumbo' ? 'King Jumbo' : s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  /* Colores de edredón: cara principal, reverso y color de sábana que combina.
+     sheet: null = no hay sábanas en ese color (se sugiere Crema). */
+  var DUVET_COLORS = [
+    {key: 'azul marino', name: 'Azul Marino', rev: 'Gris carbón', sheet: 'Marine'},
+    {key: 'gris', name: 'Gris', rev: 'Gris Oxford', sheet: null},
+    {key: 'beige', name: 'Beige', rev: 'Chocolate', sheet: 'Beage'},
+    {key: 'blanco', name: 'Blanco', rev: 'Blanco', sheet: 'Crema'},
+    {key: 'negro', name: 'Negro', rev: 'Gris carbón', sheet: 'Black'},
+    {key: 'rayas', name: 'Blanco con Rayas', rev: 'Gris claro', sheet: 'Crema'}
+  ];
+  function detectColors(n) {
+    var out = [];
+    DUVET_COLORS.forEach(function (c) {
+      if (n.indexOf(c.key) !== -1) out.push(c);
+    });
+    if (!out.length && n.indexOf('marino') !== -1) out.push(DUVET_COLORS[0]);
+    return out;
+  }
+
+  /* Memoria de la conversación (solo dura mientras la página está abierta) */
+  var lastProduct = null; /* 'edredon' | 'sabana' */
+  var lastPackage = null; /* {size, colors} */
+  var lastPackageTotal = 0;
+  function clearPackage() { lastPackage = null; lastPackageTotal = 0; }
+
+  function buildPackage(size, colors) {
+    var main = colors[0];
+    var lines = [], total = 0;
+    var pe = EDREDON_P[size]; total += pe;
+    var rev = main.rev ? ' (reversible, reverso ' + main.rev + ')' : '';
+    lines.push('· Edredón hipoalergénico ' + main.name + rev + ' · ' + sizeLabel(size) + ' — $' + fmt(pe) + ' MXN');
+    var ps = SABANA_P[size]; total += ps;
+    if (main.sheet) {
+      lines.push('· Sábanas estilo egipcio color ' + main.sheet + ' · ' + sizeLabel(size) + ' — $' + fmt(ps) + ' MXN');
+    } else {
+      lines.push('· Sábanas estilo egipcio color Crema · ' + sizeLabel(size) + ' — $' + fmt(ps) + ' MXN (en gris no las manejamos; el Crema combina muy bien con el gris)');
+    }
+    total += ALM_PAR_STD;
+    lines.push('· Par de almohadas de bambú Memory Foam Standard — $' + fmt(ALM_PAR_STD) + ' MXN');
+    var txt = '¡Con mucho gusto! Le armo su paquete en ' + colors.map(function (c) { return c.name.toLowerCase(); }).join(' y ') + ', en tamaño ' + sizeLabel(size) + ':<br>' + lines.join('<br>') + '<br><b>Total del paquete: $' + fmt(total) + ' MXN</b>';
+    if (colors.length > 1 && main.rev && colors[1].name === 'Gris' && main.rev.indexOf('Gris carbón') === 0) {
+      txt += '<br>El edredón ya trae las dos caras que me pide: Azul Marino y su reverso Gris carbón.';
+    }
+    txt += '<br>¿Su cama es ' + sizeLabel(size) + ' o de otro tamaño? Con mucho gusto se lo ajusto. También puede verlo armado en 3D aquí: ' + link('viste-tu-cama.html', 'Viste tu Cama 3D');
+    lastPackage = {size: size, colors: colors};
+    lastPackageTotal = total;
+    return txt;
+  }
 
   var PRICE_EDREDON = 'Edredones hipoalergénicos: Individual $999 · Matrimonial $1,099 · Queen $1,199 · King $1,299 · King Jumbo $1,499 MXN. <br>Ver todos: ' + link('edredones.html', 'Edredones');
   var PRICE_SABANA = 'Sábanas estilo egipcio: Individual $500 · Matrimonial $600 · Queen $700 · King $800 MXN. <br>Ver colores y tamaños: ' + link('sabanas.html', 'Sábanas');
@@ -36,22 +105,54 @@
   function getBotReply(raw) {
     var n = normalize(raw);
 
-    if (!n) return 'Escríbeme tu duda y con gusto te ayudo. Por ejemplo: "¿Cuánto cuesta un edredón Queen?" o "¿Hacen envíos?"';
+    if (!n) return 'Escríbame su duda y con mucho gusto le ayudo. Por ejemplo: "¿Cuánto cuesta un edredón Queen?" o "¿Me arma un paquete en azul marino y gris?"';
 
-    /* Saludos */
+    /* Saludos — bienvenida cálida */
     if (has(n, ['hola', 'buenos dias', 'buenas tardes', 'buenas noches', 'que tal', 'saludos'])) {
-      return '¡Hola! Bienvenido a Inovation Store. Soy tu asistente. ¿En qué te ayudo? Puedo darte precios de edredones, sábanas, almohadas y cortinas, explicarte Viste tu Cama o ayudarte con envíos y pagos.';
+      return '¡Hola! Qué gusto saludarle. Bienvenido a Inovation Store, será un placer atenderle. ¿En qué le puedo ayudar? Con mucho gusto le doy precios de edredones, sábanas, almohadas y cortinas, le armo un paquete con su total, le explico Viste tu Cama o le ayudo con envíos y pagos.';
     }
-    if (has(n, ['gracias'])) return '¡Con gusto! Si necesitas algo más, aquí estoy. También puedes escribirnos por WhatsApp en ' + link(WHATSAPP_PAGE, 'Contacto') + '.';
-    if (has(n, ['adios', 'hasta luego', 'bye', 'nos vemos'])) return '¡Gracias por visitar Inovation Store! Que tengas un excelente día.';
+    if (has(n, ['gracias'])) return '¡Con mucho gusto! Ha sido un placer atenderle. Si necesita algo más, aquí estoy para servirle. También puede escribirnos por WhatsApp en ' + link(WHATSAPP_PAGE, 'Contacto') + '. ¡Que tenga un excelente día!';
+    if (has(n, ['adios', 'hasta luego', 'bye', 'nos vemos', 'me despido'])) return '¡Muchas gracias por su visita a Inovation Store! Ha sido un verdadero placer atenderle. Que tenga un excelente día y lo esperamos pronto. ¡Hasta luego!';
+
+    /* Paquetes — armar un combo con su total */
+    if (has(n, ['paquete', 'combo', 'kit', 'juego completo', 'todo en', 'armame', 'armes', 'hazme'])) {
+      var colors = detectColors(n);
+      var size = detectSize(n) || 'queen';
+      if (!colors.length) {
+        return '¡Con mucho gusto le armo su paquete! ¿En qué colores le gustaría? Por ejemplo: azul marino y gris, beige, blanco o negro. Y dígame, ¿su cama es Individual, Matrimonial, Queen, King o King Jumbo?';
+      }
+      return buildPackage(size, colors);
+    }
+
+    /* Seguimiento: "¿cuánto es todo?" después de un paquete */
+    if (lastPackageTotal > 0 && has(n, ['cuanto es todo', 'cuanto seria todo', 'cuanto sale todo', 'total del paquete', 'cuanto es en total', 'cuanto seria en total'])) {
+      return 'Con mucho gusto: el total de su paquete es de <b>$' + fmt(lastPackageTotal) + ' MXN</b>. ¿Le gustaría que se lo ajuste a otro tamaño o que le agregue las cortinas Blackout?';
+    }
+
+    /* Seguimiento: solo un tamaño ("¿y en king?") — usa el último producto o paquete */
+    var onlySize = detectSize(n);
+    if (onlySize && !has(n, ['edredon', 'sabana', 'almohada', 'cortina', 'paquete', 'combo', 'cama', 'precio', 'cuesta', 'cuanto'])) {
+      if (lastPackage) {
+        return buildPackage(onlySize, lastPackage.colors);
+      }
+      if (lastProduct === 'edredon') {
+        return 'Con mucho gusto: el edredón ' + sizeLabel(onlySize) + ' cuesta $' + fmt(EDREDON_P[onlySize]) + ' MXN. ' + link('edredones.html', 'Ver edredones');
+      }
+      if (lastProduct === 'sabana') {
+        return 'Con mucho gusto: las sábanas ' + sizeLabel(onlySize) + ' cuestan $' + fmt(SABANA_P[onlySize]) + ' MXN. ' + link('sabanas.html', 'Ver sábanas');
+      }
+    }
 
     /* Viste tu cama */
     if (has(n, ['viste tu cama', 'viste', 'configurador', 'disena tu cama', 'disenar mi cama', '3d'])) {
-      return 'Viste tu Cama es nuestro configurador 3D: eliges tamaño de cama, color de sábanas, tipo y color de edredón, almohadas y complementos, y ves tu cama en vivo con el total actualizado. El total por defecto en Queen es $3,599 MXN. Pruébalo aquí: ' + link('viste-tu-cama.html', 'Viste tu Cama 3D');
+      clearPackage();
+      return 'Viste tu Cama es nuestro configurador 3D: usted elige tamaño de cama, color de sábanas, tipo y color de edredón, almohadas y complementos, y ve su cama en vivo con el total actualizado. En Queen, el total base es $1,899 MXN (edredón $1,199 + sábanas $700); con par de almohadas de bambú queda en $3,399 MXN. Pruébelo aquí: ' + link('viste-tu-cama.html', 'Viste tu Cama 3D');
     }
 
     /* Edredones — con tamaño si lo menciona */
     if (has(n, ['edredon', 'edredones', 'colcha', 'cobertor'])) {
+      clearPackage();
+      lastProduct = 'edredon';
       if (has(n, ['king jumbo', 'jumbo'])) return 'El edredón King Jumbo cuesta $1,499 MXN. ' + link('edredones.html', 'Ver edredones');
       if (has(n, ['individual'])) return 'El edredón Individual cuesta $999 MXN. ' + link('edredones.html', 'Ver edredones');
       if (has(n, ['matrimonial'])) return 'El edredón Matrimonial cuesta $1,099 MXN. ' + link('edredones.html', 'Ver edredones');
@@ -62,12 +163,15 @@
 
     /* Almohadas — antes que sábanas, porque "almohada de bambú" contiene "bambú" */
     if (has(n, ['almohada', 'almohadas', 'memory foam'])) {
+      clearPackage();
       return PRICE_ALMOHADA;
     }
 
     /* Sábanas */
     if (has(n, ['sabana', 'sabanas', 'juego de sabanas', 'egipcia', 'egipcio', 'bambu'])) {
-      if (has(n, ['bambu', 'bambú'])) return 'Las sábanas de bambú las encuentras aquí: ' + link('sabanas-bambu.html', 'Sábanas de Bambú') + '. Las de estilo egipcio cuestan: Individual $500 · Matrimonial $600 · Queen $700 · King $800 MXN.';
+      clearPackage();
+      lastProduct = 'sabana';
+      if (has(n, ['bambu', 'bambú'])) return 'Las sábanas de bambú las encuentra aquí: ' + link('sabanas-bambu.html', 'Sábanas de Bambú') + '. Las de estilo egipcio cuestan: Individual $500 · Matrimonial $600 · Queen $700 · King $800 MXN.';
       if (has(n, ['individual'])) return 'Las sábanas Individual cuestan $500 MXN. ' + link('sabanas.html', 'Ver sábanas');
       if (has(n, ['matrimonial'])) return 'Las sábanas Matrimonial cuestan $600 MXN. ' + link('sabanas.html', 'Ver sábanas');
       if (has(n, ['queen'])) return 'Las sábanas Queen cuestan $700 MXN. ' + link('sabanas.html', 'Ver sábanas');
@@ -77,6 +181,7 @@
 
     /* Cortinas */
     if (has(n, ['cortina', 'cortinas', 'blackout', 'thermal'])) {
+      clearPackage();
       return PRICE_CORTINA;
     }
 
@@ -91,41 +196,41 @@
 
     /* Precio genérico */
     if (has(n, ['precio', 'precios', 'costo', 'cuesta', 'cuestan', 'cuanto vale', 'cuanto cuesta', 'oferta', 'ofertas', 'descuento', 'promocion', 'promociones'])) {
-      if (has(n, ['oferta', 'descuento', 'promocion'])) return 'Nuestras ofertas actuales están aquí: ' + link('ofertas.html', 'Ofertas') + '. ¿De qué producto quieres el precio? Edredones desde $999, sábanas desde $500, almohadas de bambú desde $800 y cortinas desde $550.';
-      return 'Con gusto, estos son nuestros precios:<br>· ' + PRICE_EDREDON + '<br>· ' + PRICE_SABANA + '<br>· ' + PRICE_ALMOHADA + '<br>· Cortinas Blackout Thermal desde $550. ' + link('cortinas.html', 'Ver cortinas');
+      if (has(n, ['oferta', 'descuento', 'promocion'])) return 'Nuestras ofertas actuales están aquí: ' + link('ofertas.html', 'Ofertas') + '. ¿De qué producto quiere el precio? Edredones desde $999, sábanas desde $500, almohadas de bambú desde $800 y cortinas desde $550.';
+      return 'Con mucho gusto, estos son nuestros precios:<br>· ' + PRICE_EDREDON + '<br>· ' + PRICE_SABANA + '<br>· ' + PRICE_ALMOHADA + '<br>· Cortinas Blackout Thermal desde $550. ' + link('cortinas.html', 'Ver cortinas');
     }
 
     /* Envíos */
     if (has(n, ['envio', 'envios', 'entrega', 'llega', 'tarda', 'mandan', 'mandar', 'donde entregan'])) {
-      return 'Hacemos envíos automatizados a todo México. El envío es gratis en pedidos participantes (lo verás en tu carrito). ¿Quieres ver algún producto? ' + link('tienda.html', 'Ir a la Tienda');
+      return 'Hacemos envíos automatizados a todo México y también entregamos en cualquier estación del Metro, Metrobús, Mexibús, Mexicable, Cablebús, Tren Ligero y Suburbano. El envío es gratis en pedidos participantes (lo verá en su carrito). ¿Le gustaría ver algún producto? ' + link('tienda.html', 'Ir a la Tienda');
     }
 
     /* Pagos */
     if (has(n, ['pago', 'pagos', 'pagar', 'mercado pago', 'apple pay', 'codi', 'tarjeta', 'efectivo', 'transferencia'])) {
-      return 'Aceptamos Mercado Pago, Apple Pay, CoDi y saldo de tu Inovation Pass. La compra es segura. Puedes pagar desde tu carrito (botón arriba a la derecha).';
+      return 'Aceptamos Mercado Pago, Apple Pay, CoDi y saldo de su Inovation Pass. La compra es totalmente segura. Puede pagar desde su carrito (botón arriba a la derecha).';
     }
 
     /* Garantía */
     if (has(n, ['garantia', 'devolucion', 'devoluciones', 'cambio', 'cambios', 'reembolso'])) {
-      return 'Todos nuestros productos tienen Garantía de 10 años y compra segura. Si necesitas un cambio o devolución, escríbenos por WhatsApp y te ayudamos: ' + link(WHATSAPP_PAGE, 'Contacto por WhatsApp');
+      return 'Todos nuestros productos tienen Garantía de 10 años y compra segura. Si necesita un cambio o devolución, escríbanos por WhatsApp y con gusto le ayudamos: ' + link(WHATSAPP_PAGE, 'Contacto por WhatsApp');
     }
 
     /* Inovation Pass */
     if (has(n, ['pass', 'puntos', 'monedero', 'saldo', 'recompensa', 'recompensas'])) {
-      return 'Inovation Pass es nuestro monedero electrónico: ganas 15% en puntos con cada compra y los usas como saldo. Saldo actual de la tarjeta: $100.00 MXN. Más información y calculadora de puntos: ' + link('pass.html', 'Inovation Pass');
+      return 'Inovation Pass es nuestro monedero electrónico: usted gana 15% en puntos con cada compra y los usa como saldo. Saldo actual de la tarjeta: $100.00 MXN. Más información y calculadora de puntos: ' + link('pass.html', 'Inovation Pass');
     }
 
     /* Contacto / WhatsApp / horario */
     if (has(n, ['whatsapp', 'contacto', 'contactar', 'hablar con alguien', 'asesor', 'humano', 'persona', 'telefono', 'numero'])) {
-      return 'Puedes escribirnos por WhatsApp Business: en ' + link(WHATSAPP_PAGE, 'Contacto') + ' está nuestro código QR, escanéalo con tu celular y te atendemos.';
+      return 'Puede escribirnos por WhatsApp Business: en ' + link(WHATSAPP_PAGE, 'Contacto') + ' está nuestro código QR, escanee con su celular y con gusto le atendemos.';
     }
     if (has(n, ['horario', 'abierto', 'atienden', 'hora'])) {
-      return 'Nuestra tienda en línea está abierta las 24 horas. Por WhatsApp te respondemos lo antes posible: ' + link(WHATSAPP_PAGE, 'Contacto');
+      return 'Nuestra tienda en línea está abierta las 24 horas. Por WhatsApp le respondemos lo antes posible: ' + link(WHATSAPP_PAGE, 'Contacto');
     }
 
     /* Historia / nosotros */
     if (has(n, ['historia', 'nosotros', 'quienes son', 'empresa', 'fundada', '2016'])) {
-      return 'Nacimos en 2016 como un pequeño emprendimiento. Nuestra primera venta fueron dos juegos de sábanas estilo egipcio. Hoy somos un referente en productos hipoalergénicos para tu recámara. Lee nuestra historia completa: ' + link('historia.html', 'Nuestra Historia');
+      return 'Nacimos en 2016 como un pequeño emprendimiento. Nuestra primera venta fueron dos juegos de sábanas estilo egipcio. Hoy somos un referente en productos hipoalergénicos para su recámara. Lea nuestra historia completa: ' + link('historia.html', 'Nuestra Historia');
     }
 
     /* Hipoalergénico / salud */
@@ -144,11 +249,12 @@
     }
 
     /* No sabe — honesto, sin inventar */
-    return 'No tengo esa información, y no quiero darte un dato incorrecto. Te ayudo con precios de edredones, sábanas, almohadas y cortinas, Viste tu Cama, envíos, pagos, garantía e Inovation Pass. Para cualquier otra duda, escríbenos por WhatsApp: ' + link(WHATSAPP_PAGE, 'Contacto por WhatsApp');
+    return 'Le ofrezco una disculpa, no tengo esa información y no quiero darle un dato incorrecto. Con mucho gusto le ayudo con precios de edredones, sábanas, almohadas y cortinas, paquetes con su total, Viste tu Cama, envíos, pagos, garantía e Inovation Pass. Para cualquier otra duda, escríbanos por WhatsApp: ' + link(WHATSAPP_PAGE, 'Contacto por WhatsApp');
   }
 
   /* ---------- Interfaz (solo en navegador) ---------- */
   var QUICK = [
+    'Armar un paquete',
     'Precios de edredones',
     'Viste tu cama',
     'Envíos',
@@ -194,7 +300,7 @@
       '<div class="chat-head"><b>Asistente Inovation Store</b><span>En línea · responde al instante</span><button type="button" class="chat-close" aria-label="Cerrar chat">✕</button></div>' +
       '<div class="chat-msgs" id="chatMsgs"></div>' +
       '<div class="chat-quick" id="chatQuick"></div>' +
-      '<div class="chat-input"><input type="text" id="chatText" placeholder="Escribe tu duda…" autocomplete="off"><button type="button" id="chatSend">Enviar</button></div>';
+      '<div class="chat-input"><input type="text" id="chatText" placeholder="Escriba su duda…" autocomplete="off"><button type="button" id="chatSend">Enviar</button></div>';
     document.body.appendChild(panel);
 
     var msgs = panel.querySelector('#chatMsgs');
@@ -229,7 +335,7 @@
       var open = panel.classList.toggle('open');
       fab.classList.toggle('open', open);
       if (open && !msgs.children.length) {
-        addMsg(msgs, '¡Hola! Soy el asistente de Inovation Store. ¿En qué te ayudo? Puedes preguntarme por precios, Viste tu Cama, envíos o pagos.', 'bot');
+        addMsg(msgs, '¡Hola! Bienvenido a Inovation Store. Soy su asistente personal y será un placer atenderle. ¿En qué le puedo ayudar? Puede preguntarme por precios, paquetes, Viste tu Cama, envíos o pagos.', 'bot');
         input.focus();
       }
     });
