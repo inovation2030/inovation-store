@@ -140,7 +140,8 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   });
   document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){addToCart(b.getAttribute('data-add'),parseInt(b.getAttribute('data-price')||'0',10))})});
-  document.querySelectorAll('.drop>button').forEach(function(b){b.addEventListener('click',function(e){
+  document.querySelectorAll('.drop>button, .drop>a').forEach(function(b){b.addEventListener('click',function(e){
+    e.preventDefault();
     e.stopPropagation();
     var d=b.parentElement, open=d.classList.toggle('open'), sub=d.querySelector('.submenu');
     /* En móvil el submenú es un panel fijo bajo el encabezado: se mide su posición real */
