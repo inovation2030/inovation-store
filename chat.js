@@ -217,7 +217,7 @@
 
     /* Inovation Pass */
     if (has(n, ['pass', 'puntos', 'monedero', 'saldo', 'recompensa', 'recompensas'])) {
-      return 'Inovation Pass es nuestro monedero electrónico: usted gana 15% en puntos con cada compra y los usa como saldo. Saldo actual de la tarjeta: $100.00 MXN. Más información y calculadora de puntos: ' + link('pass.html', 'Inovation Pass');
+      return 'Inovation Pass es nuestro monedero electrónico: usted gana 10% en puntos con cada compra y los usa como saldo. Saldo actual de la tarjeta: $100.00 MXN. Más información y calculadora de puntos: ' + link('pass.html', 'Inovation Pass');
     }
 
     /* Contacto / WhatsApp / horario */

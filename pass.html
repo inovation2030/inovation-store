@@ -1,4 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inovation Pass | Inovation Store</title><link rel="stylesheet" href="styles.css?v=27"><style>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inovation Pass | Inovation Store</title><link rel="stylesheet" href="styles.css?v=28"><style>
 .passcard{max-width:640px;margin:18px 0;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#1a3cf5,#0B3D91 70%);border:2px solid #F2B705;color:#fff;box-shadow:0 8px 24px rgba(11,61,145,.35)}
 .pass-head{display:flex;align-items:center;gap:10px;padding:14px 16px}
 .pass-logo img{width:44px;height:44px;object-fit:contain;background:#fff;border-radius:8px;padding:2px}
@@ -20,7 +20,8 @@
 <div class="pass-body"><div class="pass-qr" id="passQR"></div><p class="pass-member">Miembro <b id="passMemberId">…</b></p><p class="pass-hint">Muestra este código en tienda para usar tu saldo y puntos.</p></div>
 </div>
 <p><button class="btn" type="button" id="savePassBtn">Guardar en mi celular</button></p>
-<p class="pass-save-help">iPhone: toca Compartir → «Añadir a pantalla de inicio». Android: menú ⋮ → «Añadir a pantalla de inicio». También puedes compartir tu pase con el botón de arriba.</p><p>Saldo actual: <b>$100.00 MXN</b>. Ganas 15% en puntos Pass con cada compra y los usas como saldo.</p><p><label>Calcula tus puntos: compra de $ <input id="passAmt" type="number" value="3490" style="padding:8px;width:120px"> <button class="btn" type="button" onclick="document.getElementById('passPts').textContent=Math.round(document.getElementById('passAmt').value*0.15)+' puntos'">Calcular</button> <b id="passPts"></b></label></p></main>
+<p><a class="btn" href="assets/Inovation-Pass.pkpass">Agregar a Apple Wallet</a></p>
+<p class="pass-save-help">iPhone: toca «Agregar a Apple Wallet» para guardarlo en Wallet, o Compartir → «Añadir a pantalla de inicio». Android: menú ⋮ → «Añadir a pantalla de inicio». También puedes compartir tu pase con el botón de arriba.</p><p>Saldo actual: <b>$100.00 MXN</b>. Ganas 10% en puntos Pass con cada compra y los usas como saldo.</p><p><label>Calcula tus puntos: compra de $ <input id="passAmt" type="number" value="3490" style="padding:8px;width:120px"> <button class="btn" type="button" onclick="document.getElementById('passPts').textContent=Math.round(document.getElementById('passAmt').value*0.10)+' puntos'">Calcular</button> <b id="passPts"></b></label></p></main>
 <aside id="cartDrawer" aria-label="Carrito">
 <h2>Tu carrito</h2><div id="cartItems"></div>
 <p>Total: <b id="cartTotal">$0 MXN</b></p>
@@ -38,8 +39,8 @@
 <div><a href="historia.html">Nuestra Historia</a><br><a href="videos.html">Videos</a><br><a href="tienda.html">Tienda</a></div>
 </div></footer>
 <script src="assets/qrcode.min.js"></script>
-<script src="app.js?v=27"></script>
-<script src="chat.js?v=27"></script><script>
+<script src="app.js?v=28"></script>
+<script src="chat.js?v=28"></script><script>
 (function(){
   function getPassId(){
     var m=(location.search.match(/[?&]m=([A-Za-z0-9-]+)/)||[])[1];
