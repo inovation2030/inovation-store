@@ -9,8 +9,8 @@ header.site{position:sticky;top:0;z-index:50;background:var(--blue);color:#fff;b
 .logo b{font-size:19px;letter-spacing:1px;display:block;line-height:1.1}
 .logo small{font-size:10px;letter-spacing:3px;color:var(--gold2)}
 nav.main{flex:1;display:flex;gap:4px;align-items:center;justify-content:center;flex-wrap:wrap}
-nav.main>a,nav.main .drop>button{color:#fff;background:none;border:0;font-size:15px;padding:10px 12px;cursor:pointer;font-family:inherit}
-nav.main>a:hover,nav.main .drop>button:hover{color:var(--gold2)}
+nav.main>a,nav.main .drop>button,nav.main .drop>a{color:#fff;background:none;border:0;font-size:15px;padding:10px 12px;cursor:pointer;font-family:inherit}
+nav.main>a:hover,nav.main .drop>button:hover,nav.main .drop>a:hover{color:var(--gold2)}
 nav.main>a.active{background:var(--gold);color:#123a6b;border-radius:20px;font-weight:700}
 .drop{position:relative}
 .drop .submenu{display:none;position:absolute;top:100%;left:0;background:#fff;min-width:240px;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.25);padding:8px;z-index:99}
@@ -101,7 +101,7 @@ header.site{position:sticky;top:0}
 .hide-m{display:none}
 nav.main{display:flex;order:3;flex:1 1 100%;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:flex-start;gap:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:transparent;border-top:1px solid rgba(255,255,255,.25);margin:6px -12px 0;padding:0 8px;position:static;box-shadow:none;z-index:60}
 nav.main::-webkit-scrollbar{display:none}
-nav.main>a,nav.main .drop>button{display:block;flex:0 0 auto;width:auto;text-align:left;padding:12px 11px;border-bottom:0;white-space:nowrap;font-size:14px}
+nav.main>a,nav.main .drop>button,nav.main .drop>a{display:block;flex:0 0 auto;width:auto;text-align:left;padding:12px 11px;border-bottom:0;white-space:nowrap;font-size:14px}
 nav.main>a.active{border-radius:12px}
 .drop{position:relative}
 .drop .submenu{position:fixed;left:8px;right:8px;top:96px;display:none;min-width:0;background:var(--blue);border:1px solid rgba(255,255,255,.3);border-radius:10px;box-shadow:0 18px 30px rgba(0,0,0,.35);padding:6px;z-index:70}
