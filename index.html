@@ -1,4 +1,20 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inicio | Inovation Store</title><link rel="stylesheet" href="styles.css?v=17"></head><body><header class="site"><div class="header-in"><a class="logo" href="index.html"><img src="assets/logo.png" alt="Inovation Store"><span><b>INOVATION STORE</b><small>BLANCOS PARA EL HOGAR</small></span></a><button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button><nav class="main"><a href="index.html" class="active">Inicio</a><div class="drop"><button type="button">Tienda ▾</button><div class="submenu"><a href="tienda.html">Tienda — Ver todo</a><a href="edredones.html">Edredones</a><a href="sabanas.html">Sábanas</a><a href="sabanas-bambu.html">Sábanas de Bambú</a><a href="almohadas.html">Almohadas</a><a href="cortinas.html">Cortinas Blackout</a><a href="cubrecolchones.html">Cubrecolchones</a><a href="protectores.html">Protectores de Colchón</a></div></div><a href="viste-tu-cama.html">Viste tu Cama</a><a href="ofertas.html">Ofertas</a><a href="videos.html">Videos</a><a href="pass.html">Inovation Pass</a><a href="historia.html">Nosotros</a><a href="contacto.html">Contacto</a></nav><button class="cart-btn" type="button" onclick="openCart()">🛒 <span class="cart-label">Carrito</span> <span class="count cart-count">0</span></button></div></header><main>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inicio | Inovation Store</title><link rel="stylesheet" href="styles.css?v=17"><style>
+.carrusel{max-width:640px;margin:34px auto 8px}
+.carrusel h2{color:#0B3D91;font-size:26px;margin:0 0 12px}
+.car-view{position:relative;overflow:hidden;border-radius:14px;border:1px solid #e5d9b0;background:#fff}
+.car-track{display:flex;transition:transform .5s ease}
+.car-slide{flex:0 0 100%;min-width:0;cursor:pointer}
+.car-slide img{width:100%;height:auto;display:block}
+.car-slide .body{padding:14px 16px 18px}
+.car-slide h3{margin:0 0 4px;color:#0B3D91}
+.car-slide .price{color:#8a6d00;font-weight:700;margin:0 0 4px}
+.car-slide p{margin:0 0 10px;color:#444}
+.car-arrow{position:absolute;top:36%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:1px solid var(--gold);background:rgba(255,255,255,.92);color:#0B3D91;font-size:24px;line-height:1;cursor:pointer;z-index:2}
+.car-prev{left:8px}.car-next{right:8px}
+.car-dots{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.car-dots button{width:10px;height:10px;border-radius:50%;border:1px solid var(--gold);background:#fff;padding:0;cursor:pointer}
+.car-dots button.on{background:var(--gold)}
+</style></head><body><header class="site"><div class="header-in"><a class="logo" href="index.html"><img src="assets/logo.png" alt="Inovation Store"><span><b>INOVATION STORE</b><small>BLANCOS PARA EL HOGAR</small></span></a><button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button><nav class="main"><a href="index.html" class="active">Inicio</a><div class="drop"><button type="button">Tienda ▾</button><div class="submenu"><a href="tienda.html">Tienda — Ver todo</a><a href="edredones.html">Edredones</a><a href="sabanas.html">Sábanas</a><a href="sabanas-bambu.html">Sábanas de Bambú</a><a href="almohadas.html">Almohadas</a><a href="cortinas.html">Cortinas Blackout</a><a href="cubrecolchones.html">Cubrecolchones</a><a href="protectores.html">Protectores de Colchón</a></div></div><a href="viste-tu-cama.html">Viste tu Cama</a><a href="ofertas.html">Ofertas</a><a href="videos.html">Videos</a><a href="pass.html">Inovation Pass</a><a href="historia.html">Nosotros</a><a href="contacto.html">Contacto</a></nav><button class="cart-btn" type="button" onclick="openCart()">🛒 <span class="cart-label">Carrito</span> <span class="count cart-count">0</span></button></div></header><main>
 <section class="hero"><h1>Inovation Store<br><em>Blancos Para El Hogar</em></h1>
 <p style="color:#F2B705;font-size:22px;font-weight:700;letter-spacing:1px;margin:6px 0 12px">Descanso, calidad y elegancia</p>
 <p>Edredones hipoalergénicos, sábanas estilo egipcio y de bambú, almohadas Memory Foam y cortinas blackout.</p>
@@ -7,9 +23,16 @@
 <div class="cards">
 <div class="card"><img src="assets/edredon-azul-marino.jpg" alt="Edredones"><div class="body"><h3>Edredones</h3><p class="price">desde $999 <small>MXN</small></p><p>Hipoalergénicos, 6 colores reversibles.</p><a class="btn" href="edredones.html">Ver edredones</a></div></div>
 <div class="card"><img src="assets/sabana-violet.jpg" alt="Sábanas estilo egipcio"><div class="body"><h3>Sábanas estilo egipcio</h3><p class="price">desde $500 <small>MXN</small></p><p>20 colores con foto real.</p><a class="btn" href="sabanas.html">Ver sábanas</a></div></div>
-<div class="card"><img src="assets/almohada-par.jpg" alt="Almohadas de bambú"><div class="body"><h3>Almohadas de bambú</h3><p class="price">desde $800 <small>MXN</small></p><p>Memory Foam con funda de bambú.</p><a class="btn" href="almohadas.html">Ver almohadas</a></div></div>
-<div class="card"><img src="assets/cortina-chocolate.jpg" alt="Cortinas Blackout"><div class="body"><h3>Cortinas Blackout</h3><p class="price">desde $550 <small>MXN</small></p><p>Thermal, 17 colores.</p><a class="btn" href="cortinas.html">Ver cortinas</a></div></div>
 </div>
+<section class="carrusel" id="carrusel"><h2>Edredón Doble Vista</h2>
+<div class="car-view"><div class="car-track">
+<div class="car-slide"><img src="assets/edredon-azul-marino-foto.jpg" alt="Edredón Azul Marino, cara principal"><div class="body"><h3>Cara principal — Azul Marino</h3><p class="price">desde $999 <small>MXN</small></p><p>Edredón hipoalergénico, doble vista.</p><a class="btn" href="edredones.html">Ver edredones</a></div></div>
+<div class="car-slide"><img src="assets/edredon-gris-carbon-foto.jpg" alt="Edredón Azul Marino, reverso Gris carbón"><div class="body"><h3>Reverso — Gris carbón</h3><p class="price">desde $999 <small>MXN</small></p><p>El mismo edredón, del otro lado.</p><a class="btn" href="edredones.html">Ver edredones</a></div></div>
+</div>
+<button class="car-arrow car-prev" type="button" aria-label="Anterior">‹</button>
+<button class="car-arrow car-next" type="button" aria-label="Siguiente">›</button>
+</div><div class="car-dots"></div>
+</section>
 <div class="badges"><div class="badge">🚚 Envío a todo México</div><div class="badge">🔒 Compra segura</div><div class="badge">🛡️ Garantía 10 años</div></div>
 </main>
 <aside id="cartDrawer" aria-label="Carrito">
@@ -28,5 +51,18 @@
 <div><a href="viste-tu-cama.html">Viste tu Cama</a><br><a href="ofertas.html">Ofertas</a><br><a href="pass.html">Inovation Pass</a><br><a href="contacto.html">Contacto por WhatsApp</a></div>
 <div><a href="historia.html">Nuestra Historia</a><br><a href="videos.html">Videos</a><br><a href="tienda.html">Tienda</a></div>
 </div></footer>
+<script>
+(function(){var c=document.getElementById('carrusel');if(!c)return;
+var t=c.querySelector('.car-track'),slides=t.children,n=slides.length,i=0,dots=c.querySelector('.car-dots'),timer,swiped=false;
+for(var k=0;k<n;k++){var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ir a la diapositiva '+(k+1));(function(j){b.addEventListener('click',function(){go(j);reset();});})(k);dots.appendChild(b);}
+function go(j){i=(j+n)%n;t.style.transform='translateX('+(-i*100)+'%)';var ds=dots.querySelectorAll('button');for(var x=0;x<ds.length;x++){ds[x].classList.toggle('on',x===i);}}
+function reset(){clearInterval(timer);timer=setInterval(function(){go(i+1);},4000);}
+c.querySelector('.car-prev').addEventListener('click',function(){go(i-1);reset();});
+c.querySelector('.car-next').addEventListener('click',function(){go(i+1);reset();});
+for(var s=0;s<n;s++){slides[s].addEventListener('click',function(){if(swiped)return;var a=this.querySelector('a.btn');if(a)location.href=a.getAttribute('href');});}
+var x0=null;c.querySelector('.car-view').addEventListener('touchstart',function(e){x0=e.touches[0].clientX;},{passive:true});
+c.querySelector('.car-view').addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40){swiped=true;setTimeout(function(){swiped=false;},300);go(i+(dx<0?1:-1));reset();}x0=null;},{passive:true});
+go(0);reset();})();
+</script>
 <script src="app.js?v=17"></script>
 <script src="chat.js?v=17"></script></body></html>
