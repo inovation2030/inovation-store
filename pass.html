@@ -12,15 +12,13 @@
 .pass-qr svg{width:150px;height:150px;display:block}
 .pass-member{margin:12px 0 4px;font-size:17px}
 .pass-hint{margin:0;font-size:14px;opacity:.85}
-.pass-save-help{font-size:14px;color:#555;max-width:640px}
 </style>
 </head><body><header class="site"><div class="header-in"><a class="logo" href="index.html"><img src="assets/logo.png" alt="Inovation Store"><span><b>INOVATION STORE</b><small>BLANCOS PARA EL HOGAR</small></span></a><button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button><nav class="main"><a href="index.html">Inicio</a><div class="drop"><a href="tienda.html">Tienda ▾</a><div class="submenu"><a href="tienda.html">Tienda — Ver todo</a><a href="todo.html">Todos los productos</a><a href="edredones.html">Edredones</a><a href="sabanas.html">Sábanas</a><a href="sabanas-bambu.html">Sábanas de Bambú</a><a href="almohadas.html">Almohadas</a><a href="cortinas.html">Cortinas Blackout</a><a href="cubrecolchones.html">Cubrecolchones</a><a href="protectores.html">Protectores de Colchón</a></div></div><a href="viste-tu-cama.html">Viste tu Cama</a><a href="ofertas.html">Ofertas</a><a href="videos.html">Videos</a><a href="pass.html" class="active">Inovation Pass</a><a href="historia.html">Nosotros</a><a href="contacto.html">Contacto</a></nav><button class="cart-btn" type="button" onclick="openCart()">🛒 <span class="cart-label">Carrito</span> <span class="count cart-count">0</span></button></div></header><main><h1 class="page">Inovation Pass</h1><p class="lead">Tu monedero electrónico y sistema de recompensas.</p><div class="passcard" id="passCard">
 <div class="pass-head"><span class="pass-logo"><img src="assets/logo.png" alt="Inovation Store"></span><span class="pass-name">Inovation Pass</span><span class="pass-bal"><small>BALANCE</small><b>$100.00</b></span></div>
 <img class="pass-band" src="assets/pass-card.jpg" alt="">
 <div class="pass-body"><div class="pass-qr" id="passQR"></div><p class="pass-member">Miembro <b id="passMemberId">…</b></p><p class="pass-hint">Muestra este código en tienda para usar tu saldo y puntos.</p></div>
 </div>
-<p><button class="btn" type="button" id="savePassBtn">Guardar en mi celular</button></p>
-<p class="pass-save-help">iPhone: toca Compartir → «Añadir a pantalla de inicio». Android: menú ⋮ → «Añadir a pantalla de inicio». También puedes compartir tu pase con el botón de arriba.</p><p>Saldo actual: <b>$100.00 MXN</b>. Ganas 10% en puntos Pass con cada compra y los usas como saldo.</p><p><label>Calcula tus puntos: compra de $ <input id="passAmt" type="number" value="3490" style="padding:8px;width:120px"> <button class="btn" type="button" onclick="document.getElementById('passPts').textContent=Math.round(document.getElementById('passAmt').value*0.10)+' puntos'">Calcular</button> <b id="passPts"></b></label></p></main>
+<p>Saldo actual: <b>$100.00 MXN</b>. Ganas 10% en puntos Pass con cada compra y los usas como saldo.</p><p><label>Calcula tus puntos: compra de $ <input id="passAmt" type="number" value="3490" style="padding:8px;width:120px"> <button class="btn" type="button" onclick="document.getElementById('passPts').textContent=Math.round(document.getElementById('passAmt').value*0.10)+' puntos'">Calcular</button> <b id="passPts"></b></label></p></main>
 <aside id="cartDrawer" aria-label="Carrito">
 <h2>Tu carrito</h2><div id="cartItems"></div>
 <p>Total: <b id="cartTotal">$0 MXN</b></p>
@@ -56,11 +54,6 @@
     var qr=qrcode(0,'M'); qr.addData(url); qr.make();
     document.getElementById('passQR').innerHTML=qr.createSvgTag({cellSize:4,margin:2,scalable:true});
   }catch(e){}
-  var btn=document.getElementById('savePassBtn');
-  if(btn) btn.addEventListener('click',function(){
-    if(navigator.share){ navigator.share({title:'Inovation Pass',text:'Mi Inovation Pass — '+id,url:url}).catch(function(){}); }
-    else if(navigator.clipboard){ navigator.clipboard.writeText(url); btn.textContent='Enlace copiado'; }
-  });
 })();
 </script>
 </body></html>
