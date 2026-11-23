@@ -13,6 +13,46 @@ var SHIP_OPTIONS=[
   {id:'interior',label:'Interior de la República',fee:250}
 ];
 var FREE_SHIP_MIN=1000;
+/* ---------- Pago con tarjeta (Stripe, EN VIVO) ---------- */
+/* Enlaces de pago reales de Stripe (cuenta Alberto Ochoa, MXN).
+   El precio depende solo del TAMANO, no del color: por eso el mapa es
+   por tipo de producto + precio. El color lo escribe el cliente en el
+   campo personalizado "Color" del checkout de Stripe. */
+var INOV_STRIPE_LINKS = {
+  edredon: {999:'https://buy.stripe.com/eVq6oI5Tv8uNeYr8gV3ks00',1099:'https://buy.stripe.com/9B6aEYchT4exbMf8gV3ks01',1199:'https://buy.stripe.com/6oUcN66XzaCVbMf9kZ3ks02',1299:'https://buy.stripe.com/14A3cwa9L9yR2bF7cR3ks03',1499:'https://buy.stripe.com/8x28wQ6Xz12l03xbt73ks04'},
+  sabana: {500:'https://buy.stripe.com/9B64gAbdPaCV6rVcxb3ks05',600:'https://buy.stripe.com/cNi5kE81DeTbdUnbt73ks06',700:'https://buy.stripe.com/8x228sa9Lh1jg2vfJn3ks07',800:'https://buy.stripe.com/4gMeVe2HjdP7eYr0Ot3ks08'}
+};
+function stripeLinkFor(kind, price){
+  var m = INOV_STRIPE_LINKS[kind];
+  return m ? (m[price] || null) : null;
+}
+function buyWithStripe(btn){
+  var kind = btn.getAttribute('data-buy-stripe');
+  var scope = btn.closest('article');
+  var add = scope ? scope.querySelector('[data-add]') : null;
+  var price = add ? parseInt(add.getAttribute('data-price')||'0', 10) : 0;
+  var url = stripeLinkFor(kind, price);
+  if(!url){ alert('Este producto aun no tiene pago con tarjeta. Agregalo al carrito o escribenos por WhatsApp.'); return; }
+  window.open(url, '_blank');
+}
+function payCartWithStripe(){
+  var c = getCart();
+  if(!c.length){ alert('Tu carrito esta vacio.'); return; }
+  for(var i=0;i<c.length;i++){
+    var it = c[i];
+    var kind = /edred/i.test(it.name) ? 'edredon' : (/bana/i.test(it.name) ? 'sabana' : null);
+    if(kind){
+      var url = stripeLinkFor(kind, it.price);
+      if(url){
+        if(c.length>1){ alert('Tienes '+c.length+' productos en el carrito. El pago con tarjeta es por producto: te abro el pago de "'+it.name+'". Para los demas, usa su boton "Comprar con tarjeta" en su pagina.'); }
+        window.open(url, '_blank');
+        return;
+      }
+    }
+  }
+  alert('Estos productos aun no tienen pago con tarjeta. Escribenos por WhatsApp para pagarlo.');
+}
+
 function getShip(){try{return localStorage.getItem('inovation_ship')||''}catch(e){return''}}
 function saveShip(id){try{localStorage.setItem('inovation_ship',id)}catch(e){}}
 function shipFee(subtotal,id){
@@ -140,6 +180,7 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   });
   document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){addToCart(b.getAttribute('data-add'),parseInt(b.getAttribute('data-price')||'0',10))})});
+  document.querySelectorAll('[data-buy-stripe]').forEach(function(b){b.addEventListener('click',function(){buyWithStripe(b)})});
   document.querySelectorAll('.drop>button, .drop>a').forEach(function(b){b.addEventListener('click',function(e){
     if(window.matchMedia('(max-width:768px)').matches){return;}
     e.preventDefault();

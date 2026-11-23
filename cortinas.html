@@ -4,7 +4,7 @@
 <p>Total: <b id="cartTotal">$0 MXN</b></p>
 <p>Ganas <b id="cartPoints">0 puntos Pass</b> con esta compra.</p>
 <p><button class="btn" type="button" onclick="alert('Compra con Mercado Pago (demo). Elige tu método en el checkout.')">Comprar con Mercado Pago</button></p>
-<p><button class="btn blue" type="button" onclick="alert('Apple Pay / CoDi disponibles en el checkout.')">Apple Pay · CoDi</button></p>
+<p><button class="btn blue" type="button" onclick="payCartWithStripe()">💳 Pagar con tarjeta (Stripe)</button></p>
 <p><button class="btn" type="button" onclick="alert('Se aplicó tu saldo Inovation Pass.')">Pagar con saldo Pass</button></p>
 <p><button type="button" onclick="clearCart()">Vaciar carrito</button> · <button type="button" onclick="closeCart()">Cerrar</button></p>
 </aside>
@@ -43,5 +43,5 @@ document.getElementById("curPanels").addEventListener("click",function(e){var t=
 render();
 })();
 </script>
-<script src="app.js?v=28"></script>
+<script src="app.js?v=29"></script>
 <script src="chat.js?v=28"></script></body></html>
